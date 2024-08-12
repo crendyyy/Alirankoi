@@ -7,9 +7,9 @@ import Profile from "../pages/Profile";
 
 const Layout = () => {
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center bg-[#F8F8F8]">
-      <main className="flex flex-col bg-white justify-between w-1/3 h-full">
-        <div className="p-6 flex flex-col">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-[#F8F8F8]">
+      <main className="relative flex flex-col justify-between w-1/3 min-h-screen bg-white">
+        <div className="flex flex-col flex-grow p-6 mb-[76px] ">
           <Outlet />
         </div>
         <ButtomBar />

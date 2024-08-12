@@ -3,8 +3,8 @@ import HomeIcon from "../icons/HomeIcon";
 
 const ButtomBar = () => {
   return (
-    <div className="bottom-0 overflow-hidden w-full bg-white border-t border-gray-200 border-solid flex">
-      <div className="flex w-full justify-between">
+    <div className="fixed bottom-0 z-10 flex w-1/3 overflow-hidden bg-white border-t border-gray-200 border-solid">
+      <div className="flex justify-between w-full">
         <Menu icon={HomeIcon} link="/" text="Home" />
         <Menu icon={HomeIcon} link="/order" text="Home" />
         <Menu icon={HomeIcon} link="/setting" text="Home" />
