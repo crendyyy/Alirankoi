@@ -6,7 +6,7 @@ import UserIcon from "../icons/UserIcon";
 
 const ButtomBar = () => {
   return (
-    <div className="fixed bottom-0 z-10 flex w-1/3 overflow-hidden bg-white border-t border-gray-200 border-solid">
+    <div className="fixed bottom-0 z-10 flex w-1/3 max-[1080px]:w-full overflow-hidden bg-white border-t border-gray-200 border-solid">
       <div className="flex justify-between w-full">
         <Menu icon={HomeIcon} link="/" text="Home" />
         <Menu icon={DiscountIcon} link="/order" text="Order" />

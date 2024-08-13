@@ -4,6 +4,7 @@ import HistoryCard from "../components/shared/HistoryCard";
 import { Link } from "react-router-dom";
 import useModal from "../Hooks/useModal";
 import PaymentModal from "../components/modal/PaymentModal";
+import WalletIcon from "../components/icons/WalletIcon";
 
 const Home = () => {
   const { isModalopen, openModal, closeModal } = useModal();
@@ -45,7 +46,7 @@ const Home = () => {
           </div>
           <div className="flex gap-2 p-4 bg-white rounded-3xl w-fit">
             <div className="p-3 text-white bg-blue-500 rounded-2xl">
-              <HomeIcon />
+              <WalletIcon />
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-gray-400">Stok</span>
