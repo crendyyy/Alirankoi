@@ -5,6 +5,8 @@ import Order from "../pages/Order";
 import Setting from "../pages/Setting";
 import Profile from "../pages/Profile";
 import OrderDetail from "../pages/OrderDetail";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
 
 const Layout = () => {
   const location = useLocation();
@@ -12,13 +14,20 @@ const Layout = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-center w-full items-center bg-[#F8F8F8]">
-      <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-1/3 bg-white">
-        <div className="flex flex-col flex-grow p-6 mb-[76px] ">
-          <Outlet />
-        </div>
-
-        <ButtomBar />
-      </main>
+      {path === "/login" || path === "/register" ? (
+        <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-1/3 bg-white">
+          <div className="flex flex-col flex-grow p-6 ">
+            <Outlet />
+          </div>
+        </main>
+      ) : (
+        <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-1/3 bg-white">
+          <div className="flex flex-col flex-grow p-6 mb-[76px] ">
+            <Outlet />
+          </div>
+          <ButtomBar />
+        </main>
+      )}
     </div>
   );
 };
@@ -46,6 +55,14 @@ const routes = [
           {
             path: "/profile",
             children: [{ index: true, element: <Profile /> }],
+          },
+          {
+            path: "/login",
+            children: [{ index: true, element: <Login /> }],
+          },
+          {
+            path: "/register",
+            children: [{ index: true, element: <Register /> }],
           },
         ],
       },
