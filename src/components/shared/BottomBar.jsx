@@ -1,14 +1,17 @@
 import { NavLink } from "react-router-dom";
 import HomeIcon from "../icons/HomeIcon";
+import DiscountIcon from "../icons/DiscountIcon";
+import SettingIcon from "../icons/SettingIcons";
+import UserIcon from "../icons/UserIcon";
 
 const ButtomBar = () => {
   return (
     <div className="fixed bottom-0 z-10 flex w-1/3 overflow-hidden bg-white border-t border-gray-200 border-solid">
       <div className="flex justify-between w-full">
         <Menu icon={HomeIcon} link="/" text="Home" />
-        <Menu icon={HomeIcon} link="/order" text="Home" />
-        <Menu icon={HomeIcon} link="/setting" text="Home" />
-        <Menu icon={HomeIcon} link="/profile" text="Home" />
+        <Menu icon={DiscountIcon} link="/order" text="Order" />
+        <Menu icon={SettingIcon} link="/setting" text="Setting" />
+        <Menu icon={UserIcon} link="/profile" text="Profile" />
       </div>
     </div>
   );
@@ -20,7 +23,7 @@ const Menu = ({ text, icon: Icon, link }) => {
       to={link}
       className={({ isActive, isPending }) =>
         `flex flex-col p-3 cursor-pointer items-center w-full font-semibold hover:bg-[#EFEFEF] hover:text-black ${
-          isActive ? "text-black bg-[#EFEFEF] shadow-button" : "text-gray-500"
+          isActive ? "text-black bg-[#EFEFEF] shadow-button" : "text-black"
         }`
       }
     >
