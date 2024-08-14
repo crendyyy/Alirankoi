@@ -13,11 +13,11 @@ const Backdrop = (props) => {
 const Overlay = (props) => {
   return (
     <motion.div
-      initial={{ x: "-50%", y: "-40%", opacity: 0 }}
-      animate={{ x: "-50%", y: "-50%", opacity: 1 }}
-      exit={{ x: "-50%", y: "-55%", opacity: 0 }}
+      initial={{ x: "-50%", y: "40%", opacity: 0 }}
+      animate={{ x: "-50%", y: "0%", opacity: 1 }}
+      exit={{ x: "-50%", y: "55%", opacity: 0 }}
       transition={{ duration: 0.2, type: "spring" }}
-      className="fixed left-2/4 bottom-[-303px] z-[60] max-[1080px]:w-full overflow-hidden m-auto w-[600px]"
+      className="fixed left-1/2 bottom-0 transform -translate-x-1/2 z-[60] w-[600px] max-w-full overflow-hidden"
     >
       {props.children}
     </motion.div>

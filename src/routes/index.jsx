@@ -27,7 +27,6 @@ const Layout = () => {
               <Outlet />
             </div>
           )}
-
           <ButtomBar />
         </main>
       )}

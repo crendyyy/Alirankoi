@@ -1,10 +1,25 @@
 import Title from "antd/es/typography/Title";
 import Modal from "../shared/Modal";
-import { Flex, Input, InputNumber } from "antd";
-import { useState } from "react";
+import { Button, Flex, Input, InputNumber, Upload, Image } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
 
-const PaymentModal = ({ onClose }) => {
-  const [paymentType, setPaymentType] = useState("alipay");
+const PaymentModal = ({ onClose, typeModal }) => {
+  const [paymentType, setPaymentType] = useState();
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [imageList, setImageList] = useState([]);
+
+  const handlePreview = (file) => {
+    setPreviewImage(file.thumbUrl || file.url);
+    setPreviewOpen(true);
+  };
+
+  useEffect(() => {
+    setPaymentType(typeModal);
+  }, [typeModal]);
+
+  const handleChange = ({ fileList }) => setImageList(fileList);
 
   const onChange = (value) => {
     console.log("changed", value);
@@ -58,6 +73,43 @@ const PaymentModal = ({ onClose }) => {
                 parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                 onChange={onChange}
               />
+              <Flex justify="space-between">
+                <Upload
+                  listType="picture"
+                  className="w-full"
+                  fileList={imageList}
+                  onPreview={handlePreview}
+                  onChange={handleChange}
+                  maxCount={1}
+                  showUploadList={{
+                    showPreviewIcon: true,
+                    showRemoveIcon: true,
+                    showDownloadIcon: false,
+                  }}
+                >
+                  <Flex gap="small" align="center">
+                    <Button icon={<UploadOutlined />}>QR code</Button>
+                    <span className="text-[#9CA3AF] text-sm">
+                      {"(Optional)"}
+                    </span>
+                  </Flex>
+                </Upload>
+
+                {previewImage && (
+                  <Image
+                    wrapperStyle={{
+                      display: "none",
+                    }}
+                    preview={{
+                      visible: previewOpen,
+                      onVisibleChange: (visible) => setPreviewOpen(visible),
+                      afterOpenChange: (visible) =>
+                        !visible && setPreviewImage(""),
+                    }}
+                    src={previewImage}
+                  />
+                )}
+              </Flex>
             </Flex>
           )}
         </div>

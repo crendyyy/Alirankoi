@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import HomeIcon from "../components/icons/HomeIcon";
 import HistoryCard from "../components/shared/HistoryCard";
 import { Link } from "react-router-dom";
@@ -8,6 +8,7 @@ import WalletIcon from "../components/icons/WalletIcon";
 
 const Home = () => {
   const { isModalopen, openModal, closeModal } = useModal();
+  const [paymentType, setPaymentType] = useState("");
 
   const Orders = [
     {
@@ -33,9 +34,16 @@ const Home = () => {
     },
   ];
 
+  const handleOpenModal = (type) => {
+    setPaymentType(type);
+    openModal();
+  };
+
   return (
     <div className="flex flex-col w-full gap-12">
-      {isModalopen && <PaymentModal onClose={closeModal} />}
+      {isModalopen && (
+        <PaymentModal onClose={closeModal} typeModal={paymentType} />
+      )}
       <div className="flex gap-6 w-full">
         <div className="flex w-1/2 flex-col gap-12 bg-gray-100 p-6 max-[460px]:p-3 max-[460px]:gap-3 max-[460px]:rounded-[20px] rounded-[48px] ">
           <div className="flex w-full flex-col gap-6 max-[460px]:gap-3">
@@ -58,7 +66,7 @@ const Home = () => {
             </div>
           </div>
           <button
-            onClick={openModal}
+            onClick={() => handleOpenModal("bank")}
             className="flex w-full items-center justify-center h-12 text-base font-bold text-white bg-blue-500 rounded-full"
           >
             Buy Bank
@@ -85,7 +93,7 @@ const Home = () => {
             </div>
           </div>
           <button
-            onClick={openModal}
+            onClick={() => handleOpenModal("ali")}
             className="flex w-full items-center justify-center h-12 text-base font-bold text-white bg-blue-500 rounded-full"
           >
             Buy Ali
