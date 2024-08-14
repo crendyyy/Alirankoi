@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import HomeIcon from "../components/icons/HomeIcon";
 import HistoryCard from "../components/shared/HistoryCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useModal from "../Hooks/useModal";
 import PaymentModal from "../components/modal/PaymentModal";
 import WalletIcon from "../components/icons/WalletIcon";
 
 const Home = () => {
+  const navigate = useNavigate()
+
   const { isModalopen, openModal, closeModal } = useModal();
   const [paymentType, setPaymentType] = useState("");
 
@@ -34,6 +36,10 @@ const Home = () => {
     },
   ];
 
+  const handleOrderDetail = (order) => {
+    navigate(`/order/${order.orderId}`, { state: { order } });
+  }
+
   const handleOpenModal = (type) => {
     setPaymentType(type);
     openModal();
@@ -44,7 +50,7 @@ const Home = () => {
       {isModalopen && (
         <PaymentModal onClose={closeModal} typeModal={paymentType} />
       )}
-      <div className="flex gap-6 w-full">
+      <div className="flex w-full gap-6">
         <div className="flex w-1/2 flex-col gap-12 bg-gray-100 p-6 max-[460px]:p-3 max-[460px]:gap-3 max-[460px]:rounded-[20px] rounded-[48px] ">
           <div className="flex w-full flex-col gap-6 max-[460px]:gap-3">
             <div className="flex flex-col gap-2 max-[460px]:gap-0.5 w-full">
@@ -67,7 +73,7 @@ const Home = () => {
           </div>
           <button
             onClick={() => handleOpenModal("bank")}
-            className="flex w-full items-center justify-center h-12 text-base font-bold text-white bg-blue-500 rounded-full"
+            className="flex items-center justify-center w-full h-12 text-base font-bold text-white bg-blue-500 rounded-full"
           >
             Buy Bank
           </button>
@@ -94,21 +100,22 @@ const Home = () => {
           </div>
           <button
             onClick={() => handleOpenModal("ali")}
-            className="flex w-full items-center justify-center h-12 text-base font-bold text-white bg-blue-500 rounded-full"
+            className="flex items-center justify-center w-full h-12 text-base font-bold text-white bg-blue-500 rounded-full"
           >
             Buy Ali
           </button>
         </div>
       </div>
-      <div className="flex flex-col gap-4 w-full">
-        <div className="flex justify-between items-center">
-          <span className="font-semibold text-lg text-black">MY HISTORY</span>
+      <div className="flex flex-col w-full gap-4">
+        <div className="flex items-center justify-between">
+          <span className="text-lg font-semibold text-black">MY HISTORY</span>
           <Link to="/order" className="text-xs text-black">
             View All
           </Link>
         </div>
         {Orders.map((order) => (
           <HistoryCard
+            onClick={() => handleOrderDetail(order)}
             key={order.orderId}
             date={order.date}
             rate={order.rate}

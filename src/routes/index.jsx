@@ -7,8 +7,13 @@ import Profile from "../pages/Profile";
 import OrderDetail from "../pages/OrderDetail";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import Aside from "../components/shared/Aside";
+import Layout, { Content } from "antd/es/layout/layout";
+import Sider from "antd/es/layout/Sider";
+import Dashboard from "../pages/Dashboard";
+import AdminOrders from "../pages/AdminOrders";
 
-const Layout = () => {
+const LayoutUser = () => {
   const location = useLocation();
   const path = location.pathname;
 
@@ -19,18 +24,40 @@ const Layout = () => {
           <Outlet />
         </main>
       ) : (
-        <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-[600px] bg-white">
+        <>
           {matchPath("/order/:orderId", path) ? (
-            <Outlet />
-          ) : (
-            <div className="flex flex-col flex-grow p-6 mb-[76px] ">
+            <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-[600px] ">
               <Outlet />
-            </div>
+            </main>
+          ) : (
+            <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-[600px] bg-white">
+              <div className="flex flex-col flex-grow p-6 mb-[76px] ">
+                <Outlet />
+              </div>
+            </main>
           )}
           <ButtomBar />
-        </main>
+        </>
       )}
     </div>
+  );
+};
+
+const LayoutAdmin = () => {
+  return (
+    <Layout style={{ minHeight: "100vh" }}>
+      <Layout>
+        <Sider theme="light" width={270}>
+          <Aside />
+        </Sider>
+
+        <Content>
+          <main className="w-full px-12 py-8">
+            <Outlet />
+          </main>
+        </Content>
+      </Layout>
+    </Layout>
   );
 };
 
@@ -40,7 +67,7 @@ const routes = [
     children: [
       {
         path: "/",
-        element: <Layout />,
+        element: <LayoutUser />,
         children: [
           { index: true, element: <Home /> },
           {
@@ -65,6 +92,20 @@ const routes = [
           {
             path: "/register",
             children: [{ index: true, element: <Register /> }],
+          },
+        ],
+      },
+      {
+        path: "/",
+        element: <LayoutAdmin />,
+        children: [
+          {
+            path: "/dashboard",
+            children: [{ index: true, element: <Dashboard /> }],
+          },
+          {
+            path: "/orders",
+            children: [{ index: true, element: <AdminOrders /> }],
           },
         ],
       },
