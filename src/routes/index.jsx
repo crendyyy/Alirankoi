@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { matchPath, Outlet, useLocation } from "react-router-dom";
 import Home from "../pages/Home";
 import ButtomBar from "../components/shared/BottomBar";
 import Order from "../pages/Order";
@@ -15,16 +15,19 @@ const Layout = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center w-full items-center bg-[#F8F8F8]">
       {path === "/login" || path === "/register" ? (
-        <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-1/3 bg-white">
-          <div className="flex flex-col flex-grow p-6 ">
-            <Outlet />
-          </div>
+        <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-[600px] bg-white">
+          <Outlet />
         </main>
       ) : (
-        <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-1/3 bg-white">
-          <div className="flex flex-col flex-grow p-6 mb-[76px] ">
+        <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-[600px] bg-white">
+          {matchPath("/order/:orderId", path) ? (
             <Outlet />
-          </div>
+          ) : (
+            <div className="flex flex-col flex-grow p-6 mb-[76px] ">
+              <Outlet />
+            </div>
+          )}
+
           <ButtomBar />
         </main>
       )}

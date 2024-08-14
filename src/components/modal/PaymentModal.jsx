@@ -1,8 +1,11 @@
 import Title from "antd/es/typography/Title";
 import Modal from "../shared/Modal";
 import { Flex, Input, InputNumber } from "antd";
+import { useState } from "react";
 
 const PaymentModal = ({ onClose }) => {
+  const [paymentType, setPaymentType] = useState("alipay");
+
   const onChange = (value) => {
     console.log("changed", value);
   };
@@ -11,30 +14,52 @@ const PaymentModal = ({ onClose }) => {
       <div className="bg-[#F8F8F8] flex flex-col gap-2 rounded-t-3xl">
         <div className="p-6 bg-white rounded-3xl flex flex-col gap-6">
           <Title level={5}>Payment Information</Title>
-          <Flex vertical gap="middle">
-            <Input
-              variant="filled"
-              placeholder="Bank Name"
-              className="w-full h-12 flex items-center px-2"
-            />
-            <InputNumber
-              placeholder="Bank Number"
-              className="w-full h-12 flex items-center "
-              variant="filled"
-              parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-              onChange={onChange}
-            />
-            <Input
-              variant="filled"
-              placeholder="Bank Branch"
-              className="w-full h-12 flex items-center px-2"
-            />
-            <Input
-              variant="filled"
-              placeholder="Account Name"
-              className="w-full h-12 flex items-center px-2"
-            />
-          </Flex>
+          {paymentType === "bank" ? (
+            <Flex vertical gap="middle">
+              <Input
+                variant="filled"
+                placeholder="Bank Name"
+                className="w-full h-12 flex items-center px-2"
+              />
+              <InputNumber
+                placeholder="Bank Number"
+                className="w-full h-12 flex items-center "
+                variant="filled"
+                parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                onChange={onChange}
+              />
+              <Input
+                variant="filled"
+                placeholder="Bank Branch"
+                className="w-full h-12 flex items-center px-2"
+              />
+              <Input
+                variant="filled"
+                placeholder="Account Name"
+                className="w-full h-12 flex items-center px-2"
+              />
+            </Flex>
+          ) : (
+            <Flex vertical gap="middle">
+              <Input
+                variant="filled"
+                placeholder="Nomor / Email"
+                className="w-full h-12 flex items-center px-2"
+              />
+              <Input
+                variant="filled"
+                placeholder="Nama"
+                className="w-full h-12 flex items-center px-2"
+              />
+              <InputNumber
+                placeholder="Nominal"
+                className="w-full h-12 flex items-center "
+                variant="filled"
+                parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                onChange={onChange}
+              />
+            </Flex>
+          )}
         </div>
         <div className="p-6 bg-white rounded-3xl flex flex-col gap-5">
           <Title level={5}>Purhcase Amount</Title>
@@ -43,9 +68,9 @@ const PaymentModal = ({ onClose }) => {
             variant="filled"
             prefix="¥"
             formatter={(value) =>
-              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+              value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""
             }
-            parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+            parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
             onChange={onChange}
           />
         </div>

@@ -8,7 +8,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const onFinish = () => {
-
     console.log(email);
     console.log(password);
   };
@@ -31,7 +30,12 @@ const Login = () => {
                 { required: true, message: "Please input your Username!" },
               ]}
             >
-              <Input placeholder="Username" onChange={(e) => setEmail(e.target.value)} value={email}/>
+              <Input
+                placeholder="Username"
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+              />
             </Form.Item>
             <Form.Item
               label="Password"
@@ -39,7 +43,12 @@ const Login = () => {
                 { required: true, message: "Please input your Password!" },
               ]}
             >
-              <Input placeholder="Password" type="password" />
+              <Input
+                placeholder="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </Form.Item>
             <Form.Item>
               <Button
