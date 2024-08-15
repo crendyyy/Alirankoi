@@ -28,8 +28,10 @@ const Menu = ({ link, children }) => {
     <NavLink
       to={link}
       className={({ isActive, isPending }) =>
-        `flex h-12 items-center gap-4 rounded-full pl-4 font-semibold text-gray-400 ${
-          isActive ? "bg-blue-500 text-white" : "text-gray-400"
+        `flex h-12 items-center gap-4 rounded-xl pl-4 font-semibold text-gray-400 ${
+          isActive
+            ? "bg-primary text-white hover:text-white"
+            : "text-gray-400 border border-gray-300 hover:text-gray-600 hover:border-gray-400"
         }`
       }
     >

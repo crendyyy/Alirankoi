@@ -18,7 +18,7 @@ for (let i = 0; i < 100; i++) {
     key: i.toString(),
     no: `${i + 1}`,
     bankNumber: `${i}`,
-    date: new Date(),
+    date: "",
     bankName: `Nama Bank ${i}`,
     bankBranch: `Bank Branch ${i}`,
     accountName: `Account Name ${i}`,
