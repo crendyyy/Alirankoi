@@ -6,9 +6,6 @@ export default {
       colors: {
         primary: "#1367FF",
       },
-      fontFamily: {
-        primary: ["Plus Jakarta Sans", "sans-serif"],
-      },
     },
   },
   plugins: [],
