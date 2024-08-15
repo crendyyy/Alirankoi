@@ -47,11 +47,24 @@ const LayoutAdmin = () => {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Layout>
-        <Sider theme="light" width={270}>
+        <Sider
+          theme="light"
+          width={270}
+          style={{
+            overflow: "auto",
+            height: "100vh",
+            position: "fixed",
+            insetInlineStart: 0,
+            top: 0,
+            bottom: 0,
+            scrollbarWidth: "thin",
+            scrollbarColor: "unset",
+          }}
+        >
           <Aside />
         </Sider>
 
-        <Content>
+        <Content style={{ marginLeft: "270px" }}>
           <main className="w-full px-12 py-8">
             <Outlet />
           </main>

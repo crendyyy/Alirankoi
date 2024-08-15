@@ -1,8 +1,11 @@
 import { Flex } from "antd";
 import Title from "antd/es/typography/Title";
 import HistoryCard from "../components/shared/HistoryCard";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Order = () => {
+  const navigate = useNavigate();
+
   const Orders = [
     {
       totalAmount: 10000,
@@ -26,6 +29,11 @@ const Order = () => {
       orderId: 3,
     },
   ];
+
+  const handleOrderDetail = (order) => {
+    navigate(`/order/${order.orderId}`, { state: { order } });
+  };
+
   return (
     <>
       <Flex vertical gap="small">
@@ -33,6 +41,7 @@ const Order = () => {
         <Flex vertical gap="middle">
           {Orders.map((order) => (
             <HistoryCard
+              onClick={() => handleOrderDetail(order)}
               date={order.date}
               rate={order.rate}
               status={order.status}
