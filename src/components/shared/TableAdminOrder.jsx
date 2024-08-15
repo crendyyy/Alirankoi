@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Button, DatePicker, Form, Input, InputNumber, Popconfirm, Select, Table, Typography } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Popconfirm,
+  Select,
+  Table,
+  Typography,
+} from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 const originData = [];
 
@@ -8,6 +18,7 @@ for (let i = 0; i < 100; i++) {
     key: i.toString(),
     no: `${i + 1}`,
     bankNumber: `${i}`,
+    date: new Date(),
     bankName: `Nama Bank ${i}`,
     bankBranch: `Bank Branch ${i}`,
     accountName: `Account Name ${i}`,
@@ -16,8 +27,17 @@ for (let i = 0; i < 100; i++) {
     tes: `${i}`,
   });
 }
-const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
-  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
+  const inputNode = inputType === "date" ? <DatePicker /> : <Input />;
   return (
     <td {...restProps}>
       {editing ? (
@@ -98,9 +118,11 @@ const TableAdminOrder = () => {
         return editable ? (
           <DatePicker />
         ) : (
-          <span className="text-sm font-normal flex flex-col gap-1">
+          <span className="flex flex-col gap-1 text-sm font-normal">
             <span className="font-medium">Mon Aug 2024 14:37:16</span>
-            <span className="text-[#687182] font-light text-xs block">GMT+0700 (Western Indonesia Time)</span>
+            <span className="text-[#687182] font-light text-xs block">
+              GMT+0700 (Western Indonesia Time)
+            </span>
           </span>
         );
       },
@@ -133,7 +155,9 @@ const TableAdminOrder = () => {
     {
       title: "Invoice",
       dataIndex: "",
-      render: (text, record, index) => <Button type="primary">See Invoice</Button>,
+      render: (text, record, index) => (
+        <Button type="primary">See Invoice</Button>
+      ),
     },
     {
       title: "Status",
@@ -160,11 +184,18 @@ const TableAdminOrder = () => {
             </Popconfirm>
           </span>
         ) : (
-          <div className="flex gap-2 items-center">
-            <Typography.Link disabled={editingKey !== ""} onClick={() => edit(record)}>
+          <div className="flex items-center gap-2">
+            <Typography.Link
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            >
               Edit Data
             </Typography.Link>
-            <Select placeholder="Status" style={{ width: 120 }} onChange={handleChangeStatus}>
+            <Select
+              placeholder="Status"
+              style={{ width: 120 }}
+              onChange={handleChangeStatus}
+            >
               <Option value="Complete">Complete</Option>
               <Option value="Cancel">Cancel</Option>
             </Select>
@@ -190,12 +221,15 @@ const TableAdminOrder = () => {
     };
   });
   return (
-    <div className="flex bg-white mt-7 flex-col p-3 rounded-lg">
+    <div className="flex flex-col p-3 bg-white rounded-lg mt-7">
       <Form form={form} component={false}>
-        <div className="flex justify-between items-center">
-          <h1 className="text-lg font-semibold mt-3 mb-8 ml-5">User Order 1</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">User Order 1</h1>
           <div className="flex gap-3">
-            <Button type="primary" className="bg-gray-500 border border-gray-400 hover:!bg-gray-600">
+            <Button
+              type="primary"
+              className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
+            >
               <PrinterOutlined />
               Print
             </Button>

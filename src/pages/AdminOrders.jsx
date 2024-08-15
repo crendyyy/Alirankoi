@@ -162,19 +162,23 @@ const AdminOrders = () => {
       <Title level={1}>All Orders</Title>
       <div className="flex">
         <div className="flex flex-col gap-3 mr-2">
-          <h3 className="font-medium text-sm">Selected Date</h3>
+          <h3 className="text-sm font-medium">Selected Date</h3>
           <DatePicker onChange={onChangeDate} />
         </div>
 
         <div className="flex flex-col gap-3">
-          <h3 className="font-medium text-sm">Selected Order</h3>
+          <h3 className="text-sm font-medium">Selected Order</h3>
           <div className="flex gap-2">
-            <Select placeholder="Select order" style={{ width: 180 }} onChange={handleChange}>
+            <Select
+              placeholder="Select order"
+              style={{ width: 180 }}
+              onChange={handleChange}
+            >
               <Option value="Complete">Complete</Option>
               <Option value="Cancel">Cancel</Option>
             </Select>
-            <div className="flex justify-between items-center gap-2">
-              <Button type="primary" className="bg-primary text-white">
+            <div className="flex items-center justify-between gap-2">
+              <Button type="primary" className="text-white bg-primary">
                 Update Selected Order Status
               </Button>{" "}
               |
