@@ -1,28 +1,69 @@
-import { Button, Flex, Form, Input, Layout } from "antd";
+import { Button, Form, Input, Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Title from "antd/es/typography/Title";
 import { useState } from "react";
+import { useNavigate } from "react-router";
+import { useLogin } from "../components/service/userServices";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const loginMutation = useLogin();
 
-  const onFinish = () => {
-    console.log(email);
-    console.log(password);
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleInput = (field, value) => {
+    setCredentials((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    if (loginMutation.isLoading) return;
+  
+    loginMutation.mutate(credentials, {
+      onSuccess: (data) => {
+        console.log("Response data:", data); // Log the entire response
+        if (data && data.data) { // Adjust based on actual structure
+          const { token, user } = data.data.payload; // Access 'data' field
+      
+          if (token) {
+            localStorage.setItem("token", token);
+            document.cookie = `token=${token};path=/`;
+      
+            if (user.is_admin) {
+              navigate("/dashboard");
+            } else {
+              navigate("/");
+            }
+          } else {
+            alert("Invalid Credentials");
+          }
+        } else {
+          alert("Unexpected response format. Please try again.");
+        }
+      },
+      onError: (error) => {
+        console.error("Login error:", error);
+        alert("An error occurred during login. Please try again.");
+      },
+    });
   };
 
   return (
-    <Layout className="bg-white flex justify-center items-center">
-      <Content className="flex w-72 items-center">
-        <Flex vertical gap="middle" className="w-full">
+    <Layout className="flex items-center justify-center bg-white">
+      <Content className="flex items-center w-72">
+        <div className="flex flex-col w-full gap-4">
           <Title level={2}>Login</Title>
           <Form
             layout="vertical"
             style={{ maxWidth: 600 }}
             name="login"
             initialValues={{ remember: true }}
-            onFinish={onFinish}
+            onFinish={handleSubmit}
           >
             <Form.Item
               label="Username"
@@ -32,9 +73,9 @@ const Login = () => {
             >
               <Input
                 placeholder="Username"
-                type="email"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
+                required
+                value={credentials.username}
+                onChange={(e) => handleInput("username", e.target.value)}
               />
             </Form.Item>
             <Form.Item
@@ -46,8 +87,9 @@ const Login = () => {
               <Input
                 placeholder="Password"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                required
+                value={credentials.password}
+                onChange={(e) => handleInput("password", e.target.value)}
               />
             </Form.Item>
             <Form.Item>
@@ -56,14 +98,16 @@ const Login = () => {
                 className="w-full"
                 size="large"
                 htmlType="submit"
+                loading={loginMutation.isLoading} // Show loading state while submitting
               >
                 Login
               </Button>
             </Form.Item>
           </Form>
-        </Flex>
+        </div>
       </Content>
     </Layout>
   );
 };
+
 export default Login;

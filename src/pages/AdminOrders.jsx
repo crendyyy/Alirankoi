@@ -1,7 +1,7 @@
 import { Button, DatePicker, Select } from "antd";
 import Title from "antd/es/typography/Title";
 import { useState } from "react";
-import TableAdminOrder from "../components/shared/TableAdminOrder";
+import TableAdminOrder from "../components/orders/TableAdminOrder";
 
 const AdminOrders = () => {
   // Date

@@ -228,9 +228,9 @@ const TableAdminOrder = () => {
           <div className="flex gap-3">
             <Button
               type="primary"
+              icon={<PrinterOutlined />}
               className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
             >
-              <PrinterOutlined />
               Print
             </Button>
             <Button type="primary">Export to Excel</Button>
