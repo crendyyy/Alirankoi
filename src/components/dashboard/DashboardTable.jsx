@@ -17,12 +17,7 @@ const DashboardTable = () => {
       dataIndex: "date",
       editable: true,
       render: (text, record) => (
-        <span className="flex flex-col gap-1 text-sm font-normal">
-          <span className="font-medium">Mon Aug 2024 14:37:16</span>
-          <span className="text-[#687182] font-light text-xs block">
-            GMT+0700 (Western Indonesia Time)
-          </span>
-        </span>
+        <span className="font-medium">Mon Aug 2024 14:37:16</span>
       ),
     },
     {
@@ -79,8 +74,18 @@ const DashboardTable = () => {
   const Fotter = () => {
     return (
       <Flex justify="space-between">
-        <span className="text-xs font-medium">Total amount: <span className="text-xs font-bold">{data.reduce((acc, item) => acc + item.amount, 0)}</span></span>
-        <span className="text-xs font-medium">Total Profit/Margin: <span className="text-xs font-bold">{data.reduce((acc, item) => acc + item.profit, 0)}</span></span>
+        <span className="text-xs font-medium">
+          Total amount:{" "}
+          <span className="text-xs font-bold">
+            {data.reduce((acc, item) => acc + item.amount, 0)}
+          </span>
+        </span>
+        <span className="text-xs font-medium">
+          Total Profit/Margin:{" "}
+          <span className="text-xs font-bold">
+            {data.reduce((acc, item) => acc + item.profit, 0)}
+          </span>
+        </span>
       </Flex>
     );
   };
@@ -131,7 +136,7 @@ const DashboardTable = () => {
           }}
           columns={columns}
           dataSource={data}
-          footer={ Fotter}
+          footer={Fotter}
         />
       </Flex>
     </>

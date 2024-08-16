@@ -4,7 +4,7 @@ const Status = ({ status }) => {
   return (
     <span
       className={`py-2 px-4 rounded-full ${
-        status === "Succes"
+        status === "Complete"
           ? "bg-green-200 text-green-700"
           : status === "Pending"
           ? "bg-yellow-200 text-yellow-700"

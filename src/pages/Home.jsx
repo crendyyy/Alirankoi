@@ -5,40 +5,45 @@ import { Link, useNavigate } from "react-router-dom";
 import useModal from "../Hooks/useModal";
 import PaymentModal from "../components/modal/PaymentModal";
 import WalletIcon from "../components/icons/WalletIcon";
+import { useGetUserOrders } from "../components/service/user/useGetUserOrder";
+import { data } from "autoprefixer";
 
 const Home = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { isModalopen, openModal, closeModal } = useModal();
   const [paymentType, setPaymentType] = useState("");
 
-  const Orders = [
-    {
-      totalAmount: 10000,
-      date: "17:10 - 18/08/24",
-      rate: 22400,
-      status: "Succes",
-      orderId: 1,
-    },
-    {
-      totalAmount: 5000,
-      date: "17:10 - 18/08/24",
-      rate: 22400,
-      status: "Pending",
-      orderId: 2,
-    },
-    {
-      totalAmount: 5000,
-      date: "17:10 - 18/08/24",
-      rate: 22400,
-      status: "Canceled",
-      orderId: 3,
-    },
-  ];
+  const { data: orders, isPending, isError } = useGetUserOrders();
+  console.log(orders);
+
+  // const Orders = [
+  //   {
+  //     totalAmount: 10000,
+  //     date: "17:10 - 18/08/24",
+  //     rate: 22400,
+  //     status: "Succes",
+  //     orderId: 1,
+  //   },
+  //   {
+  //     totalAmount: 5000,
+  //     date: "17:10 - 18/08/24",
+  //     rate: 22400,
+  //     status: "Pending",
+  //     orderId: 2,
+  //   },
+  //   {
+  //     totalAmount: 5000,
+  //     date: "17:10 - 18/08/24",
+  //     rate: 22400,
+  //     status: "Canceled",
+  //     orderId: 3,
+  //   },
+  // ];
 
   const handleOrderDetail = (order) => {
     navigate(`/order/${order.orderId}`, { state: { order } });
-  }
+  };
 
   const handleOpenModal = (type) => {
     setPaymentType(type);
@@ -113,16 +118,18 @@ const Home = () => {
             View All
           </Link>
         </div>
-        {Orders.map((order) => (
-          <HistoryCard
-            onClick={() => handleOrderDetail(order)}
-            key={order.orderId}
-            date={order.date}
-            rate={order.rate}
-            status={order.status}
-            totalAmount={order.totalAmount}
-          />
-        ))}
+        {isPending ? <p>Loading</p> : ""}
+        {orders &&
+          orders.payload.map((order) => (
+            <HistoryCard
+              onClick={() => handleOrderDetail(order)}
+              key={order.id}
+              date={order.createdAt}
+              rate={order.bank_number}
+              status={order.status}
+              totalAmount={order.amount}
+            />
+          ))}
       </div>
     </div>
   );

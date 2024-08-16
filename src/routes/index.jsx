@@ -49,7 +49,7 @@ const LayoutAdmin = () => {
       <Layout>
         <Sider
           theme="light"
-          width={270}
+          width={240}
           style={{
             overflow: "auto",
             height: "100vh",
@@ -64,7 +64,7 @@ const LayoutAdmin = () => {
           <Aside />
         </Sider>
 
-        <Content style={{ marginLeft: "270px" }}>
+        <Content style={{ marginLeft: "240px" }}>
           <main className="w-full px-12 py-8">
             <Outlet />
           </main>

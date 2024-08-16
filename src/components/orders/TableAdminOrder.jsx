@@ -156,7 +156,9 @@ const TableAdminOrder = () => {
       title: "Invoice",
       dataIndex: "",
       render: (text, record, index) => (
-        <Button type="primary">See Invoice</Button>
+        <Button className="w-full" type="primary">
+          See Invoice
+        </Button>
       ),
     },
     {
@@ -193,7 +195,7 @@ const TableAdminOrder = () => {
             </Typography.Link>
             <Select
               placeholder="Status"
-              style={{ width: 120 }}
+              style={{ width: "100%" }}
               onChange={handleChangeStatus}
             >
               <Option value="Complete">Complete</Option>
