@@ -12,6 +12,8 @@ import Layout, { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import Dashboard from "../pages/Dashboard";
 import AdminOrders from "../pages/AdminOrders";
+import NotFound from "../pages/NotFound";
+import ProtectedRoutes from "./ProtectedRoutes";
 
 const LayoutUser = () => {
   const location = useLocation();
@@ -91,21 +93,60 @@ const routes = [
         path: "/",
         element: <LayoutUser />,
         children: [
-          { index: true, element: <Home /> },
+          {
+            index: true,
+            element: (
+              <ProtectedRoutes roles={["user"]}>
+                <Home />
+              </ProtectedRoutes>
+            ),
+          },
           {
             path: "/order",
             children: [
-              { index: true, element: <Order /> },
-              { path: ":orderId", element: <OrderDetail /> },
+              {
+                index: true,
+                element: (
+                  <ProtectedRoutes roles={["user"]}>
+                    <Order />
+                  </ProtectedRoutes>
+                ),
+              },
+              {
+                path: ":orderId",
+                element: (
+                  <ProtectedRoutes roles={["user"]}>
+                    <OrderDetail />
+                  </ProtectedRoutes>
+                ),
+              },
             ],
           },
           {
             path: "/setting",
-            children: [{ index: true, element: <Setting /> }],
+            children: [
+              {
+                index: true,
+                element: (
+                  <ProtectedRoutes roles={["user"]}>
+                    <Setting />
+                  </ProtectedRoutes>
+                ),
+              },
+            ],
           },
           {
             path: "/profile",
-            children: [{ index: true, element: <Profile /> }],
+            children: [
+              {
+                index: true,
+                element: (
+                  <ProtectedRoutes roles={["user"]}>
+                    <Profile />
+                  </ProtectedRoutes>
+                ),
+              },
+            ],
           },
           {
             path: "/login",
@@ -119,7 +160,11 @@ const routes = [
       },
       {
         path: "/",
-        element: <LayoutAdmin />,
+        element: (
+          <ProtectedRoutes roles={["admin"]}>
+            <LayoutAdmin />
+          </ProtectedRoutes>
+        ),
         children: [
           {
             path: "/dashboard",
@@ -130,6 +175,10 @@ const routes = [
             children: [{ index: true, element: <AdminOrders /> }],
           },
         ],
+      },
+      {
+        path: "*",
+        element: <NotFound />,
       },
     ],
   },

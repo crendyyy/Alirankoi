@@ -9,32 +9,6 @@ const OrderDetail = () => {
   const { order } = state;
   console.log(order);
 
-  const props = {
-    listType: "picture",
-    beforeUpload(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-          const img = document.createElement("img");
-          img.src = reader.result;
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            ctx.fillStyle = "red";
-            ctx.textBaseline = "middle";
-            ctx.font = "33px Arial";
-            ctx.fillText("Ant Design", 20, 20);
-            canvas.toBlob((result) => resolve(result));
-          };
-        };
-      });
-    },
-  };
-
   return (
     <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-5 mb-24">
       <h1 className="p-5 font-bold bg-white">Order Detail</h1>
@@ -46,19 +20,19 @@ const OrderDetail = () => {
         </div>
         <div className="flex justify-between">
           <p>Order Id</p>
-          <p>{order.orderId}</p>
+          <p>{order.id}</p>
         </div>
         <div className="flex justify-between">
           <p>Date</p>
-          <p>{order.date}</p>
+          <p>{order.createdAt}</p>
         </div>
         <div className="flex justify-between">
           <p>Rate</p>
-          <p>{order.rate}</p>
+          <p>{order.bank_number}</p>
         </div>
         <div className="flex justify-between">
           <p>Amount</p>
-          <p>{order.totalAmount}</p>
+          <p>{order.amount}</p>
         </div>
       </div>
 
@@ -80,20 +54,46 @@ const OrderDetail = () => {
       <div className="p-6 bg-white rounded-3xl">
         <h1 className="mb-4">Payment Proof</h1>
         <div className="flex">
-          <Upload {...props} className="w-full">
+          <Upload listType="picture" className="w-full">
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
         </div>
       </div>
 
       <div className="flex flex-col gap-6 p-6 text-sm font-normal bg-white rounded-3xl">
-        <div className="flex justify-between">
-          <h1>Payment Information</h1>
-        </div>
-        <Input placeholder="Bank Name" />
-        <Input placeholder="Bank Number" />
-        <Input placeholder="Bank Branch" />
-        <Input placeholder="Account Name" />
+        {order.status === "Pending" ? (
+          <>
+            <div className="flex justify-between">
+              <h1>Payment Information</h1>
+            </div>
+            <Input placeholder="Bank Name" value={order.bank_detail} />
+            <Input placeholder="Bank Number" value={order.bank_number} />
+            <Input placeholder="Bank Branch" value={order.bank_branch} />
+            <Input placeholder="Account Name" value={order.account_name} />
+          </>
+        ) : (
+          <>
+            <div className="flex justify-between">
+              <h1>Payment Information</h1>
+            </div>
+            <Input placeholder="Bank Name" value={order.bank_detail} disabled />
+            <Input
+              placeholder="Bank Number"
+              value={order.bank_number}
+              disabled
+            />
+            <Input
+              placeholder="Bank Branch"
+              value={order.bank_branch}
+              disabled
+            />
+            <Input
+              placeholder="Account Name"
+              value={order.account_name}
+              disabled
+            />
+          </>
+        )}
       </div>
 
       <div className="flex items-center justify-between p-6 bg-white rounded-3xl">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import HomeIcon from "../components/icons/HomeIcon";
 import HistoryCard from "../components/shared/HistoryCard";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,49 +7,33 @@ import PaymentModal from "../components/modal/PaymentModal";
 import WalletIcon from "../components/icons/WalletIcon";
 import { useGetUserOrders } from "../components/service/user/useGetUserOrder";
 import { data } from "autoprefixer";
+import { Button } from "antd";
+import { AuthContext } from "../context/AuthContext";
 
 const Home = () => {
   const navigate = useNavigate();
 
   const { isModalopen, openModal, closeModal } = useModal();
   const [paymentType, setPaymentType] = useState("");
+  const { logout } = useContext(AuthContext);
 
   const { data: orders, isPending, isError } = useGetUserOrders();
   console.log(orders);
 
-  // const Orders = [
-  //   {
-  //     totalAmount: 10000,
-  //     date: "17:10 - 18/08/24",
-  //     rate: 22400,
-  //     status: "Succes",
-  //     orderId: 1,
-  //   },
-  //   {
-  //     totalAmount: 5000,
-  //     date: "17:10 - 18/08/24",
-  //     rate: 22400,
-  //     status: "Pending",
-  //     orderId: 2,
-  //   },
-  //   {
-  //     totalAmount: 5000,
-  //     date: "17:10 - 18/08/24",
-  //     rate: 22400,
-  //     status: "Canceled",
-  //     orderId: 3,
-  //   },
-  // ];
+  useEffect(() => {
+    if (!orders || orders === null) {
+      navigate("/login");
+    }
+  }, [orders, navigate]);
 
   const handleOrderDetail = (order) => {
-    navigate(`/order/${order.orderId}`, { state: { order } });
+    navigate(`/order/${order.id}`, { state: { order } });
   };
 
   const handleOpenModal = (type) => {
     setPaymentType(type);
     openModal();
   };
-
   return (
     <div className="flex flex-col w-full gap-12">
       {isModalopen && (
@@ -111,6 +95,7 @@ const Home = () => {
           </button>
         </div>
       </div>
+      <Button onClick={logout}>Logout</Button>
       <div className="flex flex-col w-full gap-4">
         <div className="flex items-center justify-between">
           <span className="text-lg font-semibold text-black">MY HISTORY</span>

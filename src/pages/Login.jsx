@@ -1,13 +1,16 @@
 import { Button, Form, Input, Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Title from "antd/es/typography/Title";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { useLogin } from "../components/service/user/userServices";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
   const loginMutation = useLogin();
+  const { login, auth } = useContext(AuthContext);
+  console.log(auth);
 
   const [credentials, setCredentials] = useState({
     username: "",
@@ -26,20 +29,11 @@ const Login = () => {
 
     loginMutation.mutate(credentials, {
       onSuccess: (data) => {
-        console.log("Response data:", data); // Log the entire response
         if (data && data.data) {
-          // Adjust based on actual structure
-          const { token, user } = data.data.payload; // Access 'data' field
-
+          const { token, user } = data.data.payload;
           if (token) {
-            localStorage.setItem("token", token);
-            document.cookie = `token=${token};path=/`;
-
-            if (user.is_admin) {
-              navigate("/dashboard");
-            } else {
-              navigate("/");
-            }
+            login(user, token);
+            navigate(user.is_admin ? "/dashboard" : "/");
           } else {
             alert("Invalid Credentials");
           }
