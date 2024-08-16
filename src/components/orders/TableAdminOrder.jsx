@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Button, DatePicker, Form, Input, InputNumber, Popconfirm, Select, Table, Typography } from "antd";
-import { DeleteOutlined, EditOutlined, PrinterOutlined } from "@ant-design/icons";
+import { Button, DatePicker, Form, Input, InputNumber, Modal, Popconfirm, Select, Table, Typography } from "antd";
+import { DeleteOutlined, EditOutlined, ExclamationCircleFilled, PrinterOutlined } from "@ant-design/icons";
 import Status from "../shared/Status";
 const originData = [];
 
@@ -148,15 +148,9 @@ const TableAdminOrder = () => {
       title: "Invoice",
       dataIndex: "",
       render: (text, record, index) => (
-<<<<<<< Updated upstream
-        <Button className="w-full" type="primary">
-          See Invoice
-        </Button>
-=======
-        <a type="primary" className="w-fit text-xs underline text-primary">
+        <a type="primary" onClick={showModal} className="w-fit text-xs underline text-primary">
           See Invoice
         </a>
->>>>>>> Stashed changes
       ),
     },
     {
@@ -191,7 +185,7 @@ const TableAdminOrder = () => {
                 <EditOutlined />
               </button>
             </Typography.Link>
-            <button className="px-2 py-1 bg-red-500 rounded-md text-white">
+            <button className="px-2 py-1 bg-red-500 rounded-md text-white" onClick={showConfirm} type="dashed">
               <DeleteOutlined />
             </button>
             {/* <Select
@@ -223,6 +217,48 @@ const TableAdminOrder = () => {
       }),
     };
   });
+
+  // Row Selection
+  const [selectionType, setSelectionType] = useState("checkbox");
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
+    },
+    getCheckboxProps: (record) => ({
+      disabled: record.name === "Disabled User",
+      // Column configuration not to be checked
+      name: record.name,
+    }),
+  };
+
+  // Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  // Delete
+  const { confirm } = Modal;
+  const showConfirm = () => {
+    confirm({
+      title: "Do you want to delete these items?",
+      icon: <ExclamationCircleFilled />,
+      content: "Some descriptions",
+      onOk() {
+        console.log("OK");
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
   return (
     <div className="flex flex-col p-3 bg-white rounded-lg mt-7">
       <Form form={form} component={false}>
@@ -236,12 +272,15 @@ const TableAdminOrder = () => {
           </div>
         </div>
         <Table
+          rowSelection={{
+            type: selectionType,
+            ...rowSelection,
+          }}
           components={{
             body: {
               cell: EditableCell,
             },
           }}
-          bordered
           dataSource={data}
           columns={mergedColumns}
           rowClassName="editable-row"
@@ -250,6 +289,9 @@ const TableAdminOrder = () => {
           }}
         />
       </Form>
+      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <img src="" alt="Invoice" width="500" height="600" />
+      </Modal>
     </div>
   );
 };

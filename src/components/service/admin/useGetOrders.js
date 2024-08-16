@@ -1,17 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import useAxios from "../../hooks/useAxios";
-import excelsKeys from ".";
+import useAxios from "../../../Hooks/useAxios";
+import orderKeys from ".";
 
-export const useGetExcel = () => {
+export const useGetOrder = () => {
   const axiosClient = useAxios();
 
-  const cacheKey = excelsKeys.lists;
+  const cacheKey = orderKeys.lists;
 
   const query = useQuery({
     queryKey: cacheKey,
     staleTime: Infinity,
     queryFn: () => axiosClient._get(`/order`),
   });
+
+  console.log(query.data);
 
   return { ...query, data: query.data?.data };
 };

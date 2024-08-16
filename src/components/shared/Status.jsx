@@ -3,11 +3,7 @@ import React from "react";
 const Status = ({ status }) => {
   return (
     <span
-<<<<<<< Updated upstream
-      className={`py-2 px-4 rounded-full ${
-=======
       className={`py-0.5 px-4 rounded-full ${
->>>>>>> Stashed changes
         status === "Complete"
           ? "bg-green-200 text-green-700"
           : status === "Pending"

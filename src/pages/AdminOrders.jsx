@@ -2,8 +2,12 @@ import { Button, DatePicker, Select } from "antd";
 import Title from "antd/es/typography/Title";
 import { useState } from "react";
 import TableAdminOrder from "../components/orders/TableAdminOrder";
+import { useGetOrder } from "../components/service/admin/useGetOrders";
 
 const AdminOrders = () => {
+  // API CALLS
+  console.log(useGetOrder());
+
   // Date
   const onChangeDate = (date, dateString) => {
     console.log(date, dateString);
@@ -190,6 +194,7 @@ const AdminOrders = () => {
         </div>
       </div>
       <div>
+        <TableAdminOrder />
         <TableAdminOrder />
       </div>
     </>

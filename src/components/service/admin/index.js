@@ -1,5 +1,5 @@
-const excelsKeys = {
-  lists: ["excels", "list"],
+const orderKeys = {
+  lists: ["orders", "list"],
 };
 
-export default excelsKeys;
+export default orderKeys;
