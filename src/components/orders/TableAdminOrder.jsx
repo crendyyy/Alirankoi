@@ -1,16 +1,7 @@
 import React, { useState } from "react";
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Popconfirm,
-  Select,
-  Table,
-  Typography,
-} from "antd";
-import { PrinterOutlined } from "@ant-design/icons";
+import { Button, DatePicker, Form, Input, InputNumber, Popconfirm, Select, Table, Typography } from "antd";
+import { DeleteOutlined, EditOutlined, PrinterOutlined } from "@ant-design/icons";
+import Status from "../shared/Status";
 const originData = [];
 
 for (let i = 0; i < 100; i++) {
@@ -27,17 +18,21 @@ for (let i = 0; i < 100; i++) {
     tes: `${i}`,
   });
 }
-const EditableCell = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-  const inputNode = inputType === "date" ? <DatePicker /> : <Input />;
+const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
+  function handleChangeStatus(value) {
+    console.log(`selected ${value}`);
+  }
+  const inputNode =
+    inputType === "date" ? (
+      <DatePicker />
+    ) : inputType === "status" ? (
+      <Select placeholder="Status" style={{ width: 120 }} onChange={handleChangeStatus}>
+        <Option value="Complete">Complete</Option>
+        <Option value="Cancel">Cancel</Option>
+      </Select>
+    ) : (
+      <Input />
+    );
   return (
     <td {...restProps}>
       {editing ? (
@@ -107,7 +102,7 @@ const TableAdminOrder = () => {
     {
       title: "#",
       dataIndex: "no",
-      editable: true,
+      width: 10,
     },
     {
       title: "Date",
@@ -120,9 +115,6 @@ const TableAdminOrder = () => {
         ) : (
           <span className="flex flex-col gap-1 text-sm font-normal">
             <span className="font-medium">Mon Aug 2024 14:37:16</span>
-            <span className="text-[#687182] font-light text-xs block">
-              GMT+0700 (Western Indonesia Time)
-            </span>
           </span>
         );
       },
@@ -156,15 +148,22 @@ const TableAdminOrder = () => {
       title: "Invoice",
       dataIndex: "",
       render: (text, record, index) => (
+<<<<<<< Updated upstream
         <Button className="w-full" type="primary">
           See Invoice
         </Button>
+=======
+        <a type="primary" className="w-fit text-xs underline text-primary">
+          See Invoice
+        </a>
+>>>>>>> Stashed changes
       ),
     },
     {
       title: "Status",
       dataIndex: "status",
       editable: true,
+      render: (text, record, index) => <Status status="Complete" />,
     },
     {
       title: "Actions",
@@ -172,7 +171,7 @@ const TableAdminOrder = () => {
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
-          <span>
+          <span className="flex flex-col">
             <Typography.Link
               onClick={() => save(record.key)}
               style={{
@@ -186,14 +185,16 @@ const TableAdminOrder = () => {
             </Popconfirm>
           </span>
         ) : (
-          <div className="flex items-center gap-2">
-            <Typography.Link
-              disabled={editingKey !== ""}
-              onClick={() => edit(record)}
-            >
-              Edit Data
+          <div className="flex items-center gap-1">
+            <Typography.Link disabled={editingKey !== ""} onClick={() => edit(record)}>
+              <button className="px-2 py-1 bg-primary rounded-md text-white">
+                <EditOutlined />
+              </button>
             </Typography.Link>
-            <Select
+            <button className="px-2 py-1 bg-red-500 rounded-md text-white">
+              <DeleteOutlined />
+            </button>
+            {/* <Select
               placeholder="Status"
               style={{ width: "100%" }}
               onChange={handleChangeStatus}
@@ -201,7 +202,7 @@ const TableAdminOrder = () => {
               <Option value="Complete">Complete</Option>
               <Option value="Cancel">Cancel</Option>
             </Select>
-            <Button type="primary">Update Status</Button>
+            <Button type="primary">Update Status</Button> */}
           </div>
         );
       },
@@ -228,11 +229,7 @@ const TableAdminOrder = () => {
         <div className="flex items-center justify-between">
           <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">User Order 1</h1>
           <div className="flex gap-3">
-            <Button
-              type="primary"
-              icon={<PrinterOutlined />}
-              className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
-            >
+            <Button type="primary" icon={<PrinterOutlined />} className="bg-gray-500 border border-gray-400 hover:!bg-gray-600">
               Print
             </Button>
             <Button type="primary">Export to Excel</Button>

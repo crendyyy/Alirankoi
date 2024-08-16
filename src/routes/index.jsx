@@ -49,7 +49,11 @@ const LayoutAdmin = () => {
       <Layout>
         <Sider
           theme="light"
+<<<<<<< Updated upstream
           width={240}
+=======
+          width={250}
+>>>>>>> Stashed changes
           style={{
             overflow: "auto",
             height: "100vh",
@@ -64,8 +68,13 @@ const LayoutAdmin = () => {
           <Aside />
         </Sider>
 
+<<<<<<< Updated upstream
         <Content style={{ marginLeft: "240px" }}>
           <main className="w-full px-12 py-8">
+=======
+        <Content style={{ marginLeft: "250px" }}>
+          <main className="w-full px-8 py-8">
+>>>>>>> Stashed changes
             <Outlet />
           </main>
         </Content>
