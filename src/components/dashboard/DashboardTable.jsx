@@ -2,93 +2,27 @@ import { PrinterOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, InputNumber, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
 
-const DashboardTable = () => {
-  const columns = [
-    {
-      title: "#",
-      dataIndex: "no",
-      width: 12,
-      render: (text, record, index) => (
-        <span className="text-sm font-normal">{index + 1}</span>
-      ),
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      editable: true,
-      render: (text, record) => (
-        <span className="font-medium">Mon Aug 2024 14:37:16</span>
-      ),
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-    },
-    {
-      title: "Bank Number",
-      dataIndex: "bankNumber",
-    },
-    {
-      title: "Bank Name",
-      dataIndex: "bankName",
-    },
-    {
-      title: "Bank Branch",
-      dataIndex: "bankBranch",
-    },
-    {
-      title: "Account Name",
-      dataIndex: "accountName",
-    },
-    {
-      title: "Harga Jual",
-      dataIndex: "hargaJual",
-    },
-    {
-      title: "Harga Beli",
-      dataIndex: "hargaBeli",
-    },
-    {
-      title: "Profit/Margin",
-      dataIndex: "profit",
-    },
-  ];
-  const data = [];
-
-  for (let i = 0; i < 16; i++) {
-    data.push({
-      key: i.toString(),
-      bankNumber: `${i}`,
-      date: "",
-      bankName: `Nama Bank ${i}`,
-      bankBranch: `Bank Branch ${i}`,
-      accountName: `Account Name ${i}`,
-      status: `Success`,
-      amount: 1000,
-      hargaJual: 2500,
-      hargaBeli: 2000,
-      profit: 500,
-    });
-  }
-
+const DashboardTable = ({columns, data, isLoading}) => {
   const Fotter = () => {
     return (
       <Flex justify="space-between">
         <span className="text-xs font-medium">
           Total amount:{" "}
           <span className="text-xs font-bold">
-            {data.reduce((acc, item) => acc + item.amount, 0)}
+            {data && data.reduce((acc, item) => acc + Number(item.amount), 0)}
           </span>
         </span>
         <span className="text-xs font-medium">
           Total Profit/Margin:{" "}
           <span className="text-xs font-bold">
-            {data.reduce((acc, item) => acc + item.profit, 0)}
+            {data && data.reduce((acc, item) => acc + item.profit, 0)}
           </span>
         </span>
       </Flex>
     );
   };
+  console.log(data);
+
 
   // rowSelection object indicates the need for row selection
   const rowSelection = {
@@ -134,6 +68,7 @@ const DashboardTable = () => {
             type: "checkbox",
             ...rowSelection,
           }}
+          loading={isLoading}
           columns={columns}
           dataSource={data}
           footer={Fotter}

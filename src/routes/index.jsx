@@ -87,7 +87,7 @@ const routes = [
           {
             index: true,
             element: (
-              <ProtectedRoutes roles={["user"]}>
+              <ProtectedRoutes roles={["user", "admin"]}>
                 <Home />
               </ProtectedRoutes>
             ),

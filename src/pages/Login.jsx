@@ -10,7 +10,6 @@ const Login = () => {
   const navigate = useNavigate();
   const loginMutation = useLogin();
   const { login, auth } = useContext(AuthContext);
-  console.log(auth);
 
   const [credentials, setCredentials] = useState({
     username: "",

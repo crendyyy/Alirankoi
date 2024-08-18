@@ -5,10 +5,10 @@ import { Link, useNavigate } from "react-router-dom";
 import useModal from "../Hooks/useModal";
 import PaymentModal from "../components/modal/PaymentModal";
 import WalletIcon from "../components/icons/WalletIcon";
-import { useGetUserOrders } from "../components/service/user/useGetUserOrder";
-import { data } from "autoprefixer";
+import { useGetUserOrders } from "../components/service/user/order/useGetUserOrder";
 import { Button } from "antd";
 import { AuthContext } from "../context/AuthContext";
+import { useGetStock } from "../components/service/stock/useGetStock";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -17,14 +17,10 @@ const Home = () => {
   const [paymentType, setPaymentType] = useState("");
   const { logout } = useContext(AuthContext);
 
-  const { data: orders, isPending, isError } = useGetUserOrders();
-  console.log(orders);
+  const { data: orders, isPending: isOrderPending, isError: isOrderError } = useGetUserOrders();
 
-  useEffect(() => {
-    if (!orders || orders === null) {
-      navigate("/login");
-    }
-  }, [orders, navigate]);
+  const { data: stock, isPending: isPending, isError: isError} = useGetStock();
+
 
   const handleOrderDetail = (order) => {
     navigate(`/order/${order.id}`, { state: { order } });
@@ -46,8 +42,9 @@ const Home = () => {
               <span className="text-sm font-medium text-gray-400 max-[460px]:text-xs">
                 Current Exchange
               </span>
+              {isPending && <div className="">-</div>}
               <span className="text-3xl max-[460px]:text-2xl font-bold text-black">
-                Rp 2.234
+                {stock && stock.payload[0].price}
               </span>
             </div>
             <div className="flex w-full max-[460px]:p-3 gap-2 p-4 items-center bg-white rounded-3xl ">
@@ -56,7 +53,7 @@ const Home = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-400">Stok</span>
-                <span className="text-sm font-bold text-black">¥12.000</span>
+                <span className="text-sm font-bold text-black">¥{stock && stock.payload[0].stock}{isPending && `-`}</span>
               </div>
             </div>
           </div>
@@ -73,8 +70,9 @@ const Home = () => {
               <span className="text-sm font-medium text-gray-400 max-[460px]:text-xs">
                 Current Exchange
               </span>
+              {isPending && <div className="">-</div>}
               <span className="text-3xl max-[460px]:text-2xl font-bold text-black">
-                Rp 2.234
+                {stock && stock.payload[0].price}
               </span>
             </div>
             <div className="flex w-full max-[460px]:p-3 gap-2 p-4 items-center bg-white rounded-3xl ">
@@ -83,7 +81,7 @@ const Home = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-400">Stok</span>
-                <span className="text-sm font-bold text-black">¥12.000</span>
+                <span className="text-sm font-bold text-black">¥{stock && stock.payload[0].stock}{isPending && `-`}</span>
               </div>
             </div>
           </div>
@@ -103,7 +101,7 @@ const Home = () => {
             View All
           </Link>
         </div>
-        {isPending ? <p>Loading</p> : ""}
+        {isOrderPending ? <p>Loading</p> : ""}
         {orders &&
           orders.payload.map((order) => (
             <HistoryCard

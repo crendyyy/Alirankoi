@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import useAxios from "../../../Hooks/useAxios";
+import useAxios from "../../../../Hooks/useAxios";
 import ordersKeys from ".";
 
 export const useGetUserOrders = () => {
@@ -14,5 +14,10 @@ export const useGetUserOrders = () => {
   });
   console.log(query.data);
 
-  return { ...query, data: query.data?.data };
+  return {
+    ...query,
+    data: query.data?.data,
+    isPending: query.isPending,
+    isError: query.isError,
+  };
 };
