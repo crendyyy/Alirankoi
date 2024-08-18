@@ -1,15 +1,31 @@
-import React, { useState } from "react";
-import { Button, DatePicker, Form, Input, InputNumber, Modal, Popconfirm, Select, Table, Typography } from "antd";
-import { DeleteOutlined, EditOutlined, ExclamationCircleFilled, PrinterOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Popconfirm,
+  Select,
+  Table,
+  Typography,
+} from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleFilled,
+  PrinterOutlined,
+} from "@ant-design/icons";
 import Status from "../shared/Status";
-const originData = [];
 
+let originData = [];
 for (let i = 0; i < 100; i++) {
   originData.push({
     key: i.toString(),
     no: `${i + 1}`,
     bankNumber: `${i}`,
-    date: "",
+    // date: "coba",
     bankName: `Nama Bank ${i}`,
     bankBranch: `Bank Branch ${i}`,
     accountName: `Account Name ${i}`,
@@ -18,15 +34,29 @@ for (let i = 0; i < 100; i++) {
     tes: `${i}`,
   });
 }
-const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
-  function handleChangeStatus(value) {
+
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
+  const handleChangeStatus = (value) => {
     console.log(`selected ${value}`);
-  }
+  };
   const inputNode =
     inputType === "date" ? (
       <DatePicker />
     ) : inputType === "status" ? (
-      <Select placeholder="Status" style={{ width: 120 }} onChange={handleChangeStatus}>
+      <Select
+        placeholder="Status"
+        style={{ width: 120 }}
+        onChange={handleChangeStatus}
+      >
         <Option value="Complete">Complete</Option>
         <Option value="Cancel">Cancel</Option>
       </Select>
@@ -56,15 +86,13 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
     </td>
   );
 };
-const TableAdminOrder = () => {
-  // Select
-  function handleChangeStatus(value) {
-    console.log(`selected ${value}`);
-  }
 
+const TableAdminOrder = () => {
   const [form] = Form.useForm();
   const [data, setData] = useState(originData);
   const [editingKey, setEditingKey] = useState("");
+
+  // Edit Data
   const isEditing = (record) => record.key === editingKey;
   const edit = (record) => {
     form.setFieldsValue({
@@ -76,6 +104,8 @@ const TableAdminOrder = () => {
   const cancel = () => {
     setEditingKey("");
   };
+
+  // Save Edit Data
   const save = async (key) => {
     try {
       const row = await form.validateFields();
@@ -98,6 +128,8 @@ const TableAdminOrder = () => {
       console.log("Validate Failed:", errInfo);
     }
   };
+
+  // Column Table
   const columns = [
     {
       title: "#",
@@ -114,7 +146,7 @@ const TableAdminOrder = () => {
           <DatePicker />
         ) : (
           <span className="flex flex-col gap-1 text-sm font-normal">
-            <span className="font-medium">Mon Aug 2024 14:37:16</span>
+            <span className="font-medium">{record.date}</span>
           </span>
         );
       },
@@ -148,7 +180,11 @@ const TableAdminOrder = () => {
       title: "Invoice",
       dataIndex: "",
       render: (text, record, index) => (
-        <a type="primary" onClick={showModal} className="w-fit text-xs underline text-primary">
+        <a
+          type="primary"
+          onClick={showModal}
+          className="w-fit text-xs underline text-primary"
+        >
           See Invoice
         </a>
       ),
@@ -180,12 +216,19 @@ const TableAdminOrder = () => {
           </span>
         ) : (
           <div className="flex items-center gap-1">
-            <Typography.Link disabled={editingKey !== ""} onClick={() => edit(record)}>
+            <Typography.Link
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            >
               <button className="px-2 py-1 bg-primary rounded-md text-white">
                 <EditOutlined />
               </button>
             </Typography.Link>
-            <button className="px-2 py-1 bg-red-500 rounded-md text-white" onClick={showConfirm} type="dashed">
+            <button
+              className="px-2 py-1 bg-red-500 rounded-md text-white"
+              onClick={showConfirm}
+              type="dashed"
+            >
               <DeleteOutlined />
             </button>
             {/* <Select
@@ -202,6 +245,7 @@ const TableAdminOrder = () => {
       },
     },
   ];
+
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
@@ -222,7 +266,11 @@ const TableAdminOrder = () => {
   const [selectionType, setSelectionType] = useState("checkbox");
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}`,
+        "selectedRows: ",
+        selectedRows
+      );
     },
     getCheckboxProps: (record) => ({
       disabled: record.name === "Disabled User",
@@ -259,13 +307,19 @@ const TableAdminOrder = () => {
     });
   };
 
+  // API CALLS GET
+
   return (
     <div className="flex flex-col p-3 bg-white rounded-lg mt-7">
       <Form form={form} component={false}>
         <div className="flex items-center justify-between">
           <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">User Order 1</h1>
           <div className="flex gap-3">
-            <Button type="primary" icon={<PrinterOutlined />} className="bg-gray-500 border border-gray-400 hover:!bg-gray-600">
+            <Button
+              type="primary"
+              icon={<PrinterOutlined />}
+              className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
+            >
               Print
             </Button>
             <Button type="primary">Export to Excel</Button>
@@ -289,7 +343,12 @@ const TableAdminOrder = () => {
           }}
         />
       </Form>
-      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
         <img src="" alt="Invoice" width="500" height="600" />
       </Modal>
     </div>
