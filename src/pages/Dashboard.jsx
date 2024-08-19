@@ -14,7 +14,6 @@ import EditCard from "../components/dashboard/EditCard";
 import DashboardTable from "../components/dashboard/DashboardTable";
 import { useNavigate } from "react-router";
 import { useGetStock } from "../components/service/stock/useGetStock";
-import { useGetOrder } from "../components/service/admin/useGetOrders";
 import {
   useOpenStatus,
   useSeperateStatus,
@@ -24,6 +23,7 @@ import {
   useUpdateStockPlus,
 } from "../components/service/admin/useUpdateStock";
 import { useUpdatePrice } from "../components/service/admin/useUpdatePrice";
+import { useGetOrders } from "../components/service/admin/useGetOrders";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -37,7 +37,7 @@ const Dashboard = () => {
     isPending: isStockPending,
     isError: isStockError,
   } = useGetStock();
-  const { data: orders, isPending, isError } = useGetOrder();
+  const { data: orders, isPending, isError } = useGetOrders();
 
   const openStatusMutation = useOpenStatus();
 

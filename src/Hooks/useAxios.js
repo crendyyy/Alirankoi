@@ -13,6 +13,13 @@ const useAxios = () => {
     },
   });
 
+  axiosClient.interceptors.request.use((config) => {
+    if (config.data instanceof FormData) {
+      config.headers["Content-Type"] = "multipart/form-data";
+    }
+    return config;
+  });
+
   const _get = (url, config = {}) => {
     return axiosClient.get(url, config);
   };

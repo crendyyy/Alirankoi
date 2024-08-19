@@ -17,10 +17,13 @@ const Home = () => {
   const [paymentType, setPaymentType] = useState("");
   const { logout } = useContext(AuthContext);
 
-  const { data: orders, isPending: isOrderPending, isError: isOrderError } = useGetUserOrders();
+  const {
+    data: orders,
+    isPending: isOrderPending,
+    isError: isOrderError,
+  } = useGetUserOrders();
 
-  const { data: stock, isPending: isPending, isError: isError} = useGetStock();
-
+  const { data: stock, isPending: isPending, isError: isError } = useGetStock();
 
   const handleOrderDetail = (order) => {
     navigate(`/order/${order.id}`, { state: { order } });
@@ -53,7 +56,10 @@ const Home = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-400">Stok</span>
-                <span className="text-sm font-bold text-black">¥{stock && stock.payload[0].stock}{isPending && `-`}</span>
+                <span className="text-sm font-bold text-black">
+                  ¥{stock && stock.payload[0].stock}
+                  {isPending && `-`}
+                </span>
               </div>
             </div>
           </div>
@@ -81,7 +87,10 @@ const Home = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-400">Stok</span>
-                <span className="text-sm font-bold text-black">¥{stock && stock.payload[0].stock}{isPending && `-`}</span>
+                <span className="text-sm font-bold text-black">
+                  ¥{stock && stock.payload[0].stock}
+                  {isPending && `-`}
+                </span>
               </div>
             </div>
           </div>

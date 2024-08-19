@@ -12,7 +12,7 @@ const Order = () => {
   console.log(orders);
 
   const handleOrderDetail = (order) => {
-    navigate(`/order/${order.orderId}`, { state: { order } });
+    navigate(`/order/${order.id}`, { state: { order } });
   };
 
   return (
@@ -20,7 +20,7 @@ const Order = () => {
       <Flex vertical gap="small">
         <Title level={5}>MY HISTORY</Title>
         <Flex vertical gap="middle">
-        {isPending ? <p>Loading</p> : ""}
+          {isPending ? <p>Loading</p> : ""}
           {orders &&
             orders.payload.map((order) => (
               <HistoryCard

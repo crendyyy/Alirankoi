@@ -7,19 +7,22 @@ import { useCreateOrder } from "../service/user/order/useCreateOrder";
 import { AuthContext } from "../../context/AuthContext";
 
 const PaymentModal = ({ onClose, typeModal }) => {
-  const [paymentType, setPaymentType] = useState('bank');
+  const [paymentType, setPaymentType] = useState("bank");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [imageList, setImageList] = useState([]);
-  const {auth} = useContext(AuthContext)
+  const { auth } = useContext(AuthContext);
 
-  console.log(auth.token);
+  useEffect(() => {
+    setPaymentType(typeModal);
+  }, [typeModal]);
 
   const createOrderMutation = useCreateOrder();
 
   const [formBank] = Form.useForm();
 
   const handleCreateOrderBank = async (value) => {
+    const file = imageList[0]?.originFileObj;
     const formData = new FormData();
     formData.append("amount", value.amount);
     formData.append("bank_number", value.bank_number);
@@ -27,25 +30,21 @@ const PaymentModal = ({ onClose, typeModal }) => {
     formData.append("bank_branch", value.bank_branch);
     formData.append("account_name", value.account_name);
 
-    if (imageList.length > 0) {
-      formData.append("invoice", imageList[0].originFileObj);
+    if (file) {
+      formData.append("file", file);
     }
 
     formData.append("token", auth.token);
 
     await createOrderMutation.mutate(formData);
-    formBank.resetFields(); 
-    setImageList([]); 
+    formBank.resetFields();
+    setImageList([]);
   };
 
   const handlePreview = (file) => {
     setPreviewImage(file.thumbUrl || file.preview);
     setPreviewOpen(true);
   };
-
-  useEffect(() => {
-    setPaymentType(typeModal);
-  }, [typeModal]);
 
   const handleChange = ({ fileList }) => setImageList(fileList);
   return (
@@ -86,13 +85,14 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   />
                 </Form.Item>
                 <Flex justify="space-between">
-                  <Form.Item noStyle name="invoice">
+                  <Form.Item noStyle name="file">
                     <Upload
                       listType="picture"
                       className="w-full"
                       fileList={imageList}
                       onPreview={handlePreview}
                       onChange={handleChange}
+                      beforeUpload={() => false}
                       maxCount={1}
                       showUploadList={{
                         showPreviewIcon: true,
@@ -146,7 +146,6 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     className="flex items-center w-full h-12 "
                     variant="filled"
                     parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                  
                   />
                 </Form.Item>
                 <Flex justify="space-between">
@@ -157,6 +156,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       fileList={imageList}
                       onPreview={handlePreview}
                       onChange={handleChange}
+                      beforeUpload={() => false}
                       maxCount={1}
                       showUploadList={{
                         showPreviewIcon: true,

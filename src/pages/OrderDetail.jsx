@@ -1,13 +1,38 @@
 import { ClockCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import Status from "../components/shared/Status";
-import { Button, Input, Upload } from "antd";
+import { Button, Image, Input, Upload } from "antd";
 import Title from "antd/es/typography/Title";
 import { useLocation } from "react-router";
+import { useState } from "react";
+import { useGetStock } from "../components/service/stock/useGetStock";
 
 const OrderDetail = () => {
   const { state } = useLocation();
   const { order } = state;
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+
+  const { data: stock, isPending: isPending, isError: isError } = useGetStock();
+
   console.log(order);
+
+  const invoiceUrl = `http://localhost:3000/picture/${order.invoice_name}`;
+
+  const [imageList, setImageList] = useState([
+    {
+      uid: "-1", // UID unik
+      name: order.invoice_name, // Nama file
+      status: "done", // Status
+      url: invoiceUrl, // URL gambar
+    },
+  ]);
+
+  const handlePreview = (file) => {
+    setPreviewImage(file.thumbUrl || file.url);
+    setPreviewOpen(true);
+  };
+
+  const handleChange = ({ fileList }) => setImageList(fileList);
 
   return (
     <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-5 mb-24">
@@ -54,9 +79,34 @@ const OrderDetail = () => {
       <div className="p-6 bg-white rounded-3xl">
         <h1 className="mb-4">Payment Proof</h1>
         <div className="flex">
-          <Upload listType="picture" className="w-full">
-            <Button icon={<UploadOutlined />}>Upload</Button>
-          </Upload>
+          <Upload
+            listType="picture"
+            className="w-full"
+            fileList={imageList}
+            onPreview={handlePreview}
+            onChange={handleChange}
+            beforeUpload={() => false}
+            maxCount={1}
+            disabled
+            showUploadList={{
+              showPreviewIcon: true,
+              showRemoveIcon: false,
+              showDownloadIcon: false,
+            }}
+          ></Upload>
+          {previewImage && (
+            <Image
+              wrapperStyle={{
+                display: "none",
+              }}
+              preview={{
+                visible: previewOpen,
+                onVisibleChange: (visible) => setPreviewOpen(visible),
+                afterOpenChange: (visible) => !visible && setPreviewImage(""),
+              }}
+              src={previewImage}
+            />
+          )}
         </div>
       </div>
 
@@ -98,7 +148,11 @@ const OrderDetail = () => {
 
       <div className="flex items-center justify-between p-6 bg-white rounded-3xl">
         <span className="font-bold">Total Paid</span>
-        <span className="font-bold">Rp 22.400.000</span>
+        <span className="font-bold">
+          {isPending
+            ? "-"
+            : `${Number(order.amount) * (stock && stock.payload[0].price)}`}
+        </span>
       </div>
 
       {/* <button className="p-6 bg-[#1367FF] text-white rounded">Payment Done</button> */}
