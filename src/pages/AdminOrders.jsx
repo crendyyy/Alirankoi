@@ -28,11 +28,7 @@ const AdminOrders = () => {
           </div>
           <div className="flex gap-2 flex-col">
             <h3 className="text-sm font-medium text-nowrap">Selected Order</h3>
-            <Select
-              placeholder="Select order"
-              className="w-40"
-              onChange={handleChange}
-            >
+            <Select placeholder="Select order" className="w-40" onChange={handleChange}>
               <Option value="Complete">Complete</Option>
               <Option value="Cancel">Cancel</Option>
             </Select>
@@ -55,7 +51,7 @@ const AdminOrders = () => {
       </div>
       <div>
         <NewTableAdminOrder />
-        <TableAdminOrder />
+        {/* <TableAdminOrder /> */}
       </div>
     </>
   );
