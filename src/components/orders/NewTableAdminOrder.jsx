@@ -84,7 +84,9 @@ const NewTableAdminOrder = () => {
   const isEditing = (record) => record.key === editingKey;
   const edit = (record) => {
     form.setFieldsValue({
-      date: dayjs(record.date, dateFormat).$d.toString(),
+      date: dayjs(record.date).isValid()
+      ? dayjs(record.date)
+      : dayjs(new Date(record.date)),
       amount: "",
       bankNumber: "",
       bankName: "",
@@ -129,7 +131,7 @@ const NewTableAdminOrder = () => {
         dataSource.push({
           key: data.id,
           no: index + 1,
-          date: dayjs(data.createdAt, dateFormat),
+          date: edit ? dayjs(data.createdAt) : dayjs(data.createdAt).format(dateFormat),
           amount: data.amount,
           bankNumber: data.bank_number,
           bankName: data.bank_detail,
@@ -182,6 +184,14 @@ const NewTableAdminOrder = () => {
       dataIndex: "date",
       key: "date",
       editable: true,
+      render: (text, record) => {
+        // Display the full Date string if not editing
+        return isEditing(record) ? (
+          text
+        ) : (
+          <span>{new Date(record.date).toString()}</span>
+        );
+      },
     },
     {
       title: "Amount",
