@@ -21,8 +21,8 @@ import {
 import Status from "../shared/Status";
 import dayjs from "dayjs";
 
-// EDIT
 const dateFormat = "YYYY/MM/DD";
+
 const EditableCell = ({
   editing,
   dataIndex,
@@ -33,18 +33,11 @@ const EditableCell = ({
   children,
   ...restProps
 }) => {
-  const handleChangeStatus = (value) => {
-    console.log(`selected ${value}`);
-  };
   const inputNode =
     inputType === "date" ? (
       <DatePicker format={dateFormat} />
     ) : inputType === "status" ? (
-      <Select
-        placeholder="Status"
-        style={{ width: 120 }}
-        onChange={handleChangeStatus}
-      >
+      <Select placeholder="Status" style={{ width: 120 }}>
         <Option value="Complete">Complete</Option>
         <Option value="Cancel">Cancel</Option>
       </Select>
@@ -53,20 +46,14 @@ const EditableCell = ({
     ) : (
       <Input />
     );
+
   return (
     <td {...restProps}>
       {editing ? (
         <Form.Item
           name={dataIndex}
-          style={{
-            margin: 0,
-          }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
+          style={{ margin: 0 }}
+          rules={[{ required: true, message: `Please Input ${title}!` }]}
         >
           {inputNode}
         </Form.Item>
@@ -78,44 +65,40 @@ const EditableCell = ({
 };
 
 const NewTableAdminOrder = () => {
-  const dataSource = [];
+  const { data: orders, isPending, isError } = useGetOrders();
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState("");
+
   const isEditing = (record) => record.key === editingKey;
+
   const edit = (record) => {
     form.setFieldsValue({
       date: dayjs(record.date).isValid()
-      ? dayjs(record.date)
-      : dayjs(new Date(record.date)),
-      amount: "",
-      bankNumber: "",
-      bankName: "",
-      bankBranch: "",
-      accountName: "",
-      status: "",
+        ? dayjs(record.date)
+        : dayjs(new Date(record.date)),
       ...record,
     });
     setEditingKey(record.key);
   };
-  const cancel = () => {
-    setEditingKey("");
-  };
+
+  const cancel = () => setEditingKey("");
+
   const save = async (key) => {
     try {
       const row = await form.validateFields();
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
+      const newData = [...orders.payload];
+      const index = newData.findIndex((item) => key === item._id);
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
           ...item,
           ...row,
         });
-        setData(newData);
         setEditingKey("");
       } else {
         newData.push(row);
-        setData(newData);
         setEditingKey("");
       }
     } catch (errInfo) {
@@ -123,66 +106,47 @@ const NewTableAdminOrder = () => {
     }
   };
 
-  const { data: orders, isPending, isError } = useGetOrders();
-  isPending || isError
-    ? "loading"
-    : orders.payload.map((data, index) => {
-        // console.log(dayjs(data.createdAt, dateFormat).$d);
-        dataSource.push({
-          key: data.id,
-          no: index + 1,
-          date: edit ? dayjs(data.createdAt) : dayjs(data.createdAt).format(dateFormat),
-          amount: data.amount,
-          bankNumber: data.bank_number,
-          bankName: data.bank_detail,
-          bankBranch: data.bank_branch,
-          accountName: data.account_name,
-          invoice: data.invoice_name,
-          status: data.status,
-          action: "Action",
-        });
-      });
-
-  // Delete
-  const { confirm } = Modal;
   const showConfirm = () => {
-    confirm({
-      title: "Do you want to delete these items?",
+    Modal.confirm({
+      title: "Do you want to delete this item?",
       icon: <ExclamationCircleFilled />,
-      content: "Are you sure? deleted data cannot be recovered!",
+      content: "Deleted data cannot be recovered!",
       okText: "Yes",
       onOk() {
         console.log("OK");
       },
-      onCancel() {
-        console.log("Cancel");
-      },
     });
   };
 
-  // Modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
+  const dataSource =
+     orders?.payload.map((order, index) => ({
+          key: order._id,
+          no: index + 1,
+          date: edit
+            ? dayjs(order.createdAt)
+            : dayjs(order.createdAt).format(dateFormat),
+          amount: order.amount,
+          bank_number: order.bank_number,
+          bank_detail: order.bank_detail,
+          bank_branch: order.bank_branch,
+          account_name: order.account_name,
+          status: order.status,
+          invoice: order.invoice_name,
+          username: order.user_id?.username,
+        })) || [];
 
   const columns = [
     {
       title: "#",
       dataIndex: "no",
-      key: "no",
       width: 5,
+      render: (text, record) => (
+        <span className="text-sm font-normal">{record.no}</span>
+      ),
     },
     {
       title: "Date",
       dataIndex: "date",
-      key: "date",
       editable: true,
       render: (text, record) => {
         // Display the full Date string if not editing
@@ -196,41 +160,37 @@ const NewTableAdminOrder = () => {
     {
       title: "Amount",
       dataIndex: "amount",
-      key: "amount",
       editable: true,
     },
     {
       title: "Bank Number",
-      dataIndex: "bankNumber",
-      key: "bankNumber",
+      dataIndex: "bank_number",
       editable: true,
     },
     {
       title: "Bank Name",
-      dataIndex: "bankName",
-      key: "bankName",
+      dataIndex: "bank_detail",
       editable: true,
     },
     {
       title: "Bank Branch",
-      dataIndex: "bankBranch",
-      key: "bankBranch",
+      dataIndex: "bank_branch",
       editable: true,
     },
     {
       title: "Account Name",
-      dataIndex: "accountName",
-      key: "accountName",
+      dataIndex: "account_name",
       editable: true,
     },
     {
       title: "Invoice",
       dataIndex: "invoice",
-      key: "invoice",
-      render: (text, record, index) => (
+      render: (_, record) => (
         <a
-          type="primary"
-          onClick={showModal}
+          onClick={() => {
+            setSelectedInvoice(record.invoice);
+            setIsModalOpen(true);
+          }}
           className="text-xs underline w-fit text-primary"
         >
           See Invoice
@@ -240,10 +200,9 @@ const NewTableAdminOrder = () => {
     {
       title: "Status",
       dataIndex: "status",
-      key: "status",
       width: 25,
       editable: true,
-      render: (text, record, index) => <Status status={record.status} />,
+      render: (text, record) => <Status status={record.status} />,
     },
     {
       title: "Actions",
@@ -270,17 +229,16 @@ const NewTableAdminOrder = () => {
               disabled={editingKey !== ""}
               onClick={() => edit(record)}
             >
-              <button className="px-2 py-1 text-white rounded-md bg-primary">
+              <Button className="px-2 py-1 text-white rounded-md bg-primary">
                 <EditOutlined />
-              </button>
+              </Button>
             </Typography.Link>
-            <button
+            <Button
               className="px-2 py-1 text-white bg-red-500 rounded-md"
               onClick={showConfirm}
-              type="dashed"
             >
               <DeleteOutlined />
-            </button>
+            </Button>
           </div>
         );
       },
@@ -303,71 +261,54 @@ const NewTableAdminOrder = () => {
     };
   });
 
-  // rowSelection
-  const [selectionType, setSelectionType] = useState("checkbox");
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
-    },
-  };
-
   return (
-    <div>
-      <div className="flex flex-col p-3 bg-white rounded-lg mt-7">
-        <div className="flex items-center justify-between">
-          {/* {isPending || isError
-            ? console.log("loading...")
-            : Object.entries(orders.payload).map((data, index) => {
-                return (
-                  <h1 key={index} className="mt-3 mb-8 ml-5 text-lg font-semibold">
-                    {data[1].user_id.username}
-                    {console.log(data)}
-                  </h1>
-                );
-              })}
-          ; */}
-          <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">Username 1</h1>
-          <div className="flex gap-3 mr-5">
-            <Button
-              type="primary"
-              icon={<PrinterOutlined />}
-              className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
-            >
-              Print
-            </Button>
-            <Button type="primary">Export to Excel</Button>
+    <>
+      {dataSource.map((order) => (
+        <div className="flex flex-col p-3 bg-white rounded-lg mt-7">
+          <div key={order.key}>
+            <div className="flex items-center justify-between">
+              <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">
+                {order.username}
+              </h1>
+              <div className="flex gap-3 mr-5">
+                <Button
+                  type="primary"
+                  icon={<PrinterOutlined />}
+                  className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
+                >
+                  Print
+                </Button>
+                <Button type="primary">Export to Excel</Button>
+              </div>
+            </div>
+            <Form form={form} component={false}>
+              <Table
+                components={{ body: { cell: EditableCell } }}
+                dataSource={dataSource.filter(
+                  (filteredOrder) => filteredOrder.username === order.username
+                )}
+                columns={mergedColumns}
+                rowClassName="editable-row"
+                pagination={{ pageSize: 10 }}
+              />
+            </Form>
           </div>
         </div>
-        <Form form={form} component={false}>
-          <Table
-            components={{
-              body: {
-                cell: EditableCell,
-              },
-            }}
-            dataSource={dataSource}
-            rowSelection={{
-              type: selectionType,
-              ...rowSelection,
-            }}
-            columns={mergedColumns}
-            rowClassName="editable-row"
-          />
-        </Form>
-        <Modal
-          title="Basic Modal"
-          open={isModalOpen}
-          onOk={handleOk}
-          onCancel={handleCancel}
-        >
-          <img src={`/`} alt="Invoice" width="500" height="600" />
-        </Modal>
-      </div>
-    </div>
+      ))}
+      <Modal
+        title="Invoice"
+        visible={isModalOpen}
+        onOk={() => setIsModalOpen(false)}
+        onCancel={() => setIsModalOpen(false)}
+      >
+        <img
+          src={`http://localhost:3000/picture/${selectedInvoice}`}
+          alt="Invoice"
+          width="500"
+          height="600"
+        />
+      </Modal>
+    </>
   );
 };
 
