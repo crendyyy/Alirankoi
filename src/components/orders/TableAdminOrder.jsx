@@ -183,7 +183,7 @@ const TableAdminOrder = () => {
         <a
           type="primary"
           onClick={showModal}
-          className="w-fit text-xs underline text-primary"
+          className="text-xs underline w-fit text-primary"
         >
           See Invoice
         </a>
@@ -220,12 +220,12 @@ const TableAdminOrder = () => {
               disabled={editingKey !== ""}
               onClick={() => edit(record)}
             >
-              <button className="px-2 py-1 bg-primary rounded-md text-white">
+              <button className="px-2 py-1 text-white rounded-md bg-primary">
                 <EditOutlined />
               </button>
             </Typography.Link>
             <button
-              className="px-2 py-1 bg-red-500 rounded-md text-white"
+              className="px-2 py-1 text-white bg-red-500 rounded-md"
               onClick={showConfirm}
               type="dashed"
             >

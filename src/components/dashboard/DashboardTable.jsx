@@ -2,7 +2,7 @@ import { PrinterOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, InputNumber, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
 
-const DashboardTable = ({columns, data, isLoading}) => {
+const DashboardTable = ({ columns, data, isLoading, price }) => {
   const Fotter = () => {
     return (
       <Flex justify="space-between">
@@ -22,7 +22,6 @@ const DashboardTable = ({columns, data, isLoading}) => {
     );
   };
   console.log(data);
-
 
   // rowSelection object indicates the need for row selection
   const rowSelection = {
@@ -49,7 +48,7 @@ const DashboardTable = ({columns, data, isLoading}) => {
               <span className="text-base font-semibold text-red-700">
                 Harga jual
               </span>
-              <span className="text-xl font-bold text-red-700">Rp 2.500</span>
+              <span className="text-xl font-bold text-red-700">{price}</span>
             </div>
           </Flex>
           <Flex gap={16}>

@@ -1,13 +1,38 @@
-import { Button, DatePicker, Form, Input, InputNumber, Modal, Popconfirm, Select, Table, Typography } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Popconfirm,
+  Select,
+  Table,
+  Typography,
+} from "antd";
 import React, { useState } from "react";
 import { useGetOrders } from "../service/admin/useGetOrders";
-import { DeleteOutlined, EditOutlined, ExclamationCircleFilled, PrinterOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleFilled,
+  PrinterOutlined,
+} from "@ant-design/icons";
 import Status from "../shared/Status";
 import dayjs from "dayjs";
 
 // EDIT
 const dateFormat = "YYYY/MM/DD";
-const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
   const handleChangeStatus = (value) => {
     console.log(`selected ${value}`);
   };
@@ -15,7 +40,11 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
     inputType === "date" ? (
       <DatePicker format={dateFormat} />
     ) : inputType === "status" ? (
-      <Select placeholder="Status" style={{ width: 120 }} onChange={handleChangeStatus}>
+      <Select
+        placeholder="Status"
+        style={{ width: 120 }}
+        onChange={handleChangeStatus}
+      >
         <Option value="Complete">Complete</Option>
         <Option value="Cancel">Cancel</Option>
       </Select>
@@ -55,7 +84,7 @@ const NewTableAdminOrder = () => {
   const isEditing = (record) => record.key === editingKey;
   const edit = (record) => {
     form.setFieldsValue({
-      date: "",
+      date: dayjs(record.date, dateFormat).$d.toString(),
       amount: "",
       bankNumber: "",
       bankName: "",
@@ -100,7 +129,7 @@ const NewTableAdminOrder = () => {
         dataSource.push({
           key: data.id,
           no: index + 1,
-          date: edit ? dayjs(data.createdAt, dateFormat) : dayjs(data.createdAt, dateFormat).$d.toString(),
+          date: dayjs(data.createdAt, dateFormat),
           amount: data.amount,
           bankNumber: data.bank_number,
           bankName: data.bank_detail,
@@ -189,7 +218,11 @@ const NewTableAdminOrder = () => {
       dataIndex: "invoice",
       key: "invoice",
       render: (text, record, index) => (
-        <a type="primary" onClick={showModal} className="w-fit text-xs underline text-primary">
+        <a
+          type="primary"
+          onClick={showModal}
+          className="text-xs underline w-fit text-primary"
+        >
           See Invoice
         </a>
       ),
@@ -223,12 +256,19 @@ const NewTableAdminOrder = () => {
           </span>
         ) : (
           <div className="flex gap-0.5">
-            <Typography.Link disabled={editingKey !== ""} onClick={() => edit(record)}>
-              <button className="px-2 py-1 bg-primary rounded-md text-white">
+            <Typography.Link
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            >
+              <button className="px-2 py-1 text-white rounded-md bg-primary">
                 <EditOutlined />
               </button>
             </Typography.Link>
-            <button className="px-2 py-1 bg-red-500 rounded-md text-white" onClick={showConfirm} type="dashed">
+            <button
+              className="px-2 py-1 text-white bg-red-500 rounded-md"
+              onClick={showConfirm}
+              type="dashed"
+            >
               <DeleteOutlined />
             </button>
           </div>
@@ -257,7 +297,11 @@ const NewTableAdminOrder = () => {
   const [selectionType, setSelectionType] = useState("checkbox");
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}`,
+        "selectedRows: ",
+        selectedRows
+      );
     },
   };
 
@@ -278,7 +322,11 @@ const NewTableAdminOrder = () => {
           ; */}
           <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">Username 1</h1>
           <div className="flex gap-3 mr-5">
-            <Button type="primary" icon={<PrinterOutlined />} className="bg-gray-500 border border-gray-400 hover:!bg-gray-600">
+            <Button
+              type="primary"
+              icon={<PrinterOutlined />}
+              className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
+            >
               Print
             </Button>
             <Button type="primary">Export to Excel</Button>
@@ -300,7 +348,12 @@ const NewTableAdminOrder = () => {
             rowClassName="editable-row"
           />
         </Form>
-        <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Modal
+          title="Basic Modal"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
           <img src={`/`} alt="Invoice" width="500" height="600" />
         </Modal>
       </div>

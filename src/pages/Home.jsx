@@ -47,7 +47,7 @@ const Home = () => {
               </span>
               {isPending && <div className="">-</div>}
               <span className="text-3xl max-[460px]:text-2xl font-bold text-black">
-                {stock && stock.payload[0].price}
+                {stock?.payload[0].price}
               </span>
             </div>
             <div className="flex w-full max-[460px]:p-3 gap-2 p-4 items-center bg-white rounded-3xl ">
@@ -57,7 +57,7 @@ const Home = () => {
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-400">Stok</span>
                 <span className="text-sm font-bold text-black">
-                  ¥{stock && stock.payload[0].stock}
+                  ¥{stock?.payload[0].stock}
                   {isPending && `-`}
                 </span>
               </div>
@@ -78,7 +78,7 @@ const Home = () => {
               </span>
               {isPending && <div className="">-</div>}
               <span className="text-3xl max-[460px]:text-2xl font-bold text-black">
-                {stock && stock.payload[0].price}
+                {stock?.payload[0].price}
               </span>
             </div>
             <div className="flex w-full max-[460px]:p-3 gap-2 p-4 items-center bg-white rounded-3xl ">
@@ -88,7 +88,7 @@ const Home = () => {
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-400">Stok</span>
                 <span className="text-sm font-bold text-black">
-                  ¥{stock && stock.payload[0].stock}
+                  ¥{stock?.payload[0].stock}
                   {isPending && `-`}
                 </span>
               </div>
@@ -111,17 +111,16 @@ const Home = () => {
           </Link>
         </div>
         {isOrderPending ? <p>Loading</p> : ""}
-        {orders &&
-          orders.payload.map((order) => (
-            <HistoryCard
-              onClick={() => handleOrderDetail(order)}
-              key={order.id}
-              date={order.createdAt}
-              rate={order.bank_number}
-              status={order.status}
-              totalAmount={order.amount}
-            />
-          ))}
+        {orders?.payload.map((order) => (
+          <HistoryCard
+            onClick={() => handleOrderDetail(order)}
+            key={order.id}
+            date={order.createdAt}
+            rate={order.bank_number}
+            status={order.status}
+            totalAmount={order.amount}
+          />
+        ))}
       </div>
     </div>
   );
