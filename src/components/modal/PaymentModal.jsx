@@ -56,11 +56,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
             <Form form={formBank}>
               <Flex gap="middle" vertical>
                 <Form.Item noStyle name="bank_detail">
-                  <Input
-                    variant="filled"
-                    placeholder="Bank Name"
-                    className="flex items-center w-full h-12 px-2"
-                  />
+                  <Input variant="filled" placeholder="Bank Name" className="flex items-center w-full h-12 px-2" />
                 </Form.Item>
                 <Form.Item noStyle name="bank_number">
                   <InputNumber
@@ -71,18 +67,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   />
                 </Form.Item>
                 <Form.Item noStyle name="bank_branch">
-                  <Input
-                    variant="filled"
-                    placeholder="Bank Branch"
-                    className="flex items-center w-full h-12 px-2"
-                  />
+                  <Input variant="filled" placeholder="Bank Branch" className="flex items-center w-full h-12 px-2" />
                 </Form.Item>
                 <Form.Item noStyle name="account_name">
-                  <Input
-                    variant="filled"
-                    placeholder="Account Name"
-                    className="flex items-center w-full h-12 px-2"
-                  />
+                  <Input variant="filled" placeholder="Account Name" className="flex items-center w-full h-12 px-2" />
                 </Form.Item>
                 <Flex justify="space-between">
                   <Form.Item noStyle name="file">
@@ -114,8 +102,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       preview={{
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
-                        afterOpenChange: (visible) =>
-                          !visible && setPreviewImage(""),
+                        afterOpenChange: (visible) => !visible && setPreviewImage(""),
                       }}
                       src={previewImage}
                     />
@@ -127,18 +114,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
             <Form>
               <Flex vertical gap="middle">
                 <Form.Item noStyle>
-                  <Input
-                    variant="filled"
-                    placeholder="Nomor / Email"
-                    className="flex items-center w-full h-12 px-2"
-                  />
+                  <Input variant="filled" placeholder="Nomor / Email" className="flex items-center w-full h-12 px-2" />
                 </Form.Item>
                 <Form.Item noStyle>
-                  <Input
-                    variant="filled"
-                    placeholder="Nama"
-                    className="flex items-center w-full h-12 px-2"
-                  />
+                  <Input variant="filled" placeholder="Nama" className="flex items-center w-full h-12 px-2" />
                 </Form.Item>
                 <Form.Item noStyle>
                   <InputNumber
@@ -166,9 +145,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     >
                       <Flex gap="small" align="center">
                         <Button icon={<UploadOutlined />}>QR code</Button>
-                        <span className="text-[#9CA3AF] text-sm">
-                          {"(Optional)"}
-                        </span>
+                        <span className="text-[#9CA3AF] text-sm">{"(Optional)"}</span>
                       </Flex>
                     </Upload>
                   </Form.Item>
@@ -181,8 +158,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       preview={{
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
-                        afterOpenChange: (visible) =>
-                          !visible && setPreviewImage(""),
+                        afterOpenChange: (visible) => !visible && setPreviewImage(""),
                       }}
                       src={previewImage}
                     />
@@ -200,9 +176,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                 className="flex items-center w-full h-12 px-2"
                 variant="filled"
                 prefix="¥"
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""
-                }
+                formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
                 parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
               />
             </Form.Item>

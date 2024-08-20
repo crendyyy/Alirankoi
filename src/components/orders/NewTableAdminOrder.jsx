@@ -1,38 +1,13 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Popconfirm,
-  Select,
-  Table,
-  Typography,
-} from "antd";
+import { Button, DatePicker, Form, Input, InputNumber, Modal, Popconfirm, Select, Table, Typography } from "antd";
 import React, { useState } from "react";
 import { useGetOrders } from "../service/admin/useGetOrders";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  ExclamationCircleFilled,
-  PrinterOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, ExclamationCircleFilled, PrinterOutlined } from "@ant-design/icons";
 import Status from "../shared/Status";
 import dayjs from "dayjs";
 
 const dateFormat = "YYYY/MM/DD";
 
-const EditableCell = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
+const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
   const inputNode =
     inputType === "date" ? (
       <DatePicker format={dateFormat} />
@@ -50,11 +25,7 @@ const EditableCell = ({
   return (
     <td {...restProps}>
       {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{ margin: 0 }}
-          rules={[{ required: true, message: `Please Input ${title}!` }]}
-        >
+        <Form.Item name={dataIndex} style={{ margin: 0 }} rules={[{ required: true, message: `Please Input ${title}!` }]}>
           {inputNode}
         </Form.Item>
       ) : (
@@ -86,9 +57,7 @@ const NewTableAdminOrder = () => {
 
   const edit = (record) => {
     form.setFieldsValue({
-      date: dayjs(record.date).isValid()
-        ? dayjs(record.date)
-        : dayjs(new Date(record.date)),
+      date: dayjs(record.date).isValid() ? dayjs(record.date) : dayjs(new Date(record.date)),
       ...record,
     });
     setEditingKey(record.key);
@@ -132,9 +101,7 @@ const NewTableAdminOrder = () => {
   const dataSource =
     orders?.payload.map((order) => ({
       key: `${order._id}-${order.user_id._id}-${order.createdAt}`,
-      date: edit
-        ? dayjs(order.createdAt)
-        : dayjs(order.createdAt).format(dateFormat),
+      date: edit ? dayjs(order.createdAt) : dayjs(order.createdAt).format(dateFormat),
       amount: order.amount,
       bank_number: order.bank_number,
       bank_detail: order.bank_detail,
@@ -145,18 +112,14 @@ const NewTableAdminOrder = () => {
       username: order.user_id?.username,
     })) || [];
 
-  const groupedOrders = Array.isArray(dataSource)
-    ? groupBy(dataSource, (order) => order.username)
-    : {};
+  const groupedOrders = Array.isArray(dataSource) ? groupBy(dataSource, (order) => order.username) : {};
 
   const columns = [
     {
       title: "#",
       dataIndex: "no",
       width: 5,
-      render: (text, record, index) => (
-        <span className="text-sm font-normal">{index + 1}</span>
-      ),
+      render: (text, record, index) => <span className="text-sm font-normal">{index + 1}</span>,
     },
     {
       title: "Date",
@@ -164,11 +127,7 @@ const NewTableAdminOrder = () => {
       editable: true,
       render: (text, record) => {
         // Display the full Date string if not editing
-        return isEditing(record) ? (
-          text
-        ) : (
-          <span>{new Date(record.date).toString()}</span>
-        );
+        return isEditing(record) ? text : <span>{new Date(record.date).toString()}</span>;
       },
     },
     {
@@ -239,18 +198,12 @@ const NewTableAdminOrder = () => {
           </span>
         ) : (
           <div className="flex gap-0.5">
-            <Typography.Link
-              disabled={editingKey !== ""}
-              onClick={() => edit(record)}
-            >
+            <Typography.Link disabled={editingKey !== ""} onClick={() => edit(record)}>
               <Button className="px-2 py-1 text-white rounded-md bg-primary">
                 <EditOutlined />
               </Button>
             </Typography.Link>
-            <Button
-              className="px-2 py-1 text-white bg-red-500 rounded-md"
-              onClick={showConfirm}
-            >
+            <Button className="px-2 py-1 text-white bg-red-500 rounded-md" onClick={showConfirm}>
               <DeleteOutlined />
             </Button>
           </div>
@@ -277,11 +230,7 @@ const NewTableAdminOrder = () => {
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
     },
   };
 
@@ -289,20 +238,11 @@ const NewTableAdminOrder = () => {
     <>
       {Object.keys(groupedOrders).length > 0 ? (
         Object.keys(groupedOrders).map((username) => (
-          <div
-            className="flex flex-col p-3 bg-white rounded-lg mt-7"
-            key={username}
-          >
+          <div className="flex flex-col p-3 bg-white rounded-lg mt-7" key={username}>
             <div className="flex items-center justify-between">
-              <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">
-                {username}
-              </h1>
+              <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">{username}</h1>
               <div className="flex gap-3 mr-5">
-                <Button
-                  type="primary"
-                  icon={<PrinterOutlined />}
-                  className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
-                >
+                <Button type="primary" icon={<PrinterOutlined />} className="bg-gray-500 border border-gray-400 hover:!bg-gray-600">
                   Print
                 </Button>
                 <Button type="primary">Export to Excel</Button>
@@ -326,18 +266,8 @@ const NewTableAdminOrder = () => {
       ) : (
         <div>No orders available</div>
       )}
-      <Modal
-        title="Invoice"
-        visible={isModalOpen}
-        onOk={() => setIsModalOpen(false)}
-        onCancel={() => setIsModalOpen(false)}
-      >
-        <img
-          src={`http://localhost:3000/picture/${selectedInvoice}`}
-          alt="Invoice"
-          width="500"
-          height="600"
-        />
+      <Modal title="Invoice" visible={isModalOpen} onOk={() => setIsModalOpen(false)} onCancel={() => setIsModalOpen(false)}>
+        <img src={`http://localhost:3000/picture/${selectedInvoice}`} alt="Invoice" width="500" height="600" />
       </Modal>
     </>
   );
