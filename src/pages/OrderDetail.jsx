@@ -5,6 +5,7 @@ import Title from "antd/es/typography/Title";
 import { useLocation } from "react-router";
 import { useState } from "react";
 import { useGetStock } from "../components/service/stock/useGetStock";
+import { formatRupiah } from "../libs/utils";
 
 const OrderDetail = () => {
   const { state } = useLocation();
@@ -53,11 +54,11 @@ const OrderDetail = () => {
         </div>
         <div className="flex justify-between">
           <p>Rate</p>
-          <p>{order.bank_number}</p>
+          <p>{formatRupiah(order.bank_number)}</p>
         </div>
         <div className="flex justify-between">
           <p>Amount</p>
-          <p>{order.amount}</p>
+          <p>¥ {formatRupiah(order.amount, false)}</p>
         </div>
       </div>
 
@@ -151,7 +152,9 @@ const OrderDetail = () => {
         <span className="font-bold">
           {isPending
             ? "-"
-            : `${Number(order.amount) * (stock && stock.payload[0].price)}`}
+            : `${formatRupiah(
+                Number(order.amount) * (stock && stock.payload[0].price)
+              )}`}
         </span>
       </div>
 

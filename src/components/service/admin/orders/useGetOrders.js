@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import useAxios from "../../../Hooks/useAxios";
+import useAxios from "../../../../Hooks/useAxios";
 import orderKeys from ".";
 
 export const useGetOrders = () => {
