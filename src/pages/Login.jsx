@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { useLogin } from "../components/service/user/userServices";
 import { AuthContext } from "../context/AuthContext";
+import logoKoi from "/logo/logo-koi.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -49,9 +50,13 @@ const Login = () => {
 
   return (
     <Layout className="flex items-center justify-center bg-white">
-      <Content className="flex items-center w-72">
+      <Content className="flex items-center w-80">
         <div className="flex flex-col w-full gap-4">
-          <Title level={2}>Login</Title>
+          <div className="text-center mb-8 flex flex-col items-center">
+            <img src={logoKoi} alt="Logo Koi" className="w-fit mb-6" />
+            <h1 className="font-bold text-3xl mb-1">Welcome!</h1>
+            <p className="text-[#6C6F93]">Please enter Your Account details.</p>
+          </div>
           <Form
             layout="vertical"
             style={{ maxWidth: 600 }}
@@ -64,12 +69,14 @@ const Login = () => {
               rules={[
                 { required: true, message: "Please input your Username!" },
               ]}
+              className="text-[#0E0B3D] text-sm"
             >
               <Input
-                placeholder="Username"
+                placeholder="Enter username"
                 required
                 value={credentials.username}
                 onChange={(e) => handleInput("username", e.target.value)}
+                className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 "
               />
             </Form.Item>
             <Form.Item
@@ -79,23 +86,22 @@ const Login = () => {
               ]}
             >
               <Input
-                placeholder="Password"
+                placeholder="Enter password"
                 type="password"
                 required
                 value={credentials.password}
                 onChange={(e) => handleInput("password", e.target.value)}
+                className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 "
               />
             </Form.Item>
             <Form.Item>
-              <Button
-                type="primary"
-                className="w-full"
-                size="large"
-                htmlType="submit"
+              <button
+                className="w-full bg-primary text-base text-center text-white py-3 rounded-xl"
+                type="submit"
                 loading={loginMutation.isLoading} // Show loading state while submitting
               >
-                Login
-              </Button>
+                Sign In
+              </button>
             </Form.Item>
           </Form>
         </div>
