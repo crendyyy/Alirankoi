@@ -64,6 +64,17 @@ const EditableCell = ({
   );
 };
 
+const groupBy = (array, getKey) => {
+  return array.reduce((result, currentItem) => {
+    const groupKey = getKey(currentItem);
+    if (!result[groupKey]) {
+      result[groupKey] = [];
+    }
+    result[groupKey].push(currentItem);
+    return result;
+  }, {});
+};
+
 const NewTableAdminOrder = () => {
   const { data: orders, isPending, isError } = useGetOrders();
   const [form] = Form.useForm();
@@ -119,29 +130,32 @@ const NewTableAdminOrder = () => {
   };
 
   const dataSource =
-     orders?.payload.map((order, index) => ({
-          key: order._id,
-          no: index + 1,
-          date: edit
-            ? dayjs(order.createdAt)
-            : dayjs(order.createdAt).format(dateFormat),
-          amount: order.amount,
-          bank_number: order.bank_number,
-          bank_detail: order.bank_detail,
-          bank_branch: order.bank_branch,
-          account_name: order.account_name,
-          status: order.status,
-          invoice: order.invoice_name,
-          username: order.user_id?.username,
-        })) || [];
+    orders?.payload.map((order) => ({
+      key: `${order._id}-${order.user_id._id}-${order.createdAt}`,
+      date: edit
+        ? dayjs(order.createdAt)
+        : dayjs(order.createdAt).format(dateFormat),
+      amount: order.amount,
+      bank_number: order.bank_number,
+      bank_detail: order.bank_detail,
+      bank_branch: order.bank_branch,
+      account_name: order.account_name,
+      status: order.status,
+      invoice: order.invoice_name,
+      username: order.user_id?.username,
+    })) || [];
+
+  const groupedOrders = Array.isArray(dataSource)
+    ? groupBy(dataSource, (order) => order.username)
+    : {};
 
   const columns = [
     {
       title: "#",
       dataIndex: "no",
       width: 5,
-      render: (text, record) => (
-        <span className="text-sm font-normal">{record.no}</span>
+      render: (text, record, index) => (
+        <span className="text-sm font-normal">{index + 1}</span>
       ),
     },
     {
@@ -261,14 +275,27 @@ const NewTableAdminOrder = () => {
     };
   });
 
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}`,
+        "selectedRows: ",
+        selectedRows
+      );
+    },
+  };
+
   return (
     <>
-      {dataSource.map((order) => (
-        <div className="flex flex-col p-3 bg-white rounded-lg mt-7">
-          <div key={order.key}>
+      {Object.keys(groupedOrders).length > 0 ? (
+        Object.keys(groupedOrders).map((username) => (
+          <div
+            className="flex flex-col p-3 bg-white rounded-lg mt-7"
+            key={username}
+          >
             <div className="flex items-center justify-between">
               <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">
-                {order.username}
+                {username}
               </h1>
               <div className="flex gap-3 mr-5">
                 <Button
@@ -284,17 +311,21 @@ const NewTableAdminOrder = () => {
             <Form form={form} component={false}>
               <Table
                 components={{ body: { cell: EditableCell } }}
-                dataSource={dataSource.filter(
-                  (filteredOrder) => filteredOrder.username === order.username
-                )}
+                rowSelection={{
+                  type: "checkbox",
+                  ...rowSelection,
+                }}
+                dataSource={groupedOrders[username]}
                 columns={mergedColumns}
                 rowClassName="editable-row"
                 pagination={{ pageSize: 10 }}
               />
             </Form>
           </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <div>No orders available</div>
+      )}
       <Modal
         title="Invoice"
         visible={isModalOpen}
