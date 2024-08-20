@@ -21,6 +21,7 @@ import {
 import Status from "../shared/Status";
 import dayjs from "dayjs";
 import { useDeleteOrder } from "../service/admin/orders/useDeleteOrder";
+import { useUpdateStatusOrder } from "../service/admin/orders/useUpdateStatusOrder";
 
 const dateFormat = "YYYY/MM/DD";
 
@@ -84,6 +85,8 @@ const NewTableAdminOrder = () => {
 
   const { data: orders, isPending, isError } = useGetOrders();
 
+   const updateStatusOrderMutation = useUpdateStatusOrder()
+  
   const deleteOrderMutation = useDeleteOrder();
 
   const isEditing = (record) => record.key === editingKey;
@@ -107,10 +110,18 @@ const NewTableAdminOrder = () => {
       const index = newData.findIndex((item) => key === item._id);
       if (index > -1) {
         const item = newData[index];
-        newData.splice(index, 1, {
+        const updatedData = {
           ...item,
           ...row,
+        };
+        
+        // Call the mutation function with the updated status
+        updateStatusOrderMutation.mutate({
+          id: item._id,
+          data: { status: updatedData.status }
         });
+        
+        newData.splice(index, 1, updatedData);
         setEditingKey("");
       } else {
         newData.push(row);
@@ -133,7 +144,7 @@ const NewTableAdminOrder = () => {
 
   const dataSource =
     orders?.payload.map((order) => ({
-      key: `${order._id}-${order.user_id._id}-${order.createdAt}`,
+      key: `${order._id}`,
       date: edit
         ? dayjs(order.createdAt)
         : dayjs(order.createdAt).format(dateFormat),
@@ -145,7 +156,6 @@ const NewTableAdminOrder = () => {
       status: order.status,
       invoice: order.invoice_name,
       username: order.user_id?.username,
-      operation: order._id,
     })) || [];
 
   const groupedOrders = Array.isArray(dataSource)
@@ -219,24 +229,19 @@ const NewTableAdminOrder = () => {
       dataIndex: "status",
       width: 25,
       editable: true,
-      render: (text, record) => {
-        console.log(record.status);
-        return <Status status={record.status} />;
-      },
+      render: (text, record) =>  <Status status={record.status} />
+      
     },
     {
       title: "Actions",
       dataIndex: "operation",
-      render: (_, text, record) => {
-        console.log(record);
+      render: (text, record) => {
         const editable = isEditing(record);
         return editable ? (
           <span>
             <Typography.Link
               onClick={() => save(record.key)}
-              style={{
-                marginInlineEnd: 8,
-              }}
+              style={{ marginInlineEnd: 8 }}
             >
               Save
             </Typography.Link>
@@ -256,7 +261,7 @@ const NewTableAdminOrder = () => {
             </Typography.Link>
             <Button
               className="px-2 py-1 text-white bg-red-500 rounded-md"
-              onClick={() => showConfirm(record)}
+              onClick={() => showConfirm(record.key)}
             >
               <DeleteOutlined />
             </Button>

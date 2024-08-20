@@ -1,5 +1,5 @@
 const orderKeys = {
-  lists: ["orders", "list"],
+  lists: ["ordersAdmin", "list"],
 };
 
 export default orderKeys;

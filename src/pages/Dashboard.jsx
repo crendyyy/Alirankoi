@@ -11,7 +11,7 @@ import { useGetStock } from "../components/service/stock/useGetStock";
 import { useOpenStatus, useSeperateStatus } from "../components/service/admin/useAdminService";
 import { useUpdateStock, useUpdateStockPlus } from "../components/service/admin/useUpdateStock";
 import { useUpdatePrice } from "../components/service/admin/useUpdatePrice";
-import { useGetUserOrders } from "../components/service/user/order/useGetUserOrder";
+import { useGetOrders } from "../components/service/admin/orders/useGetOrders";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -21,7 +21,7 @@ const Dashboard = () => {
   const [formUpdatePrice] = Form.useForm();
 
   const { data: stock, isPending: isStockPending, isError: isStockError } = useGetStock();
-  const { data: orders, isPending, isError } = useGetUserOrders();
+  const { data: orders, isPending, isError } = useGetOrders();
 
   const openStatusMutation = useOpenStatus();
 
@@ -144,6 +144,8 @@ const Dashboard = () => {
       profit: profit,
       ...order,
     })) || [];
+
+    console.log(data);
 
   return (
     <Flex vertical gap={40}>
