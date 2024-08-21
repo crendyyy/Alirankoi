@@ -33,7 +33,7 @@ const LayoutUser = () => {
             </main>
           ) : (
             <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-[600px] bg-white">
-              <div className="flex flex-col flex-grow p-6 mb-[76px] ">
+              <div className="flex flex-col flex-grow p-6 max-sm:p-3 mb-[76px] ">
                 <Outlet />
               </div>
             </main>
