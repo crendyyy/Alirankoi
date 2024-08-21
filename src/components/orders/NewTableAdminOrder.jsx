@@ -296,18 +296,10 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
     };
   });
 
-  const rowSelection = (selectedRowKeys, groupIndex) => {
-    const newSelectedRowsByGroup = { ...selectedRowsByGroup };
-    newSelectedRowsByGroup[groupIndex] = selectedRowKeys;
-    setSelectedRowsByGroup(newSelectedRowsByGroup);
-    const allSelectedRows = Object.values(newSelectedRowsByGroup).flat();
-    setSelectedRow(allSelectedRows);
-  };
-  
   return (
     <>
       <Flex vertical gap="middle">
-        {Object.keys(groupedOrders).map((username, index) => (
+        {Object.keys(groupedOrders).map((username) => (
           <div className="flex flex-col p-3 bg-white rounded-lg" key={username}>
             <div className="flex items-center justify-between">
               <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">
@@ -329,9 +321,60 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
                 components={{ body: { cell: EditableCell } }}
                 rowSelection={{
                   type: "checkbox",
-                  onChange: (selectedRowKeys, selectedRows) =>
-                    rowSelection(selectedRowKeys, selectedRows, index),
-                  selectedRowKeys: selectedRowsByGroup[index] || [],
+                  selectedRowKeys: selectedRowsByGroup[username] || [],
+                  onChange: (selectedRowKeys) => {
+                    const newSelectedRowsByGroup = { ...selectedRowsByGroup };
+
+                    // Perbarui pilihan berdasarkan username grup
+                    newSelectedRowsByGroup[username] = selectedRowKeys;
+
+                    // Perbarui state untuk grup dan semua baris yang dipilih
+                    setSelectedRowsByGroup(newSelectedRowsByGroup);
+                    setSelectedRow(
+                      Object.values(newSelectedRowsByGroup).flat()
+                    );
+                  },
+                  onSelect: (record, selected) => {
+                    const newSelectedRowsByGroup = { ...selectedRowsByGroup };
+
+                    if (selected) {
+                      // Tambahkan baris ke grup yang dipilih
+                      newSelectedRowsByGroup[username] = [
+                        ...(newSelectedRowsByGroup[username] || []),
+                        record.key,
+                      ];
+                    } else {
+                      // Hapus baris dari grup yang dipilih
+                      newSelectedRowsByGroup[username] = (
+                        newSelectedRowsByGroup[username] || []
+                      ).filter((key) => key !== record.key);
+                    }
+
+                    // Perbarui state untuk grup dan semua baris yang dipilih
+                    setSelectedRowsByGroup(newSelectedRowsByGroup);
+                    setSelectedRow(
+                      Object.values(newSelectedRowsByGroup).flat()
+                    );
+                  },
+                  onSelectAll: (selected, selectedRows) => {
+                    const newSelectedRowsByGroup = { ...selectedRowsByGroup };
+
+                    if (selected) {
+                      // Pilih semua baris dalam grup
+                      newSelectedRowsByGroup[username] = selectedRows.map(
+                        (row) => row.key
+                      );
+                    } else {
+                      // Hapus semua pilihan dari grup
+                      delete newSelectedRowsByGroup[username];
+                    }
+
+                    // Perbarui state untuk grup dan semua baris yang dipilih
+                    setSelectedRowsByGroup(newSelectedRowsByGroup);
+                    setSelectedRow(
+                      Object.values(newSelectedRowsByGroup).flat()
+                    );
+                  },
                 }}
                 loading={isPending}
                 dataSource={groupedOrders[username]}
