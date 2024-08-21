@@ -1,6 +1,7 @@
 import {
   Button,
   DatePicker,
+  Flex,
   Form,
   Input,
   InputNumber,
@@ -23,7 +24,7 @@ import dayjs from "dayjs";
 import { useDeleteOrder } from "../service/admin/orders/useDeleteOrder";
 import { useUpdateStatusOrder } from "../service/admin/orders/useUpdateStatusOrder";
 
-const dateFormat = "YYYY/MM/DD";
+const dateFormat = "YYYY-MM-DD";
 
 const EditableCell = ({
   editing,
@@ -40,8 +41,8 @@ const EditableCell = ({
       <DatePicker format={dateFormat} />
     ) : inputType === "status" ? (
       <Select placeholder="Status" style={{ width: 120 }}>
-        <Option value="Complete">Complete</Option>
-        <Option value="Cancel">Cancel</Option>
+        <Select.Option value="Complete">Complete</Select.Option>
+        <Select.Option value="Cancel">Cancel</Select.Option>
       </Select>
     ) : inputType === "number" ? (
       <InputNumber />
@@ -77,16 +78,15 @@ const groupBy = (array, getKey) => {
   }, {});
 };
 
-const NewTableAdminOrder = () => {
+const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState("");
 
   const { data: orders, isPending, isError } = useGetOrders();
+  const updateStatusOrderMutation = useUpdateStatusOrder();
 
-   const updateStatusOrderMutation = useUpdateStatusOrder()
-  
   const deleteOrderMutation = useDeleteOrder();
 
   const isEditing = (record) => record.key === editingKey;
@@ -114,13 +114,13 @@ const NewTableAdminOrder = () => {
           ...item,
           ...row,
         };
-        
+
         // Call the mutation function with the updated status
         updateStatusOrderMutation.mutate({
           id: item._id,
-          data: { status: updatedData.status }
+          data: { status: updatedData.status },
         });
-        
+
         newData.splice(index, 1, updatedData);
         setEditingKey("");
       } else {
@@ -138,12 +138,23 @@ const NewTableAdminOrder = () => {
       icon: <ExclamationCircleFilled />,
       content: "Deleted data cannot be recovered!",
       okText: "Yes",
+      okType: "danger",
       onOk: () => deleteOrderMutation.mutate(id),
     });
   };
 
+  const filteredOrders =
+    orders?.payload.filter((order) => {
+      const orderDate = dayjs(order.createdAt).format(dateFormat);
+      const matchDate = selectedDate ? orderDate === selectedDate : true;
+
+      console.log(orderDate);
+      console.log(selectedDate);
+      return matchDate;
+    }) || [];
+
   const dataSource =
-    orders?.payload.map((order) => ({
+    filteredOrders.map((order) => ({
       key: `${order._id}`,
       date: edit
         ? dayjs(order.createdAt)
@@ -229,8 +240,7 @@ const NewTableAdminOrder = () => {
       dataIndex: "status",
       width: 25,
       editable: true,
-      render: (text, record) =>  <Status status={record.status} />
-      
+      render: (text, record) => <Status status={record.status} />,
     },
     {
       title: "Actions",
@@ -287,56 +297,64 @@ const NewTableAdminOrder = () => {
     };
   });
 
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
-    },
+  const rowSelection = (selectedRowKeys) => {
+    setSelectedRow(selectedRowKeys);
   };
+
+  console.log(selectedRow);
 
   return (
     <>
-      {Object.keys(groupedOrders).map((username) => (
-        <div
-          className="flex flex-col p-3 bg-white rounded-lg mt-7"
-          key={username}
-        >
-          <div className="flex items-center justify-between">
-            <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">{username}</h1>
-            <div className="flex gap-3 mr-5">
-              <Button
-                type="primary"
-                icon={<PrinterOutlined />}
-                className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
-              >
-                Print
-              </Button>
-              <Button type="primary">Export to Excel</Button>
+      <Flex vertical gap="middle">
+        {Object.keys(groupedOrders).map((username) => (
+          <div className="flex flex-col p-3 bg-white rounded-lg" key={username}>
+            <div className="flex items-center justify-between">
+              <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">
+                {username}
+              </h1>
+              <div className="flex gap-3 mr-5">
+                <Button
+                  type="primary"
+                  icon={<PrinterOutlined />}
+                  className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
+                >
+                  Print
+                </Button>
+                <Button type="primary">Export to Excel</Button>
+              </div>
             </div>
+            <Form form={form} component={false}>
+              <Table
+                components={{ body: { cell: EditableCell } }}
+                rowSelection={{
+                  type: "checkbox",
+                  onChange: rowSelection,
+                }}
+                loading={isPending}
+                dataSource={groupedOrders[username]}
+                columns={mergedColumns}
+                rowClassName="editable-row"
+                pagination={{ pageSize: 10 }}
+              />
+            </Form>
           </div>
-          <Form form={form} component={false}>
-            <Table
-              components={{ body: { cell: EditableCell } }}
-              rowSelection={{
-                type: "checkbox",
-                ...rowSelection,
-              }}
-              dataSource={groupedOrders[username]}
-              columns={mergedColumns}
-              rowClassName="editable-row"
-              pagination={{ pageSize: 10 }}
-            />
-          </Form>
-        </div>
-      ))}
+        ))}
+      </Flex>
 
       <Modal
         title="Invoice"
-        visible={isModalOpen}
+        open={isModalOpen}
         onOk={() => setIsModalOpen(false)}
+        onCancel={() => setIsModalOpen(false)}
+        footer={[
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => setIsModalOpen(false)}
+          >
+            Ok
+          </Button>,
+        ]}
       >
         <img
           src={`http://localhost:3000/picture/${selectedInvoice}`}
