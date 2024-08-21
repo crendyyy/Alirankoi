@@ -23,7 +23,9 @@ const AdminOrders = () => {
     selectedRowId.forEach((orderId) => {
       deleteOrderMutation.mutate(orderId);
     });
+    setSelectedRow([])
   };
+  console.log(selectedRow);
 
   return (
     <>

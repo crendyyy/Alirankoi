@@ -83,6 +83,7 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
   const [editingKey, setEditingKey] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState("");
+  const [selectedRowsByGroup, setSelectedRowsByGroup] = useState({});
 
   const { data: orders, isPending, isError } = useGetOrders();
   const updateStatusOrderMutation = useUpdateStatusOrder();
@@ -148,8 +149,6 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
       const orderDate = dayjs(order.createdAt).format(dateFormat);
       const matchDate = selectedDate ? orderDate === selectedDate : true;
 
-      console.log(orderDate);
-      console.log(selectedDate);
       return matchDate;
     }) || [];
 
@@ -297,16 +296,18 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
     };
   });
 
-  const rowSelection = (selectedRowKeys) => {
-    setSelectedRow(selectedRowKeys);
+  const rowSelection = (selectedRowKeys, groupIndex) => {
+    const newSelectedRowsByGroup = { ...selectedRowsByGroup };
+    newSelectedRowsByGroup[groupIndex] = selectedRowKeys;
+    setSelectedRowsByGroup(newSelectedRowsByGroup);
+    const allSelectedRows = Object.values(newSelectedRowsByGroup).flat();
+    setSelectedRow(allSelectedRows);
   };
-
-  console.log(selectedRow);
-
+  
   return (
     <>
       <Flex vertical gap="middle">
-        {Object.keys(groupedOrders).map((username) => (
+        {Object.keys(groupedOrders).map((username, index) => (
           <div className="flex flex-col p-3 bg-white rounded-lg" key={username}>
             <div className="flex items-center justify-between">
               <h1 className="mt-3 mb-8 ml-5 text-lg font-semibold">
@@ -328,7 +329,9 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
                 components={{ body: { cell: EditableCell } }}
                 rowSelection={{
                   type: "checkbox",
-                  onChange: rowSelection,
+                  onChange: (selectedRowKeys, selectedRows) =>
+                    rowSelection(selectedRowKeys, selectedRows, index),
+                  selectedRowKeys: selectedRowsByGroup[index] || [],
                 }}
                 loading={isPending}
                 dataSource={groupedOrders[username]}
