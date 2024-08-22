@@ -322,7 +322,7 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
                 rowSelection={{
                   type: "checkbox",
                   selectedRowKeys: selectedRowsByGroup[username] || [],
-                  onChange: (selectedRowKeys) => {
+                  onChange: (selectedRowKeys, selectedRow) => {
                     const newSelectedRowsByGroup = { ...selectedRowsByGroup };
 
                     // Perbarui pilihan berdasarkan username grup

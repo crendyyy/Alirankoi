@@ -27,7 +27,8 @@ import { useUpdatePrice } from "../components/service/admin/useUpdatePrice";
 import { useGetOrders } from "../components/service/admin/orders/useGetOrders";
 import dayjs from "dayjs";
 import PrintModal from "../components/modal/PrintModal";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -38,6 +39,8 @@ const Dashboard = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState([]);
+
+  const printAreaRef = useRef()
 
   const {
     data: stock,
@@ -90,6 +93,8 @@ const Dashboard = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  const handleOnPrint = useReactToPrint({content: () => printAreaRef.current})
 
   const labels = [
     "January",
@@ -202,6 +207,8 @@ const Dashboard = () => {
         isOpen={isModalOpen}
         onCancel={handleCloseModal}
         selectedRow={selectedRow}
+        printAreaRef={printAreaRef}
+        onConfirm={handleOnPrint}
       />
       <Flex vertical gap={4}>
         <Title style={{ margin: 0 }} level={2}>
