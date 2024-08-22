@@ -11,7 +11,7 @@ const AdminOrders = () => {
   const [selectedRow, setSelectedRow] = useState([]);
 
   const updateStatusOrderMutation = useUpdateStatusOrder();
-  
+
   const deleteOrderMutation = useDeleteOrder();
 
   const onChangeDate = (date, dateString) => {
@@ -29,14 +29,14 @@ const AdminOrders = () => {
         data: { status: selectedStatus },
       });
     });
-    window.location.reload()
+    window.location.reload();
   };
 
   const handleDeleteSelectedRow = (selectedRowId) => {
     selectedRowId.forEach((orderId) => {
       deleteOrderMutation.mutate(orderId);
     });
-    setSelectedRow([])
+    setSelectedRow([]);
   };
   console.log(selectedRow);
 
@@ -52,7 +52,7 @@ const AdminOrders = () => {
             </div>
             <div className="flex flex-col w-2/5 gap-2">
               <h3 className="text-sm font-medium text-nowrap">
-                Selected Order
+                Update Selected Order
               </h3>
               <Select
                 placeholder="Select order"
@@ -68,7 +68,11 @@ const AdminOrders = () => {
 
           <div className="flex flex-col w-1/2 gap-3">
             <div className="flex items-center justify-between w-full gap-2">
-              <Button type="primary" className="w-3/5 text-white bg-primary" onClick={() => handleUpdateStatusSelectedRow(selectedRow)}>
+              <Button
+                type="primary"
+                className="w-3/5 text-white bg-primary"
+                onClick={() => handleUpdateStatusSelectedRow(selectedRow)}
+              >
                 Update Selected Order Status
               </Button>{" "}
               |

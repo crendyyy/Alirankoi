@@ -2,16 +2,32 @@ import { UserAddOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, InputNumber, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import EditCard from "../components/dashboard/EditCard";
 import DashboardTable from "../components/dashboard/DashboardTable";
 import { useNavigate } from "react-router";
 import { useGetStock } from "../components/service/stock/useGetStock";
 
-import { useOpenStatus, useSeperateStatus } from "../components/service/admin/useAdminService";
-import { useUpdateStock, useUpdateStockPlus } from "../components/service/admin/useUpdateStock";
+import {
+  useOpenStatus,
+  useSeperateStatus,
+} from "../components/service/admin/useAdminService";
+import {
+  useUpdateStock,
+  useUpdateStockPlus,
+} from "../components/service/admin/useUpdateStock";
 import { useUpdatePrice } from "../components/service/admin/useUpdatePrice";
 import { useGetOrders } from "../components/service/admin/orders/useGetOrders";
+import dayjs from "dayjs";
+import PrintModal from "../components/modal/PrintModal";
+import { useState } from "react";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -20,7 +36,14 @@ const Dashboard = () => {
   const [formAddStock] = Form.useForm();
   const [formUpdatePrice] = Form.useForm();
 
-  const { data: stock, isPending: isStockPending, isError: isStockError } = useGetStock();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState([]);
+
+  const {
+    data: stock,
+    isPending: isStockPending,
+    isError: isStockError,
+  } = useGetStock();
   const { data: orders, isPending, isError } = useGetOrders();
 
   const openStatusMutation = useOpenStatus();
@@ -60,7 +83,23 @@ const Dashboard = () => {
     openStatusMutation.mutate();
   };
 
-  const labels = ["January", "February", "March", "April", "May", "June", "July"];
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const labels = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+  ];
 
   const chartData = {
     labels: labels,
@@ -93,7 +132,9 @@ const Dashboard = () => {
       title: "#",
       dataIndex: "no",
       width: 12,
-      render: (text, record, index) => <span className="text-sm font-normal">{index + 1}</span>,
+      render: (text, record, index) => (
+        <span className="text-sm font-normal">{index + 1}</span>
+      ),
     },
     {
       title: "Date",
@@ -124,31 +165,44 @@ const Dashboard = () => {
       dataIndex: "hargaJual",
     },
     {
-      title: "Harga Beli",
+      title: "Harga Modal",
       dataIndex: "hargaBeli",
     },
     {
       title: "Profit/Margin",
       dataIndex: "profit",
     },
+    {
+      title: "Subtotal",
+      dataIndex: "subtotal",
+    },
   ];
 
-  const hargaJual = 2500;
+  const today = dayjs().startOf("day");
+  const hargaJual = stock?.payload[0].price;
   const hargaBeli = 2000;
   const profit = hargaJual - hargaBeli;
   const data =
-    orders?.payload.map((order) => ({
-      key: order.id,
-      hargaBeli: hargaBeli,
-      hargaJual: hargaJual,
-      profit: profit,
-      ...order,
-    })) || [];
+    orders?.payload
+      .filter((order) => dayjs(order.createdAt).isSame(today, "day"))
+      .map((order) => ({
+        key: order.id,
+        hargaBeli: hargaBeli,
+        hargaJual: hargaJual,
+        profit: profit * order.amount,
+        subtotal: hargaJual * order.amount,
+        ...order,
+      })) || [];
 
-    console.log(data);
+  console.log(data);
 
   return (
     <Flex vertical gap={40}>
+      <PrintModal
+        isOpen={isModalOpen}
+        onCancel={handleCloseModal}
+        selectedRow={selectedRow}
+      />
       <Flex vertical gap={4}>
         <Title style={{ margin: 0 }} level={2}>
           Admin
@@ -158,7 +212,13 @@ const Dashboard = () => {
         </Title>
       </Flex>
       <Flex justify="space-between">
-        <Button type="primary" icon={<UserAddOutlined />} size="large" onClick={() => navigate("/register")} className="rounded-xl w-36">
+        <Button
+          type="primary"
+          icon={<UserAddOutlined />}
+          size="large"
+          onClick={() => navigate("/register")}
+          className="rounded-xl w-36"
+        >
           Add User
         </Button>
         <Flex gap={24}>
@@ -166,7 +226,10 @@ const Dashboard = () => {
             <Title level={5} style={{ margin: 0 }}>
               Separate Mode
             </Title>
-            <Switch checked={stock?.payload[0].separateMode} onChange={onSeperate} />
+            <Switch
+              checked={stock?.payload[0].separateMode}
+              onChange={onSeperate}
+            />
           </div>
           <div className="flex items-center h-full gap-4 px-4 py-2 bg-white rounded-xl">
             <Title level={5} style={{ margin: 0 }}>
@@ -194,7 +257,14 @@ const Dashboard = () => {
           price={`${!isStockPending ? stock?.payload[0].price : "-"}`}
         />
       ))}
-      <DashboardTable columns={columns} data={data} isLoading={isPending} price={stock?.payload[0].price} />
+      <DashboardTable
+        columns={columns}
+        setSelectedRow={setSelectedRow}
+        data={data}
+        isLoading={isPending}
+        onOpenModal={handleOpenModal}
+        price={stock?.payload[0].price}
+      />
     </Flex>
   );
 };

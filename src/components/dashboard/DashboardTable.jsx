@@ -2,7 +2,14 @@ import { PrinterOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, InputNumber, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
 
-const DashboardTable = ({ columns, data, isLoading, price }) => {
+const DashboardTable = ({
+  columns,
+  data,
+  isLoading,
+  price,
+  onOpenModal,
+  setSelectedRow,
+}) => {
   const Fotter = () => {
     return (
       <Flex justify="space-between">
@@ -23,15 +30,8 @@ const DashboardTable = ({ columns, data, isLoading, price }) => {
   };
   console.log(data);
 
-  // rowSelection object indicates the need for row selection
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
-    },
+  const rowSelection = (selectedRowKeys, selectedRows) => {
+    setSelectedRow(selectedRows);
   };
   return (
     <>
@@ -56,6 +56,7 @@ const DashboardTable = ({ columns, data, isLoading, price }) => {
               type="primary"
               icon={<PrinterOutlined />}
               className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
+              onClick={onOpenModal}
             >
               Print
             </Button>
@@ -65,7 +66,7 @@ const DashboardTable = ({ columns, data, isLoading, price }) => {
         <Table
           rowSelection={{
             type: "checkbox",
-            ...rowSelection,
+            onChange: rowSelection,
           }}
           loading={isLoading}
           columns={columns}
