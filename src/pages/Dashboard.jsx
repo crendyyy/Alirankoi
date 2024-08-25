@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
 import { UserAddOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, InputNumber, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
@@ -10,9 +12,10 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import ExcelJS from "exceljs";
+import { useNavigate } from "react-router";
 import EditCard from "../components/dashboard/EditCard";
 import DashboardTable from "../components/dashboard/DashboardTable";
-import { useNavigate } from "react-router";
 import { useGetStock } from "../components/service/stock/useGetStock";
 
 import {
@@ -27,8 +30,7 @@ import { useUpdatePrice } from "../components/service/admin/useUpdatePrice";
 import { useGetOrders } from "../components/service/admin/orders/useGetOrders";
 import dayjs from "dayjs";
 import PrintModal from "../components/modal/PrintModal";
-import { useRef, useState } from "react";
-import { useReactToPrint } from "react-to-print";
+import FileSaver from "file-saver";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -40,7 +42,7 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState([]);
 
-  const printAreaRef = useRef()
+  const printAreaRef = useRef();
 
   const {
     data: stock,
@@ -94,7 +96,9 @@ const Dashboard = () => {
     setIsModalOpen(false);
   };
 
-  const handleOnPrint = useReactToPrint({content: () => printAreaRef.current})
+  const handleOnPrint = useReactToPrint({
+    content: () => printAreaRef.current,
+  });
 
   const labels = [
     "January",
@@ -199,7 +203,79 @@ const Dashboard = () => {
         ...order,
       })) || [];
 
-  console.log(data);
+  const generateExcekFile = async (rowToSave) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet1");
+    const dashboardColums = [
+      {
+        label: "Date",
+        key: "createdAt",
+      },
+      {
+        label: "Amount",
+        key: "amount",
+      },
+      {
+        label: "Bank Number",
+        key: "bank_number",
+      },
+      {
+        label: "Bank Name",
+        key: "bank_detail",
+      },
+      {
+        label: "Bank Branch",
+        key: "bank_branch",
+      },
+      {
+        label: "Account Name",
+        key: "account_name",
+      },
+      {
+        label: "Harga Jual",
+        key: "hargaJual",
+      },
+      {
+        label: "Harga Modal",
+        key: "hargaBeli",
+      },
+      {
+        label: "Profit/Margin",
+        key: "profit",
+      },
+      {
+        label: "Subtotal",
+        key: "subtotal",
+      },
+    ];
+
+    const columns = dashboardColums.map((col) => ({
+      name: col.label,
+      filterButton: true,
+    }));
+    worksheet.addTable({
+      name: "Table1",
+      ref: "A1",
+      headerRow: true,
+      style: {
+        theme: "TableStyleLight8",
+        showRowStripes: true,
+      },
+      columns: columns,
+      rows: rowToSave.map((row) => {
+        return dashboardColums.map((col) => row[col.key]);
+      }),
+    });
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer;
+  };
+
+  const handelSaveExcel = async () => {
+    const rowToSave = selectedRow;
+    const buffer = await generateExcekFile(rowToSave);
+    const blob = new Blob([buffer], { type: "application/octet-stream" });
+    FileSaver.saveAs(blob, `${today}.xlsx`);
+  };
 
   return (
     <Flex vertical gap={40}>
@@ -268,6 +344,7 @@ const Dashboard = () => {
         columns={columns}
         setSelectedRow={setSelectedRow}
         data={data}
+        handleSaveExcel={handelSaveExcel}
         isLoading={isPending}
         onOpenModal={handleOpenModal}
         price={stock?.payload[0].price}

@@ -9,6 +9,7 @@ const DashboardTable = ({
   price,
   onOpenModal,
   setSelectedRow,
+  handleSaveExcel
 }) => {
   const Fotter = () => {
     return (
@@ -60,7 +61,7 @@ const DashboardTable = ({
             >
               Print
             </Button>
-            <Button type="primary">Export to Excel</Button>
+            <Button type="primary" onClick={handleSaveExcel}>Export to Excel</Button>
           </Flex>
         </div>
         <Table
