@@ -7,3 +7,20 @@
   box-sizing: border-box;
   font-family: "Plus Jakarta Sans", sans-serif !important;
 }
+/* .ant-input-number-handler-wrap {
+  display: none;
+} */
+
+.ant-input-number-input::placeholder {
+  color: #9ca3af !important;
+}
+/* .ant-input-number-input:hover {
+  color: #9ca3af !important;
+} */
+/* .ant-input-number-input:focus {
+  border: 1px solid #374151;
+} */
+
+/* .hover\:bg-\[\#1F222B\]:hover {
+  background-color: aqua !important;
+} */

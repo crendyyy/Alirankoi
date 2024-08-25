@@ -3,7 +3,7 @@ import React from "react";
 const Status = ({ status }) => {
   return (
     <span
-      className={`py-1 px-3 rounded-full block text-center font-medium ${
+      className={`py-1 px-3 rounded-full block text-center font-bold text-nowrap ${
         status === "Complete"
           ? "bg-green-200 text-green-700"
           : status === "Pending"

@@ -1,13 +1,23 @@
-import { AlipayOutlined, BankOutlined, CalendarOutlined, SwapOutlined } from "@ant-design/icons";
+import {
+  AlipayOutlined,
+  BankOutlined,
+  CalendarOutlined,
+  SwapOutlined,
+} from "@ant-design/icons";
 import { formatRupiah } from "../../libs/utils";
 import Status from "./Status";
 
 const HistoryCard = ({ totalAmount, date, rate, status, onClick }) => {
   return (
-    <div onClick={onClick} className="flex items-center justify-between w-full p-5 max-sm:p-4 bg-[#F7F9FC] rounded-2xl">
+    <div
+      onClick={onClick}
+      className="flex items-center justify-between w-full p-5 max-sm:p-4 bg-[#F7F9FC] rounded-2xl cursor-pointer"
+    >
       <div className="flex flex-col justify-between">
-        <span className="text-base font-bold mb-4 text-[#111111]">¥ {formatRupiah(totalAmount, false)}</span>
-        <div className="flex flex-col gap-2">
+        <span className="text-base max-sm:text-sm font-bold mb-4 text-[#111111]">
+          ¥ {formatRupiah(totalAmount, false)}
+        </span>
+        <div className="flex flex-col gap-2 font-semibold">
           <span className="text-xs text-[#9CA3AF] flex gap-2">
             <CalendarOutlined />
             {date}

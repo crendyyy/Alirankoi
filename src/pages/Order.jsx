@@ -4,6 +4,7 @@ import HistoryCard from "../components/shared/HistoryCard";
 import { useNavigate } from "react-router-dom";
 import { useGetUserOrders } from "../components/service/user/order/useGetUserOrder";
 import { useEffect } from "react";
+import { BankOutlined } from "@ant-design/icons";
 
 const Order = () => {
   const navigate = useNavigate();
@@ -18,8 +19,10 @@ const Order = () => {
   return (
     <>
       <Flex vertical gap="small">
-        <Title level={5}>MY HISTORY</Title>
-        <Flex vertical gap="middle">
+        <h1 className="flex items-center gap-1 font-semibold text-lg my-2">
+          <BankOutlined className="text-xl " /> Order Bank History
+        </h1>
+        <div className="flex flex-col gap-2">
           {isPending ? <p>Loading</p> : ""}
           {orders &&
             orders.payload.map((order) => (
@@ -32,7 +35,7 @@ const Order = () => {
                 totalAmount={order.amount}
               />
             ))}
-        </Flex>
+        </div>
       </Flex>
     </>
   );
