@@ -54,7 +54,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
   const handleChange = ({ fileList }) => setImageList(fileList);
   return (
     <Modal onCancel={onClose}>
-      <div className="bg-black flex flex-col gap-2 rounded-t-3xl">
+      <div className="flex flex-col gap-2 bg-black rounded-t-3xl">
         <div className="flex flex-col gap-3 max-sm:gap-3 p-6 max-sm:p-4 bg-[#111111] rounded-2xl">
           <Title level={5} className="max-sm:!text-sm !text-white">
             {typeModal === "Bank" ? (
@@ -71,19 +71,13 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   <Input
                     variant="filled"
                     placeholder="Bank Name"
-                    className="flex items-center w-full h-12 max-sm:h-11 px-4 rounded-full bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
+                    className="flex items-center w-full h-12 max-sm:h-11 px-4  bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
                 <Form.Item noStyle name="bank_number">
-                  {/* <InputNumber
-                    variant="filled"
-                    placeholder="Bank Number"
-                    className="flex items-center w-full h-12 px-2 rounded-full"
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                  /> */}
                   <InputNumber
                     placeholder="Bank Number"
-                    className="w-full p-2 rounded-full max-sm:p-1.5 bg-[#1F222B] text-white placeholder:!text-[#9CA3AF] focus:!bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
+                    className="w-full p-2  max-sm:p-1.5 input-number-custom"
                     variant="filled"
                     parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                   />
@@ -92,14 +86,14 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   <Input
                     variant="filled"
                     placeholder="Bank Branch"
-                    className="flex items-center w-full h-12 px-4 max-sm:h-11 rounded-full bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
+                    className="flex items-center w-full h-12 px-4 max-sm:h-11  bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
                 <Form.Item noStyle name="account_name">
                   <Input
                     variant="filled"
                     placeholder="Account Name"
-                    className="flex items-center w-full h-12 px-4 max-sm:h-11 rounded-full bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
+                    className="flex items-center w-full h-12 px-4 max-sm:h-11  bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
                 <Flex justify="space-between">
@@ -217,9 +211,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
           <Form form={formBank}>
             <Form.Item noStyle name="amount">
               <InputNumber
-                className="flex items-center w-full h-12 px-4 rounded-full max-sm:h-11 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:!bg-[#1F222B]"
+                className="flex items-center w-full h-12 px-4 max-sm:h-11 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B] active:bg-[#1F222B] !bg-[#1F222B] !text-white !hover:text-white !active:text-white"
                 variant="filled"
                 prefix="¥"
+                min={0}
                 formatter={(value) =>
                   value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""
                 }
@@ -244,7 +239,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
             <Form.Item noStyle className="w-full">
               <Button
                 htmlType="submit"
-                className="flex items-center justify-center w-full p-6 text-sm font-bold text-white bg-blue-500 rounded-full"
+                className="flex items-center justify-center w-full p-6 text-sm font-bold text-white bg-blue-500 rounded-full "
               >
                 <ShoppingCartOutlined className="text-2xl" />
                 Pay Now

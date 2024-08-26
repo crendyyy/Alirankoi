@@ -14,6 +14,45 @@
 .ant-input-number-input::placeholder {
   color: #9ca3af !important;
 }
+
+/* Mengatur background dan text color secara spesifik untuk InputNumber */
+.ant-input-number,
+.ant-input-number-input,
+.ant-input-number-input-wrap input {
+  background-color: #1f222b !important; /* Background tetap gelap */
+  color: white !important; /* Teks tetap putih */
+  border: none !important; /* Menghilangkan border putih */
+}
+
+.ant-input-number-input {
+  background-color: #1f222b !important; /* Background tetap gelap */
+}
+
+.ant-input-number-focused {
+  background-color: #1f222b !important; /* Background tetap gelap saat fokus */
+}
+
+.ant-input-number:hover .ant-input-number-input,
+.ant-input-number:focus .ant-input-number-input {
+  background-color: #1f222b !important; /* Background tetap gelap saat hover atau fokus */
+  color: white !important; /* Teks tetap putih */
+}
+
+.ant-input-number-input-wrap input {
+  background-color: #1f222b !important; /* Background tetap gelap */
+  color: white !important; /* Teks tetap putih */
+}
+
+.ant-input-number-input-wrap {
+  background-color: #1f222b !important; /* Background tetap gelap */
+}
+
+.ant-input-number:hover input,
+.ant-input-number:focus input {
+  background-color: #1f222b !important; /* Background tetap gelap saat hover atau fokus */
+  color: white !important; /* Teks tetap putih */
+}
+
 /* .ant-input-number-input:hover {
   color: #9ca3af !important;
 } */
