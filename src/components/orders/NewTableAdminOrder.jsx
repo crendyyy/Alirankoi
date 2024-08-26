@@ -19,6 +19,8 @@ import {
   ExclamationCircleFilled,
   PrinterOutlined,
 } from "@ant-design/icons";
+import ExcelJS from "exceljs";
+import FileSaver from "file-saver";
 import Status from "../shared/Status";
 import dayjs from "dayjs";
 import { useDeleteOrder } from "../service/admin/orders/useDeleteOrder";
@@ -78,7 +80,13 @@ const groupBy = (array, getKey) => {
   }, {});
 };
 
-const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
+const NewTableAdminOrder = ({
+  selectedDate,
+  setSelectedRowKeys,
+  setSelectedRow,
+  onOpenModalPrint,
+  selectedRow,
+}) => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -296,6 +304,67 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
     };
   });
 
+  const generateExcekFile = async (rowToSave) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet1");
+    const ordersColums = [
+      {
+        label: "Date",
+        key: "date",
+      },
+      {
+        label: "Amount",
+        key: "amount",
+      },
+      {
+        label: "Bank Number",
+        key: "bank_number",
+      },
+      {
+        label: "Bank Name",
+        key: "bank_detail",
+      },
+      {
+        label: "Bank Branch",
+        key: "bank_branch",
+      },
+      {
+        label: "Account Name",
+        key: "account_name",
+      },
+      {
+        label: "Status",
+        key: "status",
+      },
+    ];
+
+    const columns = ordersColums.map((col) => ({
+      name: col.label,
+      filterButton: true,
+    }));
+    worksheet.addTable({
+      name: "Table1",
+      ref: "A1",
+      headerRow: true,
+      style: {
+        theme: "TableStyleLight8",
+        showRowStripes: true,
+      },
+      columns: columns,
+      rows: rowToSave.map((row) => {
+        return ordersColums.map((col) => row[col.key]);
+      }),
+    });
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer;
+  };
+
+  const handelSaveExcel = async () => {
+    const buffer = await generateExcekFile(selectedRow);
+    const blob = new Blob([buffer], { type: "application/octet-stream" });
+    FileSaver.saveAs(blob, `tes.xlsx`);
+  };
+
   return (
     <>
       <Flex vertical gap="middle">
@@ -308,12 +377,15 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
               <div className="flex gap-3 mr-5">
                 <Button
                   type="primary"
+                  onClick={onOpenModalPrint}
                   icon={<PrinterOutlined />}
                   className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
                 >
                   Print
                 </Button>
-                <Button type="primary">Export to Excel</Button>
+                <Button type="primary" onClick={handelSaveExcel}>
+                  Export to Excel
+                </Button>
               </div>
             </div>
             <Form form={form} component={false}>
@@ -321,15 +393,19 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
                 components={{ body: { cell: EditableCell } }}
                 rowSelection={{
                   type: "checkbox",
-                  selectedRowKeys: selectedRowsByGroup[username] || [],
-                  onChange: (selectedRowKeys, selectedRow) => {
+                  onChange: (selectedRowKeys, selectedRows) => {
                     const newSelectedRowsByGroup = { ...selectedRowsByGroup };
 
                     // Perbarui pilihan berdasarkan username grup
-                    newSelectedRowsByGroup[username] = selectedRowKeys;
+                    newSelectedRowsByGroup[username] = selectedRows;
 
                     // Perbarui state untuk grup dan semua baris yang dipilih
                     setSelectedRowsByGroup(newSelectedRowsByGroup);
+                    setSelectedRowKeys(
+                      Object.values(newSelectedRowsByGroup)
+                        .flat()
+                        .map((row) => row.key)
+                    );
                     setSelectedRow(
                       Object.values(newSelectedRowsByGroup).flat()
                     );
@@ -341,17 +417,22 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
                       // Tambahkan baris ke grup yang dipilih
                       newSelectedRowsByGroup[username] = [
                         ...(newSelectedRowsByGroup[username] || []),
-                        record.key,
+                        record,
                       ];
                     } else {
                       // Hapus baris dari grup yang dipilih
                       newSelectedRowsByGroup[username] = (
                         newSelectedRowsByGroup[username] || []
-                      ).filter((key) => key !== record.key);
+                      ).filter((row) => row.key !== record.key);
                     }
 
                     // Perbarui state untuk grup dan semua baris yang dipilih
                     setSelectedRowsByGroup(newSelectedRowsByGroup);
+                    setSelectedRowKeys(
+                      Object.values(newSelectedRowsByGroup)
+                        .flat()
+                        .map((row) => row.key)
+                    );
                     setSelectedRow(
                       Object.values(newSelectedRowsByGroup).flat()
                     );
@@ -361,9 +442,7 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
 
                     if (selected) {
                       // Pilih semua baris dalam grup
-                      newSelectedRowsByGroup[username] = selectedRows.map(
-                        (row) => row.key
-                      );
+                      newSelectedRowsByGroup[username] = selectedRows;
                     } else {
                       // Hapus semua pilihan dari grup
                       delete newSelectedRowsByGroup[username];
@@ -371,6 +450,11 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRow, selectedRow }) => {
 
                     // Perbarui state untuk grup dan semua baris yang dipilih
                     setSelectedRowsByGroup(newSelectedRowsByGroup);
+                    setSelectedRowKeys(
+                      Object.values(newSelectedRowsByGroup)
+                        .flat()
+                        .map((row) => row.key)
+                    );
                     setSelectedRow(
                       Object.values(newSelectedRowsByGroup).flat()
                     );

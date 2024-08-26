@@ -148,6 +148,10 @@ const Dashboard = () => {
     {
       title: "Date",
       dataIndex: "createdAt",
+      render: (text, record) => {
+        // Display the full Date string if not editing
+        return <span>{new Date(record.createdAt).toString()}</span>;
+      },
     },
     {
       title: "Amount",
@@ -271,8 +275,7 @@ const Dashboard = () => {
   };
 
   const handelSaveExcel = async () => {
-    const rowToSave = selectedRow;
-    const buffer = await generateExcekFile(rowToSave);
+    const buffer = await generateExcekFile(selectedRow);
     const blob = new Blob([buffer], { type: "application/octet-stream" });
     FileSaver.saveAs(blob, `${today}.xlsx`);
   };

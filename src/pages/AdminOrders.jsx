@@ -1,14 +1,21 @@
 import { Button, DatePicker, Flex, Select } from "antd";
 import Title from "antd/es/typography/Title";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import NewTableAdminOrder from "../components/orders/NewTableAdminOrder";
 import { useDeleteOrder } from "../components/service/admin/orders/useDeleteOrder";
 import { useUpdateStatusOrder } from "../components/service/admin/orders/useUpdateStatusOrder";
+import { useReactToPrint } from "react-to-print";
+import PrintModal from "../components/modal/PrintModal";
 
 const AdminOrders = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [printType, setPrintType] = useState("");
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRow, setSelectedRow] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const printAreaRef = useRef();
 
   const updateStatusOrderMutation = useUpdateStatusOrder();
 
@@ -36,12 +43,38 @@ const AdminOrders = () => {
     selectedRowId.forEach((orderId) => {
       deleteOrderMutation.mutate(orderId);
     });
+    setSelectedRowKeys([]);
     setSelectedRow([]);
   };
+  console.log(selectedRowKeys);
   console.log(selectedRow);
+
+  const handleOpenModal = (typeModal) => {
+    setIsModalOpen(true);
+    setPrintType(typeModal);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setPrintType();
+  };
+
+  const handleOnPrint = useReactToPrint({
+    content: () => printAreaRef.current,
+  });
+
+  console.log(selectedDate);
 
   return (
     <>
+      <PrintModal
+        isOpen={isModalOpen}
+        onCancel={handleCloseModal}
+        selectedRow={selectedRow}
+        printAreaRef={printAreaRef}
+        onConfirm={handleOnPrint}
+        typeModal={printType}
+      />
       <Title level={1}>All Orders</Title>
       <Flex vertical gap="middle">
         <div className="flex items-end w-full gap-6">
@@ -71,7 +104,7 @@ const AdminOrders = () => {
               <Button
                 type="primary"
                 className="w-3/5 text-white bg-primary"
-                onClick={() => handleUpdateStatusSelectedRow(selectedRow)}
+                onClick={() => handleUpdateStatusSelectedRow(selectedRowKeys)}
               >
                 Update Selected Order Status
               </Button>{" "}
@@ -80,7 +113,7 @@ const AdminOrders = () => {
                 type="primary"
                 danger
                 className="w-2/5 text-white"
-                onClick={() => handleDeleteSelectedRow(selectedRow)}
+                onClick={() => handleDeleteSelectedRow(selectedRowKeys)}
               >
                 Delete Selected Order
               </Button>
@@ -89,8 +122,10 @@ const AdminOrders = () => {
         </div>
         <div>
           <NewTableAdminOrder
-            selectedRow={selectedRow}
+            setSelectedRowKeys={setSelectedRowKeys}
             setSelectedRow={setSelectedRow}
+            selectedRow={selectedRow}
+            onOpenModalPrint={() => handleOpenModal("printPageOrders")}
             selectedDate={selectedDate}
             selectedStatus={selectedStatus}
           />
