@@ -1,12 +1,7 @@
 import Title from "antd/es/typography/Title";
 import Modal from "../shared/Modal";
 import { Button, Flex, Input, InputNumber, Upload, Image, Form } from "antd";
-import {
-  AlipayOutlined,
-  BankOutlined,
-  ShoppingCartOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { AlipayOutlined, BankOutlined, ShoppingCartOutlined, UploadOutlined } from "@ant-design/icons";
 import { useContext, useEffect, useState } from "react";
 import { useCreateOrder } from "../service/user/order/useCreateOrder";
 import { AuthContext } from "../../context/AuthContext";
@@ -71,13 +66,13 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   <Input
                     variant="filled"
                     placeholder="Bank Name"
-                    className="flex items-center w-full h-12 max-sm:h-11 px-4  bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
+                    className="flex items-center w-full h-12 max-sm:h-11 px-4 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
                 <Form.Item noStyle name="bank_number">
                   <Input
                     placeholder="Bank Number"
-                    className="flex items-center w-full h-12 max-sm:h-11 px-4  bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
+                    className="flex items-center w-full h-12 max-sm:h-11 px-4 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                     type="number"
                     variant="filled"
                   />
@@ -86,36 +81,40 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   <Input
                     variant="filled"
                     placeholder="Bank Branch"
-                    className="flex items-center w-full h-12 px-4 max-sm:h-11  bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
+                    className="flex items-center w-full h-12 px-4 max-sm:h-11 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
                 <Form.Item noStyle name="account_name">
                   <Input
                     variant="filled"
                     placeholder="Account Name"
-                    className="flex items-center w-full h-12 px-4 max-sm:h-11  bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
+                    className="flex items-center w-full h-12 px-4 max-sm:h-11 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
                 <Flex justify="space-between">
                   <Form.Item noStyle name="file">
-                    <Upload
-                      listType="picture"
-                      className="w-full"
-                      fileList={imageList}
-                      onPreview={handlePreview}
-                      onChange={handleChange}
-                      beforeUpload={() => false}
-                      maxCount={1}
-                      showUploadList={{
-                        showPreviewIcon: true,
-                        showRemoveIcon: true,
-                        showDownloadIcon: false,
-                      }}
-                    >
-                      <Flex gap="small" align="center">
-                        <Button icon={<UploadOutlined />}>Invoice</Button>
-                      </Flex>
-                    </Upload>
+                    <div className="flex bg-[#1F222B] w-full p-6 max-sm:p-4 rounded-md">
+                      <Upload
+                        listType="picture"
+                        className="upload-payment-modal-user w-full"
+                        fileList={imageList}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                        beforeUpload={() => false}
+                        maxCount={1}
+                        showUploadList={{
+                          showPreviewIcon: true,
+                          showRemoveIcon: true,
+                          showDownloadIcon: false,
+                        }}
+                      >
+                        <Flex gap="small" align="center">
+                          <Button icon={<UploadOutlined />} className="max-sm:text-xs">
+                            Invoice
+                          </Button>
+                        </Flex>
+                      </Upload>
+                    </div>
                   </Form.Item>
 
                   {previewImage && (
@@ -126,8 +125,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       preview={{
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
-                        afterOpenChange: (visible) =>
-                          !visible && setPreviewImage(""),
+                        afterOpenChange: (visible) => !visible && setPreviewImage(""),
                       }}
                       src={previewImage}
                     />
@@ -137,52 +135,55 @@ const PaymentModal = ({ onClose, typeModal }) => {
             </Form>
           ) : (
             <Form>
-              <Flex vertical gap="middle">
+              <Flex vertical gap="small">
                 <Form.Item noStyle>
                   <Input
                     variant="filled"
-                    placeholder="Nomor / Email"
-                    className="flex items-center w-full h-12 px-2"
+                    placeholder="Number Phone / Email"
+                    className="flex items-center w-full h-12 max-sm:h-11 px-4 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
                 <Form.Item noStyle>
                   <Input
                     variant="filled"
-                    placeholder="Nama"
-                    className="flex items-center w-full h-12 px-2"
+                    placeholder="Name"
+                    className="flex items-center w-full h-12 max-sm:h-11 px-4 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
                 <Form.Item noStyle>
                   <InputNumber
                     placeholder="Nominal"
-                    className="flex items-center w-full h-12 "
+                    className="input-number-custom w-full p-2 max-sm:p-1.5 placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:!border-gray-700 hover:bg-[#1F222B] active:bg-[#1F222B] !bg-[#1F222B] !text-white !hover:text-white !active:text-white"
                     variant="filled"
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                    formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
+                    parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
                   />
                 </Form.Item>
                 <Flex justify="space-between">
                   <Form.Item noStyle>
-                    <Upload
-                      listType="picture"
-                      className="w-full"
-                      fileList={imageList}
-                      onPreview={handlePreview}
-                      onChange={handleChange}
-                      beforeUpload={() => false}
-                      maxCount={1}
-                      showUploadList={{
-                        showPreviewIcon: true,
-                        showRemoveIcon: true,
-                        showDownloadIcon: false,
-                      }}
-                    >
-                      <Flex gap="small" align="center">
-                        <Button icon={<UploadOutlined />}>QR code</Button>
-                        <span className="text-[#9CA3AF] text-sm">
-                          {"(Optional)"}
-                        </span>
-                      </Flex>
-                    </Upload>
+                    <div className="flex bg-[#1F222B] w-full p-6 max-sm:p-4 rounded-md">
+                      <Upload
+                        listType="picture"
+                        className="upload-payment-modal-user w-full"
+                        fileList={imageList}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                        beforeUpload={() => false}
+                        maxCount={1}
+                        showUploadList={{
+                          showPreviewIcon: true,
+                          showRemoveIcon: true,
+                          showDownloadIcon: false,
+                        }}
+                      >
+                        <Flex gap="small" align="center">
+                          <Button icon={<UploadOutlined />} className="hover:!border-black hover:!text-black max-sm:text-xs">
+                            QR code
+                          </Button>
+                          <span className="text-[#9CA3AF] text-sm max-sm:text-xs">{"(Optional)"}</span>
+                        </Flex>
+                      </Upload>
+                    </div>
                   </Form.Item>
 
                   {previewImage && (
@@ -193,8 +194,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       preview={{
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
-                        afterOpenChange: (visible) =>
-                          !visible && setPreviewImage(""),
+                        afterOpenChange: (visible) => !visible && setPreviewImage(""),
                       }}
                       src={previewImage}
                     />
@@ -215,18 +215,16 @@ const PaymentModal = ({ onClose, typeModal }) => {
                 variant="filled"
                 prefix="¥"
                 min={0}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""
-                }
+                formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
                 parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
               />
             </Form.Item>
           </Form>
         </div>
-        <div className="flex p-6 gap-2 bg-[#111111] rounded-t-2xl w-full">
+        <div className="flex p-6 max-sm:p-4 gap-2 bg-[#111111] rounded-t-2xl w-full">
           <Button
             onClick={onClose}
-            className="p-6 bg-[#F3F4F6] w-[35%] rounded-full text-sm font-bold text-black flex justify-center items-center"
+            className="p-6 !bg-[#F3F4F6] w-[35%] rounded-full text-sm font-semibold text-black flex justify-center items-center hover:!border-white hover:!bg-transparent hover:!text-white"
           >
             Cancel
           </Button>
@@ -239,9 +237,9 @@ const PaymentModal = ({ onClose, typeModal }) => {
             <Form.Item noStyle className="w-full">
               <Button
                 htmlType="submit"
-                className="flex items-center justify-center w-full p-6 text-sm font-bold text-white bg-blue-500 rounded-full "
+                className="flex items-center justify-center w-full p-6 text-sm font-bold text-white bg-primary border-primary rounded-full hover:!border-blue-700 hover:!text-white hover:!bg-blue-700"
               >
-                <ShoppingCartOutlined className="text-2xl" />
+                <ShoppingCartOutlined className="text-xl -mt-1" />
                 Pay Now
               </Button>
             </Form.Item>

@@ -1,4 +1,4 @@
-import { ClockCircleOutlined, UploadOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, InfoCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import Status from "../components/shared/Status";
 import { Button, Image, Input, Upload } from "antd";
 import Title from "antd/es/typography/Title";
@@ -36,8 +36,8 @@ const OrderDetail = () => {
   const handleChange = ({ fileList }) => setImageList(fileList);
 
   return (
-    <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-5 mb-24">
-      <h1 className="p-5 font-bold bg-white">Order Detail</h1>
+    <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-5 mb-24 px-3">
+      <h1 className="p-5 font-bold bg-white rounded-b-3xl">Order Detail</h1>
 
       <div className="flex flex-col gap-6 p-6 text-sm font-normal bg-white rounded-3xl">
         <div className="flex justify-between">
@@ -64,10 +64,7 @@ const OrderDetail = () => {
 
       {order.status === "Pending" ? (
         <div className="flex justify-between p-6 bg-[#FECACA] rounded-3xl border-2 border-dashed border-[#DC2626]">
-          <p className="text-xs text-[#DC2626]">
-            Upload payment proof before time runs out to avoid order
-            cancellation.
-          </p>
+          <p className="text-xs text-[#DC2626]">Upload payment proof before time runs out to avoid order cancellation.</p>
           <div className="flex items-center gap-2">
             <ClockCircleOutlined className="text-[#DC2626]" />
             <p className="text-xs text-[#DC2626] font-bold">10:00</p>
@@ -78,7 +75,11 @@ const OrderDetail = () => {
       )}
 
       <div className="p-6 bg-white rounded-3xl">
-        <h1 className="mb-4">Payment Proof</h1>
+        <h1>Payment Proof</h1>
+        <small className="flex gap-1 items-center my-2 max-sm:items-start text-[#9CA3AF]">
+          <InfoCircleOutlined className="max-sm:mt-1" />
+          If you need to upload a new payment proof, click the button below!
+        </small>
         <div className="flex">
           <Upload
             listType="picture"
@@ -128,34 +129,16 @@ const OrderDetail = () => {
               <h1>Payment Information</h1>
             </div>
             <Input placeholder="Bank Name" value={order.bank_detail} disabled />
-            <Input
-              placeholder="Bank Number"
-              value={order.bank_number}
-              disabled
-            />
-            <Input
-              placeholder="Bank Branch"
-              value={order.bank_branch}
-              disabled
-            />
-            <Input
-              placeholder="Account Name"
-              value={order.account_name}
-              disabled
-            />
+            <Input placeholder="Bank Number" value={order.bank_number} disabled />
+            <Input placeholder="Bank Branch" value={order.bank_branch} disabled />
+            <Input placeholder="Account Name" value={order.account_name} disabled />
           </>
         )}
       </div>
 
       <div className="flex items-center justify-between p-6 bg-white rounded-3xl">
         <span className="font-bold">Total Paid</span>
-        <span className="font-bold">
-          {isPending
-            ? "-"
-            : `${formatRupiah(
-                Number(order.amount) * (stock && stock.payload[0].price)
-              )}`}
-        </span>
+        <span className="font-bold">{isPending ? "-" : `${formatRupiah(Number(order.amount) * (stock && stock.payload[0].price))}`}</span>
       </div>
 
       {/* <button className="p-6 bg-[#1367FF] text-white rounded">Payment Done</button> */}

@@ -7,9 +7,6 @@
   box-sizing: border-box;
   font-family: "Plus Jakarta Sans", sans-serif !important;
 }
-/* .ant-input-number-handler-wrap {
-  display: none;
-} */
 
 .ant-input-number-input::placeholder {
   color: #9ca3af !important;
@@ -61,3 +58,11 @@ input[type="number"] {
 /* .hover\:bg-\[\#1F222B\]:hover {
   background-color: aqua !important;
 } */
+
+.upload-payment-modal-user .ant-upload-list-item-name,
+.upload-payment-modal-user .ant-upload-list-item-actions .ant-btn-icon span.anticon.anticon-delete {
+  @apply !text-white !text-wrap max-sm:!text-xs !text-sm;
+  /* color: white !important;
+  text-wrap: wrap !important;
+  font-size: 12px !important; */
+}
