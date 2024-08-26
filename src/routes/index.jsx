@@ -162,7 +162,11 @@ const routes = [
             children: [{ index: true, element: <Dashboard /> }],
           },
           {
-            path: "/orders",
+            path: "/orders-bank",
+            children: [{ index: true, element: <AdminOrders /> }],
+          },
+          {
+            path: "/orders-ali",
             children: [{ index: true, element: <AdminOrders /> }],
           },
         ],

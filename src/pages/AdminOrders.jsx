@@ -6,6 +6,8 @@ import { useDeleteOrder } from "../components/service/admin/orders/useDeleteOrde
 import { useUpdateStatusOrder } from "../components/service/admin/orders/useUpdateStatusOrder";
 import { useReactToPrint } from "react-to-print";
 import PrintModal from "../components/modal/PrintModal";
+import { useLocation } from "react-router-dom";
+import TableAdminOrderAli from "../components/orders/TableAdminOrderAli";
 
 const AdminOrders = () => {
   const [selectedDate, setSelectedDate] = useState("");
@@ -14,6 +16,10 @@ const AdminOrders = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRow, setSelectedRow] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const location = useLocation();
+  const path = location.pathname;
+  console.log(path);
 
   const printAreaRef = useRef();
 
@@ -75,7 +81,7 @@ const AdminOrders = () => {
         onConfirm={handleOnPrint}
         typeModal={printType}
       />
-      <Title level={1}>All Orders</Title>
+      <Title level={1}>{`Buy ${path === "/orders-bank" ? "Bank" : "Ali"} Orders`}</Title>
       <Flex vertical gap="middle">
         <div className="flex items-end w-full gap-6">
           <div className="flex w-1/2 gap-5">
@@ -84,15 +90,8 @@ const AdminOrders = () => {
               <DatePicker onChange={onChangeDate} />
             </div>
             <div className="flex flex-col w-2/5 gap-2">
-              <h3 className="text-sm font-medium text-nowrap">
-                Update Selected Order
-              </h3>
-              <Select
-                placeholder="Select order"
-                className="w-full"
-                allowClear
-                onChange={handleChangeStatus}
-              >
+              <h3 className="text-sm font-medium text-nowrap">Update Selected Order</h3>
+              <Select placeholder="Select order" className="w-full" allowClear onChange={handleChangeStatus}>
                 <Select.Option value="Complete">Complete</Select.Option>
                 <Select.Option value="Cancel">Cancel</Select.Option>
               </Select>
@@ -101,34 +100,36 @@ const AdminOrders = () => {
 
           <div className="flex flex-col w-1/2 gap-3">
             <div className="flex items-center justify-between w-full gap-2">
-              <Button
-                type="primary"
-                className="w-3/5 text-white bg-primary"
-                onClick={() => handleUpdateStatusSelectedRow(selectedRowKeys)}
-              >
+              <Button type="primary" className="w-3/5 text-white bg-primary" onClick={() => handleUpdateStatusSelectedRow(selectedRowKeys)}>
                 Update Selected Order Status
               </Button>{" "}
               |
-              <Button
-                type="primary"
-                danger
-                className="w-2/5 text-white"
-                onClick={() => handleDeleteSelectedRow(selectedRowKeys)}
-              >
+              <Button type="primary" danger className="w-2/5 text-white" onClick={() => handleDeleteSelectedRow(selectedRowKeys)}>
                 Delete Selected Order
               </Button>
             </div>
           </div>
         </div>
         <div>
-          <NewTableAdminOrder
-            setSelectedRowKeys={setSelectedRowKeys}
-            setSelectedRow={setSelectedRow}
-            selectedRow={selectedRow}
-            onOpenModalPrint={() => handleOpenModal("printPageOrders")}
-            selectedDate={selectedDate}
-            selectedStatus={selectedStatus}
-          />
+          {path === "/orders-bank" ? (
+            <NewTableAdminOrder
+              setSelectedRowKeys={setSelectedRowKeys}
+              setSelectedRow={setSelectedRow}
+              selectedRow={selectedRow}
+              onOpenModalPrint={() => handleOpenModal("printPageOrders")}
+              selectedDate={selectedDate}
+              selectedStatus={selectedStatus}
+            />
+          ) : (
+            <TableAdminOrderAli
+              setSelectedRowKeys={setSelectedRowKeys}
+              setSelectedRow={setSelectedRow}
+              selectedRow={selectedRow}
+              onOpenModalPrint={() => handleOpenModal("printPageOrders")}
+              selectedDate={selectedDate}
+              selectedStatus={selectedStatus}
+            />
+          )}
         </div>
       </Flex>
     </>

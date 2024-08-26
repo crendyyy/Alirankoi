@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import Title from "antd/es/typography/Title";
 import logoKoi from "/logo/logo-koi.png";
-import { FileDoneOutlined, HomeOutlined } from "@ant-design/icons";
+import { AlipayOutlined, BankOutlined, FileDoneOutlined, HomeOutlined } from "@ant-design/icons";
 
 const Sidebar = () => {
   return (
@@ -15,8 +15,12 @@ const Sidebar = () => {
           <HomeOutlined className="text-xl" /> Dashboard
         </Menu>
 
-        <Menu link="/orders">
-          <FileDoneOutlined className="text-xl" /> Orders
+        <Menu link="/orders-bank">
+          <BankOutlined className="text-xl" /> Buy Bank Orders
+        </Menu>
+
+        <Menu link="/orders-ali">
+          <AlipayOutlined className="text-xl" /> Buy Ali Orders
         </Menu>
       </div>
     </>
