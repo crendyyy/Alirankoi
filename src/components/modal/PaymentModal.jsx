@@ -1,7 +1,12 @@
 import Title from "antd/es/typography/Title";
 import Modal from "../shared/Modal";
 import { Button, Flex, Input, InputNumber, Upload, Image, Form } from "antd";
-import { AlipayOutlined, BankOutlined, ShoppingCartOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  AlipayOutlined,
+  BankOutlined,
+  ShoppingCartOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { useContext, useEffect, useState } from "react";
 import { useCreateOrder } from "../service/user/order/useCreateOrder";
 import { AuthContext } from "../../context/AuthContext";
@@ -96,7 +101,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     <div className="flex bg-[#1F222B] w-full p-6 max-sm:p-4 rounded-md">
                       <Upload
                         listType="picture"
-                        className="upload-payment-modal-user w-full"
+                        className="w-full upload-payment-modal-user"
                         fileList={imageList}
                         onPreview={handlePreview}
                         onChange={handleChange}
@@ -109,7 +114,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
                         }}
                       >
                         <Flex gap="small" align="center">
-                          <Button icon={<UploadOutlined />} className="max-sm:text-xs">
+                          <Button
+                            icon={<UploadOutlined />}
+                            className="max-sm:text-xs"
+                          >
                             Invoice
                           </Button>
                         </Flex>
@@ -125,7 +133,8 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       preview={{
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
-                        afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                        afterOpenChange: (visible) =>
+                          !visible && setPreviewImage(""),
                       }}
                       src={previewImage}
                     />
@@ -155,7 +164,11 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     placeholder="Nominal"
                     className="input-number-custom w-full p-2 max-sm:p-1.5 placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:!border-gray-700 hover:bg-[#1F222B] active:bg-[#1F222B] !bg-[#1F222B] !text-white !hover:text-white !active:text-white"
                     variant="filled"
-                    formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
+                    formatter={(value) =>
+                      value
+                        ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        : ""
+                    }
                     parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
                   />
                 </Form.Item>
@@ -164,7 +177,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     <div className="flex bg-[#1F222B] w-full p-6 max-sm:p-4 rounded-md">
                       <Upload
                         listType="picture"
-                        className="upload-payment-modal-user w-full"
+                        className="w-full upload-payment-modal-user"
                         fileList={imageList}
                         onPreview={handlePreview}
                         onChange={handleChange}
@@ -177,10 +190,15 @@ const PaymentModal = ({ onClose, typeModal }) => {
                         }}
                       >
                         <Flex gap="small" align="center">
-                          <Button icon={<UploadOutlined />} className="hover:!border-black hover:!text-black max-sm:text-xs">
+                          <Button
+                            icon={<UploadOutlined />}
+                            className="hover:!border-black hover:!text-black max-sm:text-xs"
+                          >
                             QR code
                           </Button>
-                          <span className="text-[#9CA3AF] text-sm max-sm:text-xs">{"(Optional)"}</span>
+                          <span className="text-[#9CA3AF] text-sm max-sm:text-xs">
+                            {"(Optional)"}
+                          </span>
                         </Flex>
                       </Upload>
                     </div>
@@ -194,7 +212,8 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       preview={{
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
-                        afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                        afterOpenChange: (visible) =>
+                          !visible && setPreviewImage(""),
                       }}
                       src={previewImage}
                     />
@@ -215,7 +234,9 @@ const PaymentModal = ({ onClose, typeModal }) => {
                 variant="filled"
                 prefix="¥"
                 min={0}
-                formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
+                formatter={(value) =>
+                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""
+                }
                 parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
               />
             </Form.Item>
@@ -239,7 +260,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                 htmlType="submit"
                 className="flex items-center justify-center w-full p-6 text-sm font-bold text-white bg-primary border-primary rounded-full hover:!border-blue-700 hover:!text-white hover:!bg-blue-700"
               >
-                <ShoppingCartOutlined className="text-xl -mt-1" />
+                <ShoppingCartOutlined className="-mt-1 text-xl" />
                 Pay Now
               </Button>
             </Form.Item>
