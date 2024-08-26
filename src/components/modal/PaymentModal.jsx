@@ -12,7 +12,7 @@ import { useCreateOrder } from "../service/user/order/useCreateOrder";
 import { AuthContext } from "../../context/AuthContext";
 
 const PaymentModal = ({ onClose, typeModal }) => {
-  const [paymentType, setPaymentType] = useState("bank");
+  const [paymentType, setPaymentType] = useState("Bank");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [imageList, setImageList] = useState([]);
@@ -75,11 +75,11 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   />
                 </Form.Item>
                 <Form.Item noStyle name="bank_number">
-                  <InputNumber
+                  <Input
                     placeholder="Bank Number"
-                    className="w-full p-2  max-sm:p-1.5 input-number-custom"
+                    className="flex items-center w-full h-12 max-sm:h-11 px-4  bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
+                    type="number"
                     variant="filled"
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                   />
                 </Form.Item>
                 <Form.Item noStyle name="bank_branch">
@@ -97,7 +97,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   />
                 </Form.Item>
                 <Flex justify="space-between">
-                  {/* <Form.Item noStyle name="file">
+                  <Form.Item noStyle name="file">
                     <Upload
                       listType="picture"
                       className="w-full"
@@ -116,7 +116,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                         <Button icon={<UploadOutlined />}>Invoice</Button>
                       </Flex>
                     </Upload>
-                  </Form.Item> */}
+                  </Form.Item>
 
                   {previewImage && (
                     <Image
@@ -211,7 +211,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
           <Form form={formBank}>
             <Form.Item noStyle name="amount">
               <InputNumber
-                className="flex items-center w-full h-12 px-4 max-sm:h-11 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B] active:bg-[#1F222B] !bg-[#1F222B] !text-white !hover:text-white !active:text-white"
+                className="input-number-custom  flex items-center w-full h-12 px-4 max-sm:h-11 placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B] active:bg-[#1F222B] !bg-[#1F222B] !text-white !hover:text-white !active:text-white"
                 variant="filled"
                 prefix="¥"
                 min={0}

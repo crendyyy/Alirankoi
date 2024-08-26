@@ -14,43 +14,41 @@
 .ant-input-number-input::placeholder {
   color: #9ca3af !important;
 }
-
-/* Mengatur background dan text color secara spesifik untuk InputNumber */
-.ant-input-number,
-.ant-input-number-input,
-.ant-input-number-input-wrap input {
-  background-color: #1f222b !important; /* Background tetap gelap */
-  color: white !important; /* Teks tetap putih */
-  border: none !important; /* Menghilangkan border putih */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-.ant-input-number-input {
-  background-color: #1f222b !important; /* Background tetap gelap */
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
-.ant-input-number-focused {
-  background-color: #1f222b !important; /* Background tetap gelap saat fokus */
-}
-
-.ant-input-number:hover .ant-input-number-input,
-.ant-input-number:focus .ant-input-number-input {
-  background-color: #1f222b !important; /* Background tetap gelap saat hover atau fokus */
-  color: white !important; /* Teks tetap putih */
-}
-
-.ant-input-number-input-wrap input {
+.input-number-custom .ant-input-number-input,
+.input-number-custom .ant-input-number-input:focus,
+.input-number-custom .ant-input-number-input:hover,
+.input-number-custom .ant-input-number-input:active {
   background-color: #1f222b !important; /* Background tetap gelap */
   color: white !important; /* Teks tetap putih */
 }
 
-.ant-input-number-input-wrap {
+.input-number-custom .ant-input-number-input-wrap input {
   background-color: #1f222b !important; /* Background tetap gelap */
+  color: white !important; /* Teks tetap putih */
 }
 
-.ant-input-number:hover input,
-.ant-input-number:focus input {
-  background-color: #1f222b !important; /* Background tetap gelap saat hover atau fokus */
-  color: white !important; /* Teks tetap putih */
+.input-number-custom .ant-input-number-focused .ant-input-number-input,
+.input-number-custom .ant-input-number-hover .ant-input-number-input {
+  background-color: #1f222b !important;
+  color: white !important;
+}
+
+.input-number-custom .ant-input-number:hover input,
+.input-number-custom .ant-input-number:focus input,
+.input-number-custom .ant-input-number:active input {
+  background-color: #1f222b !important;
+  color: white !important;
 }
 
 /* .ant-input-number-input:hover {

@@ -49,8 +49,8 @@ const Home = () => {
       {isModalopen && (
         <PaymentModal onClose={closeModal} typeModal={paymentType} />
       )}
-      <div className="flex justify-between items-center">
-        <h1 className="font-semibold text-xl text-black max-sm:text-base">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-black max-sm:text-base">
           Hello, {auth.user?.username} 👋
         </h1>
         <LogoutButton onClick={logout} />
@@ -59,17 +59,17 @@ const Home = () => {
       <div className="flex w-full gap-6 max-sm:gap-3">
         {/* Buy Bank */}
         <div className="flex w-1/2 flex-col m-auto gap-8 bg-[#11CD9F] p-6 max-sm:py-4 max-sm:px-3 max-sm:gap-6 max-sm:rounded-[18px] rounded-[32px] ">
-          <div className="flex w-full flex-col gap-6 max-sm:gap-3">
-            <div className="flex flex-col gap-2 max-sm:gap-0 w-full">
+          <div className="flex flex-col w-full gap-6 max-sm:gap-3">
+            <div className="flex flex-col w-full gap-2 max-sm:gap-0">
               <span className="text-sm font-normal text-white max-sm:text-xs">
                 Current Exchange Rate
               </span>
               {isPending && <div className="">-</div>}
-              <span className="text-3xl max-sm:text-xl font-bold text-white">
+              <span className="text-3xl font-bold text-white max-sm:text-xl">
                 {formatRupiah(stock && stock.payload[0].price)}
               </span>
             </div>
-            <div className="flex w-full max-sm:p-2 gap-2 p-4 items-center bg-white rounded-2xl ">
+            <div className="flex items-center w-full gap-2 p-4 bg-white max-sm:p-2 rounded-2xl ">
               <div className="p-2 max-sm:p-1 flex justify-center items-center rounded-xl text-black bg-[#11CD9F]">
                 <WalletIcon className="text-2xl" />
               </div>
@@ -94,17 +94,17 @@ const Home = () => {
 
         {/* Buy Ali */}
         <div className="flex w-1/2 flex-col m-auto gap-8 bg-[#0099E5] p-6 max-sm:py-4 max-sm:px-3 max-sm:gap-6 max-sm:rounded-[18px] rounded-[32px] ">
-          <div className="flex w-full flex-col gap-6 max-sm:gap-3">
-            <div className="flex flex-col gap-2 max-sm:gap-0 w-full">
+          <div className="flex flex-col w-full gap-6 max-sm:gap-3">
+            <div className="flex flex-col w-full gap-2 max-sm:gap-0">
               <span className="text-sm font-normal text-white max-sm:text-xs">
                 Current Exchange Rate
               </span>
               {isPending && <div className="">-</div>}
-              <span className="text-3xl max-sm:text-xl font-bold text-white">
+              <span className="text-3xl font-bold text-white max-sm:text-xl">
                 {formatRupiah(stock && stock.payload[0].price)}
               </span>
             </div>
-            <div className="flex w-full max-sm:p-2 gap-2 p-4 items-center bg-white rounded-2xl ">
+            <div className="flex items-center w-full gap-2 p-4 bg-white max-sm:p-2 rounded-2xl ">
               <div className="p-2 max-sm:p-1 flex justify-center items-center rounded-xl text-white bg-[#0099E5]">
                 <WalletIcon className="text-2xl" />
               </div>
