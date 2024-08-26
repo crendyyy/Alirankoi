@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import { UserAddOutlined } from "@ant-design/icons";
-import { Button, Flex, Form, InputNumber, Switch, Table } from "antd";
+import { PlusCircleOutlined, UserAddOutlined } from "@ant-design/icons";
+import { Button, Flex, Form, InputNumber, Modal, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
@@ -18,6 +18,7 @@ import { useGetOrders } from "../components/service/admin/orders/useGetOrders";
 import dayjs from "dayjs";
 import PrintModal from "../components/modal/PrintModal";
 import FileSaver from "file-saver";
+import LogoutButton from "../components/shared/LogoutButton";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -262,18 +263,29 @@ const Dashboard = () => {
         printAreaRef={printAreaRef}
         onConfirm={handleOnPrint}
       />
-      <Flex vertical gap={4}>
-        <Title style={{ margin: 0 }} level={2}>
-          Admin
-        </Title>
-        <Title style={{ margin: 0 }} level={2}>
-          Dashboard
-        </Title>
-      </Flex>
+      <div className="flex justify-between items-start">
+        <Flex vertical gap={4}>
+          <Title style={{ margin: 0 }} level={2}>
+            Admin
+          </Title>
+          <Title style={{ margin: 0 }} level={2}>
+            Dashboard
+          </Title>
+        </Flex>
+        <LogoutButton />
+      </div>
       <Flex justify="space-between">
-        <Button type="primary" icon={<UserAddOutlined />} size="large" onClick={() => navigate("/register")} className="rounded-xl w-36">
-          Add User
-        </Button>
+        <div className="flex gap-2">
+          <button onClick={() => navigate("/register")} className="rounded-xl py-2 px-4 text-white bg-primary flex items-center gap-2">
+            <UserAddOutlined className="text-lg" />
+            Add User
+          </button>
+          {/* BUTTON MANUAL ORDER */}
+          <button onClick="" className="rounded-xl bg-black py-2 px-4 text-white flex items-center gap-2">
+            <PlusCircleOutlined className="text-lg" />
+            Manual Order
+          </button>
+        </div>
         <Flex gap={24}>
           <div className="flex items-center h-full gap-4 px-4 py-2 bg-white rounded-xl">
             <Title level={5} style={{ margin: 0 }}>
