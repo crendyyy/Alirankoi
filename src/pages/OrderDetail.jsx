@@ -69,10 +69,12 @@ const OrderDetail = () => {
   const handleChange = ({ fileList }) => setImageList(fileList);
 
   return (
-    <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-5 mb-24 px-3">
-      <h1 className="p-5 font-bold bg-white rounded-b-3xl">Order Detail</h1>
+    <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-4 max-sm:gap-3.5 mb-24 px-3">
+      <h1 className="p-6 max-sm:p-5 font-bold bg-white rounded-b-3xl">
+        Order Detail
+      </h1>
 
-      <div className="flex flex-col gap-6 p-6 text-sm font-normal bg-white rounded-3xl">
+      <div className="flex flex-col gap-6 p-6 max-sm:p-5 text-sm font-normal bg-white rounded-3xl max-sm:text-[13px]">
         <div className="flex justify-between">
           <p>Status</p>
           <Status status={order.status} />
@@ -96,8 +98,8 @@ const OrderDetail = () => {
       </div>
 
       {order.status === "Pending" ? (
-        <div className="flex justify-between p-6 bg-[#FECACA] rounded-3xl border-2 border-dashed border-[#DC2626]">
-          <p className="text-xs text-[#DC2626]">
+        <div className="flex justify-between p-6 max-sm:p-5 bg-[#FECACA] rounded-3xl border-2 border-dashed border-[#DC2626] gap-2">
+          <p className="max-sm:text-xs text-sm text-[#DC2626]">
             Upload payment proof before time runs out to avoid order
             cancellation.
           </p>
@@ -110,8 +112,8 @@ const OrderDetail = () => {
         ""
       )}
 
-      <div className="p-6 bg-white rounded-3xl">
-        <h1>Payment Proof</h1>
+      <div className="p-6 max-sm:p-5 bg-white rounded-3xl">
+        <h1 className="max-sm:text-sm font-bold text-base">Payment Proof</h1>
         <small className="flex gap-1 items-center my-2 max-sm:items-start text-[#9CA3AF]">
           <InfoCircleOutlined className="max-sm:mt-1" />
           If you need to upload a new payment proof, click the button below!
@@ -148,11 +150,13 @@ const OrderDetail = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-6 p-6 text-sm font-normal bg-white rounded-3xl">
+      <div className="flex flex-col gap-6 p-6 max-sm:p-5 text-sm font-normal bg-white rounded-3xl">
         {order.status === "Pending" ? (
           <>
             <div className="flex items-center justify-between">
-              <h1>Payment Information</h1>
+              <h1 className="max-sm:text-sm font-bold text-base">
+                Payment Information
+              </h1>
               {isEdit ? (
                 <Form form={formEdit} onFinish={handleSubmitEdit}>
                   <Form.Item noStyle>
@@ -174,6 +178,7 @@ const OrderDetail = () => {
 
             <Form
               layout="vertical"
+              className="flex flex-col"
               form={formEdit}
               initialValues={{
                 bank_detail: order.bank_detail,
@@ -183,17 +188,49 @@ const OrderDetail = () => {
               }}
               onFinish={handleSubmitEdit}
             >
-              <Form.Item label="Bank Name" name="bank_detail">
-                <Input placeholder="Bank Name" disabled={!isEdit} />
+              <Form.Item
+                label="Bank Name"
+                name="bank_detail"
+                className="font-semibold !text-gray-500"
+              >
+                <Input
+                  placeholder="Bank Name"
+                  disabled={!isEdit}
+                  className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border"
+                />
               </Form.Item>
-              <Form.Item label="Bank Number" name="bank_number">
-                <Input placeholder="Bank Number" disabled={!isEdit} />
+              <Form.Item
+                label="Bank Number"
+                name="bank_number"
+                className="font-semibold !text-xs"
+              >
+                <Input
+                  placeholder="Bank Number"
+                  disabled={!isEdit}
+                  className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border"
+                />
               </Form.Item>
-              <Form.Item label="Bank Branch" name="bank_branch">
-                <Input placeholder="Bank Branch" disabled={!isEdit} />
+              <Form.Item
+                label="Bank Branch"
+                name="bank_branch"
+                className="font-semibold"
+              >
+                <Input
+                  placeholder="Bank Branch"
+                  disabled={!isEdit}
+                  className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border"
+                />
               </Form.Item>
-              <Form.Item label="Account Name" name="account_name">
-                <Input placeholder="Account Name" disabled={!isEdit} />
+              <Form.Item
+                label="Account Name"
+                name="account_name"
+                className="font-semibold"
+              >
+                <Input
+                  placeholder="Account Name"
+                  disabled={!isEdit}
+                  className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border"
+                />
               </Form.Item>
             </Form>
           </>
@@ -222,7 +259,7 @@ const OrderDetail = () => {
         )}
       </div>
 
-      <div className="flex items-center justify-between p-6 bg-white rounded-3xl">
+      <div className="flex items-center justify-between p-6 max-sm:p-5 bg-white rounded-3xl max-sm:text-sm">
         <span className="font-bold">Total Paid</span>
         <span className="font-bold">
           {isPending
@@ -234,9 +271,9 @@ const OrderDetail = () => {
       </div>
 
       {/* <button className="p-6 bg-[#1367FF] text-white rounded">Payment Done</button> */}
-      <Button type="primary" className="rounded-2xl" size="large">
+      <button className="rounded-full bg-primary text-white py-3 px-2 max-sm:text-sm font-semibold">
         Payment Done
-      </Button>
+      </button>
     </div>
   );
 };

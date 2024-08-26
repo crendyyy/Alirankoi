@@ -60,9 +60,17 @@ input[type="number"] {
 } */
 
 .upload-payment-modal-user .ant-upload-list-item-name,
-.upload-payment-modal-user .ant-upload-list-item-actions .ant-btn-icon span.anticon.anticon-delete {
+.upload-payment-modal-user
+  .ant-upload-list-item-actions
+  .ant-btn-icon
+  span.anticon.anticon-delete {
   @apply !text-white !text-wrap max-sm:!text-xs !text-sm;
   /* color: white !important;
   text-wrap: wrap !important;
   font-size: 12px !important; */
+}
+
+.ant-input-outlined[disabled] {
+  background-color: #f7f9fc !important;
+  border: 0;
 }
