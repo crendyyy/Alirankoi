@@ -1,12 +1,7 @@
 import Title from "antd/es/typography/Title";
 import Modal from "../shared/Modal";
 import { Button, Flex, Input, InputNumber, Upload, Image, Form } from "antd";
-import {
-  AlipayOutlined,
-  BankOutlined,
-  ShoppingCartOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { AlipayOutlined, BankOutlined, ShoppingCartOutlined, UploadOutlined } from "@ant-design/icons";
 import { useContext, useEffect, useState } from "react";
 import { useCreateOrder } from "../service/user/order/useCreateOrder";
 import { AuthContext } from "../../context/AuthContext";
@@ -114,10 +109,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                         }}
                       >
                         <Flex gap="small" align="center">
-                          <Button
-                            icon={<UploadOutlined />}
-                            className="max-sm:text-xs"
-                          >
+                          <Button icon={<UploadOutlined />} className="max-sm:text-xs">
                             Invoice
                           </Button>
                         </Flex>
@@ -133,8 +125,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       preview={{
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
-                        afterOpenChange: (visible) =>
-                          !visible && setPreviewImage(""),
+                        afterOpenChange: (visible) => !visible && setPreviewImage(""),
                       }}
                       src={previewImage}
                     />
@@ -159,7 +150,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     className="flex items-center w-full h-12 max-sm:h-11 px-4 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
-                <Form.Item noStyle>
+                {/* <Form.Item noStyle>
                   <InputNumber
                     placeholder="Nominal"
                     className="input-number-custom w-full p-2 max-sm:p-1.5 placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:!border-gray-700 hover:bg-[#1F222B] active:bg-[#1F222B] !bg-[#1F222B] !text-white !hover:text-white !active:text-white"
@@ -171,7 +162,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     }
                     parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
                   />
-                </Form.Item>
+                </Form.Item> */}
                 <Flex justify="space-between">
                   <Form.Item noStyle>
                     <div className="flex bg-[#1F222B] w-full p-6 max-sm:p-4 rounded-md">
@@ -190,15 +181,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
                         }}
                       >
                         <Flex gap="small" align="center">
-                          <Button
-                            icon={<UploadOutlined />}
-                            className="hover:!border-black hover:!text-black max-sm:text-xs"
-                          >
+                          <Button icon={<UploadOutlined />} className="hover:!border-black hover:!text-black max-sm:text-xs">
                             QR code
                           </Button>
-                          <span className="text-[#9CA3AF] text-sm max-sm:text-xs">
-                            {"(Optional)"}
-                          </span>
+                          <span className="text-[#9CA3AF] text-sm max-sm:text-xs">{"(Optional)"}</span>
                         </Flex>
                       </Upload>
                     </div>
@@ -212,8 +198,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       preview={{
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
-                        afterOpenChange: (visible) =>
-                          !visible && setPreviewImage(""),
+                        afterOpenChange: (visible) => !visible && setPreviewImage(""),
                       }}
                       src={previewImage}
                     />
@@ -234,9 +219,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                 variant="filled"
                 prefix="¥"
                 min={0}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""
-                }
+                formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
                 parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
               />
             </Form.Item>

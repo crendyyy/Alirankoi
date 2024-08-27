@@ -57,18 +57,10 @@ const Login = () => {
             <h1 className="font-bold text-3xl mb-1">Welcome!</h1>
             <p className="text-[#6C6F93]">Please enter Your Account details.</p>
           </div>
-          <Form
-            layout="vertical"
-            style={{ maxWidth: 600 }}
-            name="login"
-            initialValues={{ remember: true }}
-            onFinish={handleSubmit}
-          >
+          <Form layout="vertical" style={{ maxWidth: 600 }} name="login" initialValues={{ remember: true }} onFinish={handleSubmit}>
             <Form.Item
               label="Username"
-              rules={[
-                { required: true, message: "Please input your Username!" },
-              ]}
+              rules={[{ required: true, message: "Please input your Username!" }]}
               className="text-[#0E0B3D] text-sm"
             >
               <Input
@@ -79,12 +71,7 @@ const Login = () => {
                 className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 "
               />
             </Form.Item>
-            <Form.Item
-              label="Password"
-              rules={[
-                { required: true, message: "Please input your Password!" },
-              ]}
-            >
+            <Form.Item label="Password" rules={[{ required: true, message: "Please input your Password!" }]}>
               <Input
                 placeholder="Enter password"
                 type="password"

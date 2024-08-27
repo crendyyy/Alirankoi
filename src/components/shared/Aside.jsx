@@ -10,7 +10,7 @@ const Sidebar = () => {
         <img src={logoKoi} alt="Logo Koi" width={73} />
       </div>
 
-      <div className="flex flex-col gap-4 px-4">
+      <div className="flex flex-col gap-3.5 px-4">
         <Menu link="/dashboard">
           <HomeOutlined className="text-xl" /> Dashboard
         </Menu>

@@ -12,7 +12,7 @@ export const useGetUserOrders = () => {
     staleTime: Infinity,
     queryFn: () => axiosClient._get(`/user/order`),
   });
-  console.log(query.data);
+  // console.log(query.data);
 
   return {
     ...query,

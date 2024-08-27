@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { PlusCircleOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, InputNumber, Modal, Switch, Table } from "antd";
@@ -20,9 +20,17 @@ import PrintModal from "../components/modal/PrintModal";
 import FileSaver from "file-saver";
 import LogoutButton from "../components/shared/LogoutButton";
 
+import { AuthContext } from "../context/AuthContext";
+import { useGetTes } from "../components/service/tes/useGetTest";
+import { formatRupiah } from "../libs/utils";
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const Dashboard = () => {
+  console.log(useGetTes());
+
+  const { logout } = useContext(AuthContext);
+
   const [formUpdateStock] = Form.useForm();
   const [formAddStock] = Form.useForm();
   const [formUpdatePrice] = Form.useForm();
@@ -34,6 +42,10 @@ const Dashboard = () => {
 
   const { data: stock, isPending: isStockPending, isError: isStockError } = useGetStock();
   const { data: orders, isPending, isError } = useGetOrders();
+
+  // orders?.payload.map((data) => {
+  //   console.log(data);
+  // });
 
   const openStatusMutation = useOpenStatus();
 
@@ -166,8 +178,8 @@ const Dashboard = () => {
   ];
 
   const today = dayjs().startOf("day");
-  const hargaJual = stock?.payload[0].price;
-  const hargaBeli = 2000;
+  const hargaJual = stock?.payload[0].bank_sell_price;
+  const hargaBeli = stock?.payload[0].bank_buy_price;
   const profit = hargaJual - hargaBeli;
   const data =
     orders?.payload
@@ -175,9 +187,9 @@ const Dashboard = () => {
       .map((order) => ({
         key: order.id,
         hargaBeli: hargaBeli,
-        hargaJual: hargaJual,
+        hargaJual: formatRupiah(hargaJual),
         profit: profit * order.amount,
-        subtotal: hargaJual * order.amount,
+        subtotal: formatRupiah(hargaJual * order.amount),
         ...order,
       })) || [];
 
@@ -255,7 +267,7 @@ const Dashboard = () => {
   };
 
   return (
-    <Flex vertical gap={40}>
+    <Flex vertical gap={35}>
       <PrintModal
         isOpen={isModalOpen}
         onCancel={handleCloseModal}
@@ -272,9 +284,9 @@ const Dashboard = () => {
             Dashboard
           </Title>
         </Flex>
-        <LogoutButton />
+        <LogoutButton onClick={logout} />
       </div>
-      <Flex justify="space-between">
+      <Flex justify="space-between" className="mt-5">
         <div className="flex gap-2">
           <button onClick={() => navigate("/register")} className="rounded-xl py-2 px-4 text-white bg-primary flex items-center gap-2">
             <UserAddOutlined className="text-lg" />
@@ -315,7 +327,7 @@ const Dashboard = () => {
           onUpdateStock={handleUpdateStock}
           onAddStock={handleUpdateStockPlus}
           onUpdatePrice={handleUpdatePrice}
-          stock={`${!isStockPending ? stock?.payload[0].stock : "-"}`}
+          stock={`${!isStockPending ? stock?.payload[0].bank_stock : "-"}`}
           price={`${!isStockPending ? stock?.payload[0].price : "-"}`}
         />
       ))}
@@ -326,7 +338,7 @@ const Dashboard = () => {
         handleSaveExcel={handelSaveExcel}
         isLoading={isPending}
         onOpenModal={handleOpenModal}
-        price={stock?.payload[0].price}
+        price={stock?.payload[0].bank_sell_price}
         capitalPrice={hargaBeli}
       />
     </Flex>

@@ -20,11 +20,13 @@ const Home = () => {
   const [paymentType, setPaymentType] = useState("");
   const { logout, auth } = useContext(AuthContext);
 
-  console.log(auth.user?.username);
+  // console.log(auth.user?.username);
 
   const { data: orders, isPending: isOrderPending, isError: isOrderError } = useGetUserOrders();
 
   const { data: stock, isPending: isPending, isError: isError } = useGetStock();
+
+  console.log(stock);
 
   const handleOrderDetail = (order) => {
     navigate(`/order/${order.id}`, { state: { order } });
@@ -50,7 +52,7 @@ const Home = () => {
             <div className="flex flex-col w-full gap-2 max-sm:gap-0">
               <span className="text-sm font-normal text-white max-sm:text-xs">Current Exchange Rate</span>
               {isPending && <div className="">-</div>}
-              <span className="text-3xl font-bold text-white max-sm:text-xl">{formatRupiah(stock && stock.payload[0].price)}</span>
+              <span className="text-3xl font-bold text-white max-sm:text-xl">{formatRupiah(stock && stock.payload[0].ali_sell_price)}</span>
             </div>
             <div className="flex items-center w-full gap-2 p-4 bg-white max-sm:p-2 rounded-2xl ">
               <div className="p-2 max-sm:p-1 flex justify-center items-center rounded-xl text-black bg-[#11CD9F]">
@@ -60,7 +62,7 @@ const Home = () => {
               <div className="flex flex-col gap-0.5 text-black">
                 <span className="text-xs">Stok</span>
                 <span className="text-sm font-bold max-sm:text-xs">
-                  ¥ {formatRupiah(stock?.payload[0].stock, false)}
+                  ¥ {formatRupiah(stock?.payload[0].bank_stock, false)}
                   {isPending && `-`}
                 </span>
               </div>
@@ -81,7 +83,9 @@ const Home = () => {
             <div className="flex flex-col w-full gap-2 max-sm:gap-0">
               <span className="text-sm font-normal text-white max-sm:text-xs">Current Exchange Rate</span>
               {isPending && <div className="">-</div>}
-              <span className="text-3xl font-bold text-white max-sm:text-xl">{formatRupiah(stock && stock.payload[0].price)}</span>
+              <span className="text-3xl font-bold text-white max-sm:text-xl">
+                {formatRupiah(stock && stock.payload[0].bank_sell_price)}
+              </span>
             </div>
             <div className="flex items-center w-full gap-2 p-4 bg-white max-sm:p-2 rounded-2xl ">
               <div className="p-2 max-sm:p-1 flex justify-center items-center rounded-xl text-white bg-[#0099E5]">
@@ -91,7 +95,7 @@ const Home = () => {
               <div className="flex flex-col gap-0.5 text-black">
                 <span className="text-xs">Stok</span>
                 <span className="text-sm font-bold max-sm:text-xs">
-                  ¥ {formatRupiah(stock?.payload[0].stock, false)}
+                  ¥ {formatRupiah(stock?.payload[0].ali_stock, false)}
                   {isPending && `-`}
                 </span>
               </div>

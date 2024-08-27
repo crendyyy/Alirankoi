@@ -60,10 +60,7 @@ input[type="number"] {
 } */
 
 .upload-payment-modal-user .ant-upload-list-item-name,
-.upload-payment-modal-user
-  .ant-upload-list-item-actions
-  .ant-btn-icon
-  span.anticon.anticon-delete {
+.upload-payment-modal-user .ant-upload-list-item-actions .ant-btn-icon span.anticon.anticon-delete {
   @apply !text-white !text-wrap max-sm:!text-xs !text-sm;
   /* color: white !important;
   text-wrap: wrap !important;
@@ -73,4 +70,32 @@ input[type="number"] {
 .ant-input-outlined[disabled] {
   background-color: #f7f9fc !important;
   border: 0;
+}
+
+.table-order-admin tr th:first-child,
+.table-order-admin tr td:first-child {
+  @apply !pl-5 !rounded-none;
+}
+
+.table-order-admin .ant-table-thead > tr > th,
+.table-order-admin .ant-table-tbody .ant-table-cell-row-hover {
+  @apply !bg-[#F7F9FC];
+}
+
+.table-order-admin tr th:last-child,
+.table-order-admin tr td:last-child {
+  @apply !pr-5 !rounded-none;
+}
+
+.table-order-admin .ant-pagination {
+  @apply !pr-5 !rounded-none !text-gray-500;
+}
+
+.table-order-admin .ant-pagination .ant-pagination-item-active,
+.table-order-admin .ant-pagination .ant-pagination-item-active a {
+  @apply border-gray-200 bg-[#F7F9FC] !text-black rounded-lg;
+}
+
+.table-order-admin .ant-table-footer {
+  @apply bg-[#F7F9FC] rounded-none;
 }

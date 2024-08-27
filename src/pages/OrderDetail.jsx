@@ -1,8 +1,4 @@
-import {
-  ClockCircleOutlined,
-  InfoCircleOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { ClockCircleOutlined, InfoCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import Status from "../components/shared/Status";
 import { Button, Form, Image, Input, Upload } from "antd";
 import Title from "antd/es/typography/Title";
@@ -61,9 +57,7 @@ const OrderDetail = () => {
 
   return (
     <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-4 max-sm:gap-3.5 mb-24 px-3">
-      <h1 className="p-6 font-bold bg-white max-sm:p-5 rounded-b-3xl">
-        Order Detail
-      </h1>
+      <h1 className="p-6 font-bold bg-white max-sm:p-5 rounded-b-3xl">Order Detail</h1>
 
       <div className="flex flex-col gap-6 p-6 max-sm:p-5 text-sm font-normal bg-white rounded-3xl max-sm:text-[13px]">
         <div className="flex justify-between">
@@ -89,11 +83,8 @@ const OrderDetail = () => {
       </div>
 
       {order.status === "Pending" ? (
-        <div className="flex justify-between p-6 max-sm:p-5 bg-[#FECACA] rounded-3xl border-2 border-dashed border-[#DC2626] gap-2">
-          <p className="max-sm:text-xs text-sm text-[#DC2626]">
-            Upload payment proof before time runs out to avoid order
-            cancellation.
-          </p>
+        <div className="flex justify-between p-6 max-sm:p-5 bg-[#FECACA] rounded-3xl border-2 border-dashed border-[#DC2626] gap-2 max-sm:gap-3">
+          <p className="max-sm:text-xs text-sm text-[#DC2626]">Upload payment proof before time runs out to avoid order cancellation.</p>
           <div className="flex items-center gap-2">
             <ClockCircleOutlined className="text-[#DC2626]" />
             <p className="text-xs text-[#DC2626] font-bold">10:00</p>
@@ -145,16 +136,9 @@ const OrderDetail = () => {
         {order.status === "Pending" ? (
           <>
             <div className="flex items-center justify-between">
-              <h1 className="text-base font-bold max-sm:text-sm">
-                Payment Information
-              </h1>
+              <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
               {isEdit && (
-                <Button
-                  style={{ padding: 0 }}
-                  type="link"
-                  htmlType="submit"
-                  form="editForm"
-                >
+                <Button style={{ padding: 0 }} type="link" htmlType="submit" form="editForm">
                   Submit Edit
                 </Button>
               )}
@@ -175,49 +159,17 @@ const OrderDetail = () => {
               }}
               onFinish={handleSubmitEdit}
             >
-              <Form.Item
-                label="Bank Name"
-                name="bank_detail"
-                className="font-semibold !text-gray-500"
-              >
-                <Input
-                  placeholder="Bank Name"
-                  disabled={!isEdit}
-                  className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border"
-                />
+              <Form.Item label="Bank Name" name="bank_detail" className="font-semibold !text-gray-500">
+                <Input placeholder="Bank Name" disabled={!isEdit} className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border" />
               </Form.Item>
-              <Form.Item
-                label="Bank Number"
-                name="bank_number"
-                className="font-semibold !text-xs"
-              >
-                <Input
-                  placeholder="Bank Number"
-                  disabled={!isEdit}
-                  className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border"
-                />
+              <Form.Item label="Bank Number" name="bank_number" className="font-semibold !text-xs">
+                <Input placeholder="Bank Number" disabled={!isEdit} className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border" />
               </Form.Item>
-              <Form.Item
-                label="Bank Branch"
-                name="bank_branch"
-                className="font-semibold"
-              >
-                <Input
-                  placeholder="Bank Branch"
-                  disabled={!isEdit}
-                  className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border"
-                />
+              <Form.Item label="Bank Branch" name="bank_branch" className="font-semibold">
+                <Input placeholder="Bank Branch" disabled={!isEdit} className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border" />
               </Form.Item>
-              <Form.Item
-                label="Account Name"
-                name="account_name"
-                className="font-semibold"
-              >
-                <Input
-                  placeholder="Account Name"
-                  disabled={!isEdit}
-                  className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border"
-                />
+              <Form.Item label="Account Name" name="account_name" className="font-semibold">
+                <Input placeholder="Account Name" disabled={!isEdit} className="bg-[#F7F9FC] p-2.5 rounded-lg border-white hover:border" />
               </Form.Item>
             </Form>
           </>
@@ -227,21 +179,9 @@ const OrderDetail = () => {
               <h1>Payment Information</h1>
             </div>
             <Input placeholder="Bank Name" value={order.bank_detail} disabled />
-            <Input
-              placeholder="Bank Number"
-              value={order.bank_number}
-              disabled
-            />
-            <Input
-              placeholder="Bank Branch"
-              value={order.bank_branch}
-              disabled
-            />
-            <Input
-              placeholder="Account Name"
-              value={order.account_name}
-              disabled
-            />
+            <Input placeholder="Bank Number" value={order.bank_number} disabled />
+            <Input placeholder="Bank Branch" value={order.bank_branch} disabled />
+            <Input placeholder="Account Name" value={order.account_name} disabled />
           </>
         )}
       </div>
@@ -249,18 +189,13 @@ const OrderDetail = () => {
       <div className="flex items-center justify-between p-6 bg-white max-sm:p-5 rounded-3xl max-sm:text-sm">
         <span className="font-bold">Total Paid</span>
         <span className="font-bold">
-          {isPending
-            ? "-"
-            : `${formatRupiah(
-                Number(order.amount) * (stock && stock.payload[0].price)
-              )}`}
+          {console.log(stock)}
+          {isPending ? "-" : `${formatRupiah(Number(order.amount) * (stock && stock.payload[0].bank_sell_price))}`}
         </span>
       </div>
 
       {/* <button className="p-6 bg-[#1367FF] text-white rounded">Payment Done</button> */}
-      <button className="px-2 py-3 font-semibold text-white rounded-full bg-primary max-sm:text-sm">
-        Payment Done
-      </button>
+      <button className="px-2 py-3 font-semibold text-white rounded-full bg-primary max-sm:text-sm">Payment Done</button>
     </div>
   );
 };

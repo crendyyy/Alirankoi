@@ -1,15 +1,14 @@
 const NotFound = () => {
   return (
     <main className="flex flex-col items-center justify-center h-screen">
-      <h1>Not Found</h1>
-      <nav>
-        <ol className="text-sm">
-          <span>You must to </span>
-          <a href="/login" className="text-sm text-blue-400 underline">
-            Login
-          </a>
-        </ol>
-      </nav>
+      <h1 className="text-[200px] font-extrabold max-sm:text-[120px]">404</h1>
+      <p className="font-semibold text-2xl max-sm:text-lg">Sorry, Page Not Found!</p>
+      <span className="mt-3 font-light text-base max-sm:text-sm">
+        You must to
+        <a href="/login" className="text-sm ml-1 text-primary underline font-semibold hover:text-blue-400">
+          Login
+        </a>
+      </span>
     </main>
   );
 };

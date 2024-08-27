@@ -12,7 +12,7 @@ export const useGetStock = () => {
     staleTime: Infinity,
     queryFn: () => axiosClient._get(`/stock`),
   });
-  console.log(query.data);
+  // console.log(query.data);
 
   return {
     ...query,
