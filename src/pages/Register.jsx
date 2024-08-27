@@ -2,14 +2,19 @@ import { Button, Flex, Form, Input, Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useState } from "react";
 import logoKoi from "/logo/logo-koi.png";
+import { useRegister } from "../components/service/user/userServices";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const registerMutation = useRegister()
+
   const onFinish = () => {
-    console.log(email);
-    console.log(password);
+    registerMutation.mutate({
+      username: email,
+      password: password,
+    });
   };
 
   return (
@@ -54,6 +59,7 @@ const Register = () => {
               <Input
                 placeholder="Enter password"
                 type="password"
+                onChange={(e) => setPassword(e.target.value)}
                 className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 "
               />
             </Form.Item>
