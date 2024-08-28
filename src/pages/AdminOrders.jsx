@@ -42,7 +42,7 @@ const AdminOrders = () => {
         data: { status: selectedStatus },
       });
     });
-    window.location.reload();
+    setSelectedRowKeys([]);
   };
 
   const handleDeleteSelectedRow = (selectedRowId) => {
@@ -81,7 +81,9 @@ const AdminOrders = () => {
         onConfirm={handleOnPrint}
         typeModal={printType}
       />
-      <Title level={1}>{`Buy ${path === "/orders-bank" ? "Bank" : "Ali"} Orders`}</Title>
+      <Title level={1}>{`Buy ${
+        path === "/orders-bank" ? "Bank" : "Ali"
+      } Orders`}</Title>
       <Flex vertical gap="middle">
         <div className="flex items-end w-full gap-6">
           <div className="flex w-1/2 gap-5">
@@ -90,8 +92,15 @@ const AdminOrders = () => {
               <DatePicker onChange={onChangeDate} />
             </div>
             <div className="flex flex-col w-2/5 gap-2">
-              <h3 className="text-sm font-medium text-nowrap">Update Selected Order</h3>
-              <Select placeholder="Select order" className="w-full" allowClear onChange={handleChangeStatus}>
+              <h3 className="text-sm font-medium text-nowrap">
+                Update Selected Order
+              </h3>
+              <Select
+                placeholder="Select order"
+                className="w-full"
+                allowClear
+                onChange={handleChangeStatus}
+              >
                 <Select.Option value="Complete">Complete</Select.Option>
                 <Select.Option value="Cancel">Cancel</Select.Option>
               </Select>
@@ -100,11 +109,20 @@ const AdminOrders = () => {
 
           <div className="flex flex-col w-1/2 gap-3">
             <div className="flex items-center justify-between w-full gap-2">
-              <Button type="primary" className="w-3/5 text-white bg-primary" onClick={() => handleUpdateStatusSelectedRow(selectedRowKeys)}>
+              <Button
+                type="primary"
+                className="w-3/5 text-white bg-primary"
+                onClick={() => handleUpdateStatusSelectedRow(selectedRowKeys)}
+              >
                 Update Selected Order Status
               </Button>{" "}
               |
-              <Button type="primary" danger className="w-2/5 text-white" onClick={() => handleDeleteSelectedRow(selectedRowKeys)}>
+              <Button
+                type="primary"
+                danger
+                className="w-2/5 text-white"
+                onClick={() => handleDeleteSelectedRow(selectedRowKeys)}
+              >
                 Delete Selected Order
               </Button>
             </div>

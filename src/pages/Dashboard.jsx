@@ -4,15 +4,28 @@ import { PlusCircleOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, InputNumber, Modal, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import ExcelJS from "exceljs";
 import { useNavigate } from "react-router";
 import EditCard from "../components/dashboard/EditCard";
 import DashboardTable from "../components/dashboard/DashboardTable";
 import { useGetStock } from "../components/service/stock/useGetStock";
 
-import { useOpenStatus, useSeperateStatus } from "../components/service/admin/useAdminService";
-import { useUpdateStock, useUpdateStockPlus } from "../components/service/admin/useUpdateStock";
+import {
+  useOpenStatus,
+  useSeperateStatus,
+} from "../components/service/admin/useAdminService";
+import {
+  useUpdateStock,
+  useUpdateStockPlus,
+} from "../components/service/admin/useUpdateStock";
 import { useUpdatePrice } from "../components/service/admin/useUpdatePrice";
 import { useGetOrders } from "../components/service/admin/orders/useGetOrders";
 import dayjs from "dayjs";
@@ -27,20 +40,29 @@ import { formatRupiah } from "../libs/utils";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const Dashboard = () => {
-  console.log(useGetTes());
-
   const { logout } = useContext(AuthContext);
 
-  const [formUpdateStock] = Form.useForm();
-  const [formAddStock] = Form.useForm();
-  const [formUpdatePrice] = Form.useForm();
+  const [formUpdateStockBank] = Form.useForm();
+  const [formAddStockBank] = Form.useForm();
+  const [formUpdatePriceBank] = Form.useForm();
+  const [formUpdateCapitalPriceBank] = Form.useForm();
+
+  const [formUpdateStockAli] = Form.useForm();
+  const [formAddStockAli] = Form.useForm();
+  const [formUpdatePriceAli] = Form.useForm();
+  const [formUpdateCapitalPriceAli] = Form.useForm();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hideBuyPrice, setHideBuyPrice] = useState({ bank: true, ali: true });
   const [selectedRow, setSelectedRow] = useState([]);
 
   const printAreaRef = useRef();
 
-  const { data: stock, isPending: isStockPending, isError: isStockError } = useGetStock();
+  const {
+    data: stock,
+    isPending: isStockPending,
+    isError: isStockError,
+  } = useGetStock();
   const { data: orders, isPending, isError } = useGetOrders();
 
   // orders?.payload.map((data) => {
@@ -59,21 +81,31 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  const typePayment = ["Bank", "Ali"];
+  const [typePayment, setTypePayment] = useState(["Bank", "Ali"]);
 
-  const handleUpdatePrice = (values) => {
-    updatePriceMutation.mutate({ price: values.updatePrice });
-    formUpdatePrice.resetFields();
+  const handleUpdatePriceBank = (values) => {
+    updatePriceMutation.mutate({ price: values.updatePriceBank });
+    formUpdatePriceBank.resetFields();
   };
 
-  const handleUpdateStock = (values) => {
-    updateStockMutation.mutate({ stock: values.updateStock });
-    formUpdateStock.resetFields();
+  const handleUpdateStockBank = (values) => {
+    updateStockMutation.mutate({ bank_stock: values.updateStockBank });
+    formUpdateStockBank.resetFields();
   };
 
-  const handleUpdateStockPlus = (values) => {
-    updateStockPlusMutation.mutate({ stock: values.addStock });
-    formAddStock.resetFields();
+  const handleUpdateStockAli = (values) => {
+    updateStockMutation.mutate({ ali_stock: values.updateStockAli });
+    formUpdateStockAli.resetFields();
+  };
+
+  const handleUpdateStockPlusBank = (values) => {
+    updateStockPlusMutation.mutate({ bank_stock: values.addStockBank });
+    formAddStockBank.resetFields();
+  };
+
+  const handleUpdateStockPlusAli = (values) => {
+    updateStockPlusMutation.mutate({ ali_stock: values.addStockAli });
+    formAddStockAli.resetFields();
   };
 
   const onSeperate = () => {
@@ -92,11 +124,27 @@ const Dashboard = () => {
     setIsModalOpen(false);
   };
 
+  const handleHideBuyPriceBank = (prev) => {
+    setHideBuyPrice((prevState) => ({ ...prevState, bank: !prev }));
+  };
+
+  const handleHideBuyPriceAli = (prev) => {
+    setHideBuyPrice((prevState) => ({ ...prevState, ali: !prev }));
+  };
+
   const handleOnPrint = useReactToPrint({
     content: () => printAreaRef.current,
   });
 
-  const labels = ["January", "February", "March", "April", "May", "June", "July"];
+  const labels = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+  ];
 
   const chartData = {
     labels: labels,
@@ -124,12 +172,14 @@ const Dashboard = () => {
     },
   };
 
-  const columns = [
+  const columnsBank = [
     {
       title: "#",
       dataIndex: "no",
       width: 12,
-      render: (text, record, index) => <span className="text-sm font-normal">{index + 1}</span>,
+      render: (text, record, index) => (
+        <span className="text-sm font-normal">{index + 1}</span>
+      ),
     },
     {
       title: "Date",
@@ -161,12 +211,71 @@ const Dashboard = () => {
     },
     {
       title: "Harga Jual",
-      dataIndex: "hargaJual",
+      dataIndex: "selling_price",
+    },
+    ...(hideBuyPrice.bank
+      ? []
+      : [
+          {
+            title: "Harga Modal",
+            dataIndex: "buying_price",
+          },
+        ]),
+    {
+      title: "Profit/Margin",
+      dataIndex: "profit",
     },
     {
-      title: "Harga Modal",
-      dataIndex: "hargaBeli",
+      title: "Subtotal",
+      dataIndex: "subtotal",
     },
+  ];
+
+  const columnsAli = [
+    {
+      title: "#",
+      dataIndex: "no",
+      width: 12,
+      render: (text, record, index) => (
+        <span className="text-sm font-normal">{index + 1}</span>
+      ),
+    },
+    {
+      title: "Date",
+      dataIndex: "createdAt",
+      render: (text, record) => {
+        // Display the full Date string if not editing
+        return <span>{new Date(record.createdAt).toString()}</span>;
+      },
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+    },
+    {
+      title: "Nomor/Email",
+      dataIndex: "ali_number_or_email",
+    },
+    {
+      title: "Name",
+      dataIndex: "ali_name",
+    },
+    {
+      title: "Qr Code",
+      dataIndex: "ali_qr",
+    },
+    {
+      title: "Harga Jual",
+      dataIndex: "selling_price",
+    },
+    ...(hideBuyPrice.ali
+      ? []
+      : [
+          {
+            title: "Harga Modal",
+            dataIndex: "buying_price",
+          },
+        ]),
     {
       title: "Profit/Margin",
       dataIndex: "profit",
@@ -178,20 +287,32 @@ const Dashboard = () => {
   ];
 
   const today = dayjs().startOf("day");
-  const hargaJual = stock?.payload[0].bank_sell_price;
-  const hargaBeli = stock?.payload[0].bank_buy_price;
-  const profit = hargaJual - hargaBeli;
-  const data =
+  console.log(stock);
+  const dataBank =
     orders?.payload
-      .filter((order) => dayjs(order.createdAt).isSame(today, "day"))
+      .filter((order) => order.order_type === "Bank")
       .map((order) => ({
         key: order.id,
-        hargaBeli: hargaBeli,
-        hargaJual: formatRupiah(hargaJual),
-        profit: profit * order.amount,
-        subtotal: formatRupiah(hargaJual * order.amount),
+        profit:
+          (order.selling_price - order.buying_price) * Number(order.amount),
+        subtotal: order.selling_price * Number(order.amount),
         ...order,
       })) || [];
+
+  const dataAli =
+    orders?.payload
+      .filter((order) => dayjs(order.createdAt).isSame(today, "day"))
+      .filter((order) => order.order_type === "Alipay")
+      .map((order) => ({
+        key: order.id,
+        profit:
+          (order.selling_price - order.buying_price) * Number(order.amount),
+        subtotal: order.selling_price * Number(order.amount),
+        ...order,
+      })) || [];
+
+  console.log(dataBank);
+  console.log(dataAli);
 
   const generateExcekFile = async (rowToSave) => {
     const workbook = new ExcelJS.Workbook();
@@ -275,7 +396,7 @@ const Dashboard = () => {
         printAreaRef={printAreaRef}
         onConfirm={handleOnPrint}
       />
-      <div className="flex justify-between items-start">
+      <div className="flex items-start justify-between">
         <Flex vertical gap={4}>
           <Title style={{ margin: 0 }} level={2}>
             Admin
@@ -288,12 +409,18 @@ const Dashboard = () => {
       </div>
       <Flex justify="space-between" className="mt-5">
         <div className="flex gap-2">
-          <button onClick={() => navigate("/register")} className="rounded-xl py-2 px-4 text-white bg-primary flex items-center gap-2">
+          <button
+            onClick={() => navigate("/register")}
+            className="flex items-center gap-2 px-4 py-2 text-white rounded-xl bg-primary"
+          >
             <UserAddOutlined className="text-lg" />
             Add User
           </button>
           {/* BUTTON MANUAL ORDER */}
-          <button onClick="" className="rounded-xl bg-black py-2 px-4 text-white flex items-center gap-2">
+          <button
+            onClick=""
+            className="flex items-center gap-2 px-4 py-2 text-white bg-black rounded-xl"
+          >
             <PlusCircleOutlined className="text-lg" />
             Manual Order
           </button>
@@ -303,7 +430,10 @@ const Dashboard = () => {
             <Title level={5} style={{ margin: 0 }}>
               Separate Mode
             </Title>
-            <Switch checked={stock?.payload[0].separateMode} onChange={onSeperate} />
+            <Switch
+              checked={stock?.payload[0].separateMode}
+              onChange={onSeperate}
+            />
           </div>
           <div className="flex items-center h-full gap-4 px-4 py-2 bg-white rounded-xl">
             <Title level={5} style={{ margin: 0 }}>
@@ -321,27 +451,54 @@ const Dashboard = () => {
         <EditCard
           key={type}
           typePayment={type}
-          formAddStock={formAddStock}
-          formUpdatePrice={formUpdatePrice}
-          formUpdateStock={formUpdateStock}
-          onUpdateStock={handleUpdateStock}
-          onAddStock={handleUpdateStockPlus}
-          onUpdatePrice={handleUpdatePrice}
-          stock={`${!isStockPending ? stock?.payload[0].bank_stock : "-"}`}
-          price={`${!isStockPending ? stock?.payload[0].price : "-"}`}
+          formAddStockBank={formAddStockBank}
+          formAddStockAli={formAddStockAli}
+          formUpdatePriceBank={formUpdatePriceBank}
+          formUpdatePriceAli={formUpdatePriceAli}
+          formUpdateStockBank={formUpdateStockBank}
+          formUpdateStockAli={formUpdateStockAli}
+          formUpdateCapitalPriceBank={formUpdateCapitalPriceBank}
+          formUpdateCapitalPriceAli={formUpdateCapitalPriceAli}
+          onUpdateStockBank={handleUpdateStockBank}
+          onUpdateStockAli={handleUpdateStockAli}
+          onAddStockBank={handleUpdateStockPlusBank}
+          onAddStockAli={handleUpdateStockPlusAli}
+          onUpdatePriceBank={handleUpdatePriceBank}
+          stockBank={`${!isStockPending ? stock?.payload[0].bank_stock : "-"}`}
+          stockAli={`${!isStockPending ? stock?.payload[0].ali_stock : "-"}`}
+          priceBank={`${!isStockPending ? stock?.payload[0].bank_price : "-"}`}
+          priceAli={`${!isStockPending ? stock?.payload[0].ali_price : "-"}`}
+          capitalPriceBank={`${
+            !isStockPending ? stock?.payload[0].bank_buy_price : "-"
+          }`}
+          capitalPriceAli={`${
+            !isStockPending ? stock?.payload[0].ali_buy_price : "-"
+          }`}
         />
       ))}
       {typePayment.map((type) => (
         <DashboardTable
+          key={type}
           typePayment={type}
-          columns={columns}
+          columnsBank={columnsBank}
+          columnsAli={columnsAli}
           setSelectedRow={setSelectedRow}
-          data={data}
+          data={dataBank}
+          dataAli={dataAli}
           handleSaveExcel={handelSaveExcel}
+          hideBuyPrice={hideBuyPrice}
+          handleHideBuyPriceBank={handleHideBuyPriceBank}
+          handleHideBuyPriceAli={handleHideBuyPriceAli}
           isLoading={isPending}
           onOpenModal={handleOpenModal}
-          price={stock?.payload[0].bank_sell_price}
-          capitalPrice={hargaBeli}
+          priceBank={`${!isStockPending ? stock?.payload[0].bank_price : "-"}`}
+          priceAli={`${!isStockPending ? stock?.payload[0].ali_price : "-"}`}
+          capitalPriceBank={`${
+            !isStockPending ? stock?.payload[0].bank_buy_price : "-"
+          }`}
+          capitalPriceAli={`${
+            !isStockPending ? stock?.payload[0].ali_buy_price : "-"
+          }`}
         />
       ))}
     </Flex>

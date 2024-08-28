@@ -1,6 +1,7 @@
 import { Modal, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import dayjs from "dayjs";
+import { formatRupiah } from "../../libs/utils";
 
 const PrintModal = ({
   isOpen,
@@ -18,11 +19,11 @@ const PrintModal = ({
     },
     {
       title: "Harga Jual",
-      dataIndex: "hargaJual",
+      dataIndex: "selling_price",
     },
     {
       title: "Harga Modal",
-      dataIndex: "hargaBeli",
+      dataIndex: "buying_price",
     },
     {
       title: "Profit/Margin",
@@ -98,9 +99,11 @@ const PrintModal = ({
                   (total, transaction) => total + Number(transaction.amount),
                   0
                 )
-              : selectedRow.reduce(
-                  (total, transaction) => total + transaction.subtotal,
-                  0
+              : formatRupiah(
+                  selectedRow.reduce(
+                    (total, transaction) => total + transaction.subtotal,
+                    0
+                  )
                 )}
           </Title>
         </div>

@@ -1,23 +1,42 @@
-import { AlipayCircleOutlined, AlipayOutlined, BankOutlined } from "@ant-design/icons";
+import {
+  AlipayCircleOutlined,
+  AlipayOutlined,
+  BankOutlined,
+} from "@ant-design/icons";
 import { Button, Flex, Form, InputNumber, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import { formatRupiah } from "../../libs/utils";
 
 const EditCard = ({
   typePayment,
-  stock,
-  price,
-  onUpdateStock,
-  onAddStock,
-  onUpdatePrice,
-  formUpdateStock,
-  formAddStock,
-  formUpdatePrice,
+  stockBank,
+  stockAli,
+  priceBank,
+  priceAli,
+  capitalPriceBank,
+  capitalPriceAli,
+  onUpdateStockBank,
+  onUpdateStockAli,
+  onAddStockBank,
+  onAddStockAli,
+  onUpdatePriceBank,
+  onUpdatePriceAli,
+  onUpdateCapitalPriceBank,
+  onUpdateCapitalPriceAli,
+  formUpdateStockBank,
+  formUpdateStockAli,
+  formAddStockBank,
+  formAddStockAli,
+  formUpdatePriceBank,
+  formUpdatePriceAli,
+  formUpdateCapitalPriceBank,
+  formUpdateCapitalPriceAli,
 }) => {
   return (
     <Flex gap={24} vertical>
-      <h1 className="font-bold text-2xl flex gap-2 items-center">
-        {typePayment == "Bank" ? <BankOutlined /> : <AlipayOutlined />} Buy {typePayment}
+      <h1 className="flex items-center gap-2 text-2xl font-bold">
+        {typePayment == "Bank" ? <BankOutlined /> : <AlipayOutlined />} Buy{" "}
+        {typePayment}
       </h1>
       <Flex gap={24}>
         <div className="flex flex-col w-full gap-6 p-6 bg-white rounded-lg">
@@ -27,13 +46,31 @@ const EditCard = ({
           <div className="flex">
             <div className="rounded-xl flex flex-col w-1/2 gap-0.5">
               <span className="text-sm">Stock</span>
-              <Title level={3}>¥ {stock}</Title>
+              <Title level={3}>
+                ¥ {typePayment == "Bank" ? stockBank : stockAli}
+              </Title>
             </div>
             <div className="flex flex-col w-full">
               {/* Amount to Add */}
-              <Form className="w-full" layout="vertical" form={formAddStock} onFinish={onAddStock} initialValues={{ remember: true }}>
-                <Flex gap="small" align="end">
-                  <Form.Item name="addStock" className="w-full" label="Amount to add">
+              <Form
+                className="w-full"
+                layout="vertical"
+                form={
+                  typePayment == "Bank" ? formAddStockBank : formAddStockAli
+                }
+                onFinish={
+                  typePayment == "Bank" ? onAddStockBank : onAddStockAli
+                }
+                initialValues={{ remember: true }}
+              >
+                <div className="flex items-end">
+                  <Form.Item
+                    name={`${
+                      typePayment == "Bank" ? "addStockBank" : "addStockAli"
+                    }`}
+                    className="w-full"
+                    label="Amount to add"
+                  >
                     <InputNumber
                       placeholder="Enter Price"
                       min={0}
@@ -41,17 +78,42 @@ const EditCard = ({
                     />
                   </Form.Item>
                   <Form.Item>
-                    <Button type="primary" size="large" className="w-24 h-11 bg-primary" htmlType="submit">
+                    <Button
+                      type="primary"
+                      size="large"
+                      className="w-24 h-11 bg-primary"
+                      htmlType="submit"
+                    >
                       Update
                     </Button>
                   </Form.Item>
-                </Flex>
+                </div>
               </Form>
 
               {/* Amount to Update */}
-              <Form className="w-full" layout="vertical" form={formUpdateStock} onFinish={onUpdateStock} initialValues={{ remember: true }}>
+              <Form
+                className="w-full"
+                layout="vertical"
+                form={
+                  typePayment == "Bank"
+                    ? formUpdateStockBank
+                    : formUpdateStockAli
+                }
+                onFinish={
+                  typePayment == "Bank" ? onUpdateStockBank : onUpdateStockAli
+                }
+                initialValues={{ remember: true }}
+              >
                 <Flex gap="small" align="end">
-                  <Form.Item name="updateStock" className="w-full" label="Amount to update">
+                  <Form.Item
+                    name={`${
+                      typePayment == "Bank"
+                        ? "updateStockBank"
+                        : "updateStockAli"
+                    }`}
+                    className="w-full"
+                    label="Amount to update"
+                  >
                     <InputNumber
                       placeholder="Enter Price"
                       min={0}
@@ -59,7 +121,12 @@ const EditCard = ({
                     />
                   </Form.Item>
                   <Form.Item>
-                    <Button type="primary" size="large" className="w-24 h-11 bg-primary" htmlType="submit">
+                    <Button
+                      type="primary"
+                      size="large"
+                      className="w-24 h-11 bg-primary"
+                      htmlType="submit"
+                    >
                       Update
                     </Button>
                   </Form.Item>
@@ -70,16 +137,37 @@ const EditCard = ({
         </div>
 
         {/* Buy */}
-        <div className="flex flex-col w-full justify-between gap-6">
+        <div className="flex flex-col justify-between w-full gap-6">
           <div className="flex flex-row w-full gap-6 p-6 bg-white rounded-lg h-1/2">
             <div className="w-1/2 rounded-xl flex flex-col gap-0.5">
               <span className="text-sm">Price Buy {typePayment}</span>
-              <Title level={3}>{formatRupiah(price)}</Title>
+              <Title level={3}>
+                {formatRupiah(
+                  `${typePayment == "Bank" ? priceBank : priceAli}`
+                )}
+              </Title>
             </div>
             <Flex vertical className="w-full">
-              <Form className="w-full" layout="vertical" form={formUpdatePrice} onFinish={onUpdatePrice} initialValues={{ remember: true }}>
+              <Form
+                className="w-full"
+                layout="vertical"
+                form={
+                  typePayment == "Bank"
+                    ? formUpdatePriceBank
+                    : formUpdatePriceAli
+                }
+                onFinish={onUpdatePriceBank}
+                initialValues={{ remember: true }}
+              >
                 <Flex gap="small" align="end">
-                  <Form.Item name="updatePrice" className="w-full">
+                  <Form.Item
+                    name={`${
+                      typePayment == "Bank"
+                        ? "updatePriceBank"
+                        : "updatePriceAli"
+                    }`}
+                    className="w-full"
+                  >
                     <InputNumber
                       placeholder="Enter to Update Price"
                       min={0}
@@ -87,7 +175,12 @@ const EditCard = ({
                     />
                   </Form.Item>
                   <Form.Item>
-                    <Button type="primary" size="large" className="h-11 bg-primary" htmlType="submit">
+                    <Button
+                      type="primary"
+                      size="large"
+                      className="h-11 bg-primary"
+                      htmlType="submit"
+                    >
                       Update
                     </Button>
                   </Form.Item>
@@ -99,12 +192,35 @@ const EditCard = ({
           <div className="flex flex-row w-full gap-6 p-6 bg-white rounded-lg h-1/2">
             <div className="w-1/2 rounded-xl flex flex-col gap-0.5">
               <span className="text-sm">Captal Price {typePayment}</span>
-              <Title level={3}>{formatRupiah(price)}</Title>
+              <Title level={3}>
+                {formatRupiah(
+                  `${
+                    typePayment == "Bank" ? capitalPriceBank : capitalPriceAli
+                  }`
+                )}
+              </Title>
             </div>
             <div className="flex w-full">
-              <Form className="w-full" layout="vertical" form={formUpdatePrice} onFinish={onUpdatePrice} initialValues={{ remember: true }}>
+              <Form
+                className="w-full"
+                layout="vertical"
+                form={
+                  typePayment == "Bank"
+                    ? formUpdateCapitalPriceBank
+                    : formUpdateCapitalPriceAli
+                }
+                onFinish={onUpdateCapitalPriceBank}
+                initialValues={{ remember: true }}
+              >
                 <Flex gap="small" align="end">
-                  <Form.Item name="updatePrice" className="w-full">
+                  <Form.Item
+                    name={`${
+                      typePayment == "Bank"
+                        ? "updatePriceCapitalBank"
+                        : "updatePriceCapitalAli"
+                    }`}
+                    className="w-full"
+                  >
                     <InputNumber
                       placeholder="Enter to Update Price"
                       min={0}
@@ -112,7 +228,12 @@ const EditCard = ({
                     />
                   </Form.Item>
                   <Form.Item>
-                    <Button type="primary" size="large" className="h-11 bg-primary" htmlType="submit">
+                    <Button
+                      type="primary"
+                      size="large"
+                      className="h-11 bg-primary"
+                      htmlType="submit"
+                    >
                       Update
                     </Button>
                   </Form.Item>
