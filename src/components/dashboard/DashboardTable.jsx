@@ -3,7 +3,7 @@ import { Button, Flex, Form, InputNumber, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import { formatRupiah } from "../../libs/utils";
 
-const DashboardTable = ({ columns, data, isLoading, price, onOpenModal, setSelectedRow, handleSaveExcel, capitalPrice }) => {
+const DashboardTable = ({ columns, data, isLoading, price, onOpenModal, setSelectedRow, handleSaveExcel, capitalPrice, typePayment }) => {
   console.log(data);
   const Fotter = () => {
     return (
@@ -26,6 +26,7 @@ const DashboardTable = ({ columns, data, isLoading, price, onOpenModal, setSelec
   return (
     <>
       <Flex vertical>
+        <Title level={4}>Buy {typePayment} Order</Title>
         <div className="bg-white z-10 rounded-t-lg p-6 pb-8 flex justify-between items-start relative -bottom-2">
           <Flex gap={16}>
             <div className="flex items-center justify-center gap-4 px-6 py-3 bg-green-100 rounded-lg">

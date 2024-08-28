@@ -10,7 +10,7 @@ export const useGetTes = () => {
   const query = useQuery({
     queryKey: cacheKey,
     staleTime: Infinity,
-    queryFn: () => axiosClient._patch(`/stock/plus`),
+    queryFn: () => axiosClient._get(`/order`),
   });
 
   return { ...query, data: query.data?.data };

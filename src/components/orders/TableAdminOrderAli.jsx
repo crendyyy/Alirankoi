@@ -349,17 +349,16 @@ const TableAdminOrderAli = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
                 <small className="font-semibold text-xs text-gray-400">USERNAME :</small> {username}
               </h1>
               <div className="flex gap-3 mr-5">
-                <Button
-                  type="primary"
+                <button
                   onClick={onOpenModalPrint}
-                  icon={<PrinterOutlined />}
-                  className="bg-gray-500 border border-gray-400 hover:!bg-gray-600"
+                  className="flex justify-center items-center text-white bg-slate-500 border hover:!bg-slate-400 px-3 py-1 rounded-lg gap-2"
                 >
+                  <PrinterOutlined className="text-lg" />
                   Print
-                </Button>
-                <Button type="primary" onClick={handelSaveExcel}>
+                </button>
+                <button className="text-white bg-primary border hover:!bg-blue-300 px-3 py-1 rounded-lg" onClick={handelSaveExcel}>
                   Export to Excel
-                </Button>
+                </button>
               </div>
             </div>
             <Form form={form} component={false}>

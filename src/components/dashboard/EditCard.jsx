@@ -32,7 +32,7 @@ const EditCard = ({
             <div className="flex flex-col w-full">
               {/* Amount to Add */}
               <Form className="w-full" layout="vertical" form={formAddStock} onFinish={onAddStock} initialValues={{ remember: true }}>
-                <div className="flex items-end">
+                <Flex gap="small" align="end">
                   <Form.Item name="addStock" className="w-full" label="Amount to add">
                     <InputNumber
                       placeholder="Enter Price"
@@ -45,7 +45,7 @@ const EditCard = ({
                       Update
                     </Button>
                   </Form.Item>
-                </div>
+                </Flex>
               </Form>
 
               {/* Amount to Update */}

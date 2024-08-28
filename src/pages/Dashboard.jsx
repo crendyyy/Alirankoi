@@ -331,16 +331,19 @@ const Dashboard = () => {
           price={`${!isStockPending ? stock?.payload[0].price : "-"}`}
         />
       ))}
-      <DashboardTable
-        columns={columns}
-        setSelectedRow={setSelectedRow}
-        data={data}
-        handleSaveExcel={handelSaveExcel}
-        isLoading={isPending}
-        onOpenModal={handleOpenModal}
-        price={stock?.payload[0].bank_sell_price}
-        capitalPrice={hargaBeli}
-      />
+      {typePayment.map((type) => (
+        <DashboardTable
+          typePayment={type}
+          columns={columns}
+          setSelectedRow={setSelectedRow}
+          data={data}
+          handleSaveExcel={handelSaveExcel}
+          isLoading={isPending}
+          onOpenModal={handleOpenModal}
+          price={stock?.payload[0].bank_sell_price}
+          capitalPrice={hargaBeli}
+        />
+      ))}
     </Flex>
   );
 };
