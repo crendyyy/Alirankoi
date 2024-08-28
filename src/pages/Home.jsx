@@ -26,7 +26,7 @@ const Home = () => {
 
   const { data: stock, isPending: isPending, isError: isError } = useGetStock();
 
-  console.log(stock);
+  console.log(orders);
 
   const handleOrderDetail = (order) => {
     navigate(`/order/${order.id}`, { state: { order } });
@@ -52,7 +52,7 @@ const Home = () => {
             <div className="flex flex-col w-full gap-2 max-sm:gap-0">
               <span className="text-sm font-normal text-white max-sm:text-xs">Current Exchange Rate</span>
               {isPending && <div className="">-</div>}
-              <span className="text-3xl font-bold text-white max-sm:text-xl">{formatRupiah(stock && stock.payload[0].ali_sell_price)}</span>
+              <span className="text-3xl font-bold text-white max-sm:text-xl">{formatRupiah(stock?.payload[0].bank_price)}</span>
             </div>
             <div className="flex items-center w-full gap-2 p-4 bg-white max-sm:p-2 rounded-2xl ">
               <div className="p-2 max-sm:p-1 flex justify-center items-center rounded-xl text-black bg-[#11CD9F]">
@@ -84,7 +84,7 @@ const Home = () => {
               <span className="text-sm font-normal text-white max-sm:text-xs">Current Exchange Rate</span>
               {isPending && <div className="">-</div>}
               <span className="text-3xl font-bold text-white max-sm:text-xl">
-                {formatRupiah(stock && stock.payload[0].bank_sell_price)}
+                {formatRupiah(stock?.payload[0].ali_price)}
               </span>
             </div>
             <div className="flex items-center w-full gap-2 p-4 bg-white max-sm:p-2 rounded-2xl ">
@@ -102,7 +102,7 @@ const Home = () => {
             </div>
           </div>
           <button
-            onClick={() => handleOpenModal("Ali")}
+            onClick={() => handleOpenModal("Alipay")}
             className="flex items-center justify-center gap-2 w-full p-3 max-sm:p-2.5 text-base max-sm:text-xs font-bold text-black bg-white rounded-full"
           >
             <AlipayOutlined className="text-2xl max-sm:text-lg text-[#0099E5]" />
@@ -125,9 +125,10 @@ const Home = () => {
             onClick={() => handleOrderDetail(order)}
             key={order.id}
             date={order.createdAt.slice(0, 10)}
-            rate={order.bank_number}
+            rate={order.selling_price}
             status={order.status}
             totalAmount={order.amount}
+            orderType={order.order_type}
           />
         ))}
       </div>

@@ -7,7 +7,7 @@ import {
 import { formatRupiah } from "../../libs/utils";
 import Status from "./Status";
 
-const HistoryCard = ({ totalAmount, date, rate, status, onClick }) => {
+const HistoryCard = ({ totalAmount, date, rate, status, onClick, orderType }) => {
   return (
     <div
       onClick={onClick}
@@ -30,7 +30,7 @@ const HistoryCard = ({ totalAmount, date, rate, status, onClick }) => {
       </div>
       <div className="flex flex-col items-end justify-between h-20 gap-5">
         <span className="text-sm max-sm:text-xs font-medium text-[#9CA3AF] flex items-center gap-1">
-          <BankOutlined /> Bank
+          <BankOutlined /> {orderType}
         </span>
         {/* <span className="text-sm font-medium">
           <AlipayOutlined /> Ali
