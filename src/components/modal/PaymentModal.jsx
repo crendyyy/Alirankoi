@@ -13,8 +13,9 @@ import { AuthContext } from "../../context/AuthContext";
 
 const PaymentModal = ({ onClose, typeModal }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [imageList, setImageList] = useState([]);
+  // const [previewImage, setPreviewImage] = useState("");
+  const [previewImageQR, setPreviewImageQR] = useState("");
+  const [qrCodeList, setqrCodeList] = useState([]);
   const { auth } = useContext(AuthContext);
 
   console.log(typeModal);
@@ -37,12 +38,12 @@ const PaymentModal = ({ onClose, typeModal }) => {
 
     await createOrderMutation.mutate(formData);
     formBank.resetFields();
-    setImageList([]);
+    setqrCodeList([]);
     onClose();
   };
 
   const handleCreateOrderAli = async (value) => {
-    const file = imageList[0]?.originFileObj;
+    const file = qrCodeList[0]?.originFileObj;
     const formData = new FormData();
     formData.append("amount", value.amount);
     formData.append("ali_number_or_email", value.ali_number_or_email);
@@ -57,16 +58,21 @@ const PaymentModal = ({ onClose, typeModal }) => {
 
     await createOrderMutation.mutate(formData);
     formAli.resetFields();
-    setImageList([]);
+    setqrCodeList([]);
     onClose();
   };
 
-  const handlePreview = (file) => {
-    setPreviewImage(file.thumbUrl || file.preview);
+  // const handlePreview = (file) => {
+  //   setPreviewImage(file.thumbUrl || file.preview);
+  //   setPreviewOpen(true);
+  // };
+  const handlePreviewQR = (file) => {
+    setPreviewImageQR(file.thumbUrl || file.url);
     setPreviewOpen(true);
   };
 
-  const handleChange = ({ fileList }) => setImageList(fileList);
+  // const handleChange = ({ fileList }) => setqrCodeList(fileList);
+  const handleChangeQR = ({ fileList }) => setqrCodeList(fileList);
   return (
     <Modal onCancel={onclose}>
       <div className="flex flex-col gap-2 bg-black rounded-t-3xl">
@@ -136,9 +142,9 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       <Upload
                         listType="picture"
                         className="w-full upload-payment-modal-user"
-                        fileList={imageList}
-                        onPreview={handlePreview}
-                        onChange={handleChange}
+                        fileList={qrCodeList}
+                        onPreview={handlePreviewQR}
+                        onChange={handleChangeQR}
                         beforeUpload={() => false}
                         maxCount={1}
                         showUploadList={{
@@ -162,7 +168,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     </div>
                   </Form.Item>
 
-                  {previewImage && (
+                  {previewImageQR && (
                     <Image
                       wrapperStyle={{
                         display: "none",
@@ -171,9 +177,9 @@ const PaymentModal = ({ onClose, typeModal }) => {
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
                         afterOpenChange: (visible) =>
-                          !visible && setPreviewImage(""),
+                          !visible && setPreviewImageQR(""),
                       }}
-                      src={previewImage}
+                      src={previewImageQR}
                     />
                   )}
                 </Flex>
