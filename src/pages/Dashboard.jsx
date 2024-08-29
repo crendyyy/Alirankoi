@@ -39,6 +39,7 @@ import LogoutButton from "../components/shared/LogoutButton";
 import { AuthContext } from "../context/AuthContext";
 import { useGetTes } from "../components/service/tes/useGetTest";
 import { formatRupiah } from "../libs/utils";
+import CreateOrderModal from "../components/modal/CreateOrderModal";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -55,9 +56,14 @@ const Dashboard = () => {
   const [formUpdatePriceAli] = Form.useForm();
   const [formUpdateCapitalPriceAli] = Form.useForm();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [hideBuyPrice, setHideBuyPrice] = useState({ bank: true, ali: true });
   const [selectedRow, setSelectedRow] = useState([]);
+  const [selectedQr, setSelectedQr] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState({
+    printTableModal: false,
+    qrModal: false,
+    orderModal: false,
+  });
 
   const printAreaRef = useRef();
 
@@ -67,10 +73,6 @@ const Dashboard = () => {
     isError: isStockError,
   } = useGetStock();
   const { data: orders, isPending, isError } = useGetOrders();
-
-  // orders?.payload.map((data) => {
-  //   console.log(data);
-  // });
 
   const openStatusMutation = useOpenStatus();
 
@@ -140,33 +142,26 @@ const Dashboard = () => {
     openStatusMutation.mutate();
   };
 
-  // PRINT MODAL
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  // QR MODAL
-  const [isModalOpenQr, setIsModalOpenQr] = useState(false);
-  const showModal = () => {
-    setIsModalOpenQr(true);
-  };
-  const handleOk = () => {
-    setIsModalOpenQr(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpenQr(false);
-  };
-
   const handleHideBuyPriceBank = (prev) => {
     setHideBuyPrice((prevState) => ({ ...prevState, bank: !prev }));
   };
 
   const handleHideBuyPriceAli = (prev) => {
     setHideBuyPrice((prevState) => ({ ...prevState, ali: !prev }));
+  };
+
+  const handleOpenModal = (modal) => {
+    setIsModalOpen((prev) => ({
+      ...prev,
+      [modal]: true,
+    }));
+  };
+
+  const handleCloseModal = (modal) => {
+    setIsModalOpen((prev) => ({
+      ...prev,
+      [modal]: false,
+    }));
   };
 
   const handleOnPrint = useReactToPrint({
@@ -301,9 +296,16 @@ const Dashboard = () => {
       title: "Qr Code",
       dataIndex: "ali_qr",
       render: (_, record) => (
-        <a onClick={showModal} className="text-xs underline w-fit text-primary">
+        record.ali_qr.length > 0 ? 
+        <a
+          onClick={() => {
+            handleOpenModal("qrModal");
+            setSelectedQr(record.ali_qr);
+          }}
+          className="text-xs underline w-fit text-primary"
+        >
           See QR Code
-        </a>
+        </a> : <span>Not Uplouded</span>
       ),
     },
     {
@@ -332,6 +334,7 @@ const Dashboard = () => {
   console.log(stock);
   const dataBank =
     orders?.payload
+      .filter((order) => dayjs(order.createdAt).isSame(today, "day"))
       .filter((order) => order.order_type === "Bank")
       .map((order) => ({
         key: order.id,
@@ -343,7 +346,6 @@ const Dashboard = () => {
 
   const dataAli =
     orders?.payload
-      .filter((order) => dayjs(order.createdAt).isSame(today, "day"))
       .filter((order) => order.order_type === "Alipay")
       .map((order) => ({
         key: order.id,
@@ -432,12 +434,37 @@ const Dashboard = () => {
   return (
     <Flex vertical gap={35}>
       <PrintModal
-        isOpen={isModalOpen}
-        onCancel={handleCloseModal}
+        isOpen={isModalOpen.printTableModal}
+        onCancel={() => handleCloseModal("printTableModal")}
         selectedRow={selectedRow}
         printAreaRef={printAreaRef}
         onConfirm={handleOnPrint}
       />
+      <CreateOrderModal
+        isOpen={isModalOpen.orderModal}
+        onCancel={() => handleCloseModal("orderModal")}
+        onConfirm={() => handleCloseModal("orderModal")}
+      />
+      <Modal
+        title="QR code"
+        open={isModalOpen.qrModal}
+        onOk={() => handleCloseModal("qrModal")}
+        onCancel={() => handleCloseModal("qrModal")}
+        footer={[
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => handleCloseModal("qrModal")}
+          >
+            Ok
+          </Button>,
+        ]}
+      >
+        <img
+          src={`http://localhost:3000/picture/${selectedQr}`}
+          alt="Qr code"
+        />
+      </Modal>
       <div className="flex items-start justify-between">
         <Flex vertical gap={4}>
           <Title style={{ margin: 0 }} level={2}>
@@ -460,7 +487,7 @@ const Dashboard = () => {
           </button>
           {/* BUTTON MANUAL ORDER */}
           <button
-            onClick=""
+            onClick={() => handleOpenModal("orderModal")}
             className="flex items-center gap-2 px-4 py-2 text-white bg-black rounded-xl"
           >
             <PlusCircleOutlined className="text-lg" />
@@ -535,7 +562,7 @@ const Dashboard = () => {
           handleHideBuyPriceBank={handleHideBuyPriceBank}
           handleHideBuyPriceAli={handleHideBuyPriceAli}
           isLoading={isPending}
-          onOpenModal={handleOpenModal}
+          onOpenModal={() => handleOpenModal("printTableModal")}
           priceBank={`${!isStockPending ? stock?.payload[0].bank_price : "-"}`}
           priceAli={`${!isStockPending ? stock?.payload[0].ali_price : "-"}`}
           capitalPriceBank={`${
@@ -546,23 +573,6 @@ const Dashboard = () => {
           }`}
         />
       ))}
-      <Modal
-        title="Basic Modal"
-        open={isModalOpenQr}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button
-            key="submit"
-            type="primary"
-            onClick={() => setIsModalOpenQr(false)}
-          >
-            Ok
-          </Button>,
-        ]}
-      >
-        <img src="" alt="QR Code" width="500" height="600" />
-      </Modal>
     </Flex>
   );
 };
