@@ -29,7 +29,7 @@ const Home = () => {
   console.log(orders);
 
   const handleOrderDetail = (order) => {
-    navigate(`/order/${order.id}`, { state: { order } });
+    navigate(`/order/${order.order_type.toLowerCase()}/${order.id}`, { state: { order } });
   };
 
   const handleOpenModal = (type) => {
@@ -83,9 +83,7 @@ const Home = () => {
             <div className="flex flex-col w-full gap-2 max-sm:gap-0">
               <span className="text-sm font-normal text-white max-sm:text-xs">Current Exchange Rate</span>
               {isPending && <div className="">-</div>}
-              <span className="text-3xl font-bold text-white max-sm:text-xl">
-                {formatRupiah(stock?.payload[0].ali_price)}
-              </span>
+              <span className="text-3xl font-bold text-white max-sm:text-xl">{formatRupiah(stock?.payload[0].ali_price)}</span>
             </div>
             <div className="flex items-center w-full gap-2 p-4 bg-white max-sm:p-2 rounded-2xl ">
               <div className="p-2 max-sm:p-1 flex justify-center items-center rounded-xl text-white bg-[#0099E5]">

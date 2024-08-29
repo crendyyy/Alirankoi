@@ -27,7 +27,7 @@ const LayoutUser = () => {
         </main>
       ) : (
         <>
-          {matchPath("/order/:orderId", path) ? (
+          {matchPath(`/order/${"bank" || "alipay"}/:orderId`, path) ? (
             <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-[600px] ">
               <Outlet />
             </main>
@@ -93,7 +93,28 @@ const routes = [
             ),
           },
           {
-            path: "/order",
+            path: "/order/bank",
+            children: [
+              {
+                index: true,
+                element: (
+                  <ProtectedRoutes roles={["user"]}>
+                    <Order />
+                  </ProtectedRoutes>
+                ),
+              },
+              {
+                path: ":orderId",
+                element: (
+                  <ProtectedRoutes roles={["user"]}>
+                    <OrderDetail />
+                  </ProtectedRoutes>
+                ),
+              },
+            ],
+          },
+          {
+            path: "/order/alipay",
             children: [
               {
                 index: true,

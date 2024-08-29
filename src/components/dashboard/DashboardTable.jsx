@@ -1,9 +1,4 @@
-import {
-  EyeInvisibleOutlined,
-  EyeOutlined,
-  PrinterOutlined,
-  UserAddOutlined,
-} from "@ant-design/icons";
+import { EyeInvisibleOutlined, EyeOutlined, PrinterOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, InputNumber, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import { formatRupiah } from "../../libs/utils";
@@ -50,9 +45,7 @@ const DashboardTable = ({
           <span className="text-xs font-bold">
             {typePayment === "Bank"
               ? formatRupiah(data?.reduce((acc, item) => acc + item.profit, 0))
-              : formatRupiah(
-                  dataAli?.reduce((acc, item) => acc + item.profit, 0)
-                )}
+              : formatRupiah(dataAli?.reduce((acc, item) => acc + item.profit, 0))}
           </span>
         </span>
       </Flex>
@@ -70,9 +63,7 @@ const DashboardTable = ({
           <Flex gap={16}>
             <div className="flex items-center justify-center gap-4 px-6 py-3 bg-green-100 rounded-lg">
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-green-700">
-                  Harga Modal
-                </span>
+                <span className="text-sm font-medium text-green-700">Harga Modal</span>
                 <span className="text-xl font-bold text-green-700">
                   {typePayment === "Bank"
                     ? hideBuyPrice.bank === false
@@ -88,9 +79,7 @@ const DashboardTable = ({
               <button
                 className="flex bg-[#15803D] py-2 px-4 rounded-2xl"
                 onClick={
-                  typePayment === "Bank"
-                    ? () => handleHideBuyPriceBank(hideBuyPrice.bank)
-                    : () => handleHideBuyPriceAli(hideBuyPrice.ali)
+                  typePayment === "Bank" ? () => handleHideBuyPriceBank(hideBuyPrice.bank) : () => handleHideBuyPriceAli(hideBuyPrice.ali)
                 }
               >
                 {typePayment === "Bank" ? (
@@ -107,13 +96,9 @@ const DashboardTable = ({
               </button>
             </div>
             <div className="flex flex-col items-center justify-center gap-1 px-6 py-3 bg-red-100 rounded-lg">
-              <span className="text-sm font-medium text-red-700">
-                Harga jual
-              </span>
+              <span className="text-sm font-medium text-red-700">Harga jual</span>
               <span className="text-xl font-bold text-red-700">
-                {typePayment === "Bank"
-                  ? formatRupiah(priceBank)
-                  : formatRupiah(priceAli)}
+                {typePayment === "Bank" ? formatRupiah(priceBank) : formatRupiah(priceAli)}
               </span>
             </div>
           </Flex>
