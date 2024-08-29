@@ -650,7 +650,7 @@ const OrderDetail = () => {
                   <Upload
                     listType="picture"
                     className="w-full"
-                    fileList={imageList}
+                    fileList={qrCodeList}
                     onPreview={handlePreview}
                     onChange={handleChange}
                     beforeUpload={() => false}
@@ -723,7 +723,7 @@ const OrderDetail = () => {
                   <Upload
                     listType="picture"
                     className="w-full"
-                    fileList={imageList}
+                    fileList={qrCodeList}
                     onPreview={handlePreview}
                     onChange={handleChange}
                     beforeUpload={() => false}
