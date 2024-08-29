@@ -53,7 +53,7 @@ export const useCancelOrderUser = () => {
   return useMutation({
     mutationFn: ({ id }) => {
       console.log("Cancel order...", id);
-      return axiosClient._patch(`/order/payment/${id}`);
+      return axiosClient._patch(`/order/cancel/${id}`);
     },
 
     onSuccess: (response) => {
@@ -67,4 +67,3 @@ export const useCancelOrderUser = () => {
     },
   });
 };
-

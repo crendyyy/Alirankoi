@@ -15,7 +15,9 @@ const Order = () => {
   console.log(orders);
 
   const handleOrderDetail = (order) => {
-    navigate(`/order/${order.order_type.toLowerCase()}/${order.id}`, { state: { order } });
+    navigate(`/order/${order.order_type.toLowerCase()}/${order.id}`, {
+      state: { order },
+    });
   };
 
   console.log(orders);
@@ -24,21 +26,38 @@ const Order = () => {
     <>
       <Flex vertical gap="small">
         <h1 className="flex items-center gap-1 font-semibold text-lg my-2">
-          <BankOutlined className="text-xl " /> History Order Buy {path === "/order/bank" ? "Bank" : "Ali"}
+          <BankOutlined className="text-xl " /> History Order Buy{" "}
+          {path === "/order/bank" ? "Bank" : "Ali"}
         </h1>
         <div className="flex flex-col gap-2">
           {isPending ? <p>Loading</p> : ""}
-          {orders &&
-            orders.payload.map((order) => (
-              <HistoryCard
-                key={order.id}
-                onClick={() => handleOrderDetail(order)}
-                date={order.createdAt}
-                rate={order.bank_number}
-                status={order.status}
-                totalAmount={order.amount}
-              />
-            ))}
+          {path === "/order/bank"
+            ? orders?.payload
+                .filter((order) => order.order_type === "Bank")
+                .map((order) => (
+                  <HistoryCard
+                    key={order.id}
+                    onClick={() => handleOrderDetail(order)}
+                    date={order.createdAt.slice(0, 10)}
+                    rate={order.selling_price}
+                    status={order.status}
+                    orderType={order.order_type}
+                    totalAmount={order.amount}
+                  />
+                ))
+            : orders?.payload
+                .filter((order) => order.order_type === "Alipay")
+                .map((order) => (
+                  <HistoryCard
+                    key={order.id}
+                    onClick={() => handleOrderDetail(order)}
+                    date={order.createdAt.slice(0, 10)}
+                    rate={order.selling_price}
+                    status={order.status}
+                    orderType={order.order_type}
+                    totalAmount={order.amount}
+                  />
+                ))}
         </div>
       </Flex>
     </>

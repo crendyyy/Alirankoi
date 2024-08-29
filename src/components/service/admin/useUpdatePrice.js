@@ -23,3 +23,24 @@ export const useUpdatePrice = () => {
     },
   });
 };
+export const useUpdateBuyPrice = () => {
+  const queryClient = useQueryClient();
+  const axiosClient = useAxios();
+
+  return useMutation({
+    mutationFn: (data) => {
+      console.log("Updating buy price...", data);
+      return axiosClient._patch(`/buyPrice`, data);
+    },
+
+    onSuccess: (response) => {
+      console.log("Buy Price updated successfully", "success", response);
+      // Refresh data related to the stock after a successful update
+      queryClient.invalidateQueries({ queryKey: stockKeys.lists });
+    },
+
+    onError: () => {
+      toast.update("Failed to update buy price, please try again", "error");
+    },
+  });
+};

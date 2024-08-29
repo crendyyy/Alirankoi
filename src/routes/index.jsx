@@ -27,7 +27,8 @@ const LayoutUser = () => {
         </main>
       ) : (
         <>
-          {matchPath(`/order/${"bank" || "alipay"}/:orderId`, path) ? (
+          {matchPath(`/order/bank/:orderId`, path) ||
+          matchPath(`/order/alipay/:orderId`, path) ? (
             <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-[600px] ">
               <Outlet />
             </main>

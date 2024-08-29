@@ -156,7 +156,9 @@ const EditCard = ({
                     ? formUpdatePriceBank
                     : formUpdatePriceAli
                 }
-                onFinish={onUpdatePriceBank}
+                onFinish={
+                  typePayment == "Bank" ? onUpdatePriceBank : onUpdatePriceAli
+                }
                 initialValues={{ remember: true }}
               >
                 <Flex gap="small" align="end">
@@ -209,7 +211,11 @@ const EditCard = ({
                     ? formUpdateCapitalPriceBank
                     : formUpdateCapitalPriceAli
                 }
-                onFinish={onUpdateCapitalPriceBank}
+                onFinish={
+                  typePayment == "Bank"
+                    ? onUpdateCapitalPriceBank
+                    : onUpdateCapitalPriceAli
+                }
                 initialValues={{ remember: true }}
               >
                 <Flex gap="small" align="end">

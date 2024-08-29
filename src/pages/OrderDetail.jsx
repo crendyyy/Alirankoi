@@ -1,4 +1,8 @@
-import { ClockCircleOutlined, InfoCircleOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  ClockCircleOutlined,
+  InfoCircleOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import Status from "../components/shared/Status";
 import { Button, Form, Image, Input, Upload } from "antd";
 import Title from "antd/es/typography/Title";
@@ -6,8 +10,13 @@ import { useLocation, useNavigate } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { useGetStock } from "../components/service/stock/useGetStock";
 import { formatRupiah } from "../libs/utils";
-import { useCancelOrderUser, useConfirmOrderUser, useUpdateOrderUser } from "../components/service/user/order/useUpdateOrderUser";
+import {
+  useCancelOrderUser,
+  useConfirmOrderUser,
+  useUpdateOrderUser,
+} from "../components/service/user/order/useUpdateOrderUser";
 import { AuthContext } from "../context/AuthContext";
+import Countdown from "../components/shared/Countdown";
 
 const OrderDetail = () => {
   const navigate = useNavigate();
@@ -17,8 +26,6 @@ const OrderDetail = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const { auth } = useContext(AuthContext);
-
-  const { data: stock, isPending: isPending, isError: isError } = useGetStock();
 
   const editOrderMutation = useUpdateOrderUser();
 
@@ -34,10 +41,19 @@ const OrderDetail = () => {
     },
   ]);
 
+  const invoiceUrl = `http://localhost:3000/picture/${order.invoice_name}`;
+
+  const [invoiceList, setInvoiceList] = useState([
+    {
+      uid: "-1", // UID unik
+      name: order.invoice_name, // Nama file
+      status: "done", // Status
+      url: invoiceUrl, // URL gambar
+    },
+  ]);
+
   const confirmOrderMutation = useConfirmOrderUser();
   const cancelOrderMutation = useCancelOrderUser();
-
-  const invoiceUrl = `http://localhost:3000/picture/${order.invoice_name}`;
 
   const [imageList, setImageList] = useState([]);
 
@@ -60,6 +76,10 @@ const OrderDetail = () => {
     await editOrderMutation.mutate({ id: order.id, data });
     setIsEdit(false);
   };
+
+  const tenMinutesAfterCreatedAt = new Date(
+    new Date(order.createdAt).getTime() + 10 * 60 * 1000
+  ).toISOString();
 
   const handleConfirmOrder = async () => {
     const file = imageList[0]?.originFileObj;
@@ -90,7 +110,9 @@ const OrderDetail = () => {
 
   return (
     <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-4 max-sm:gap-3.5 mb-24 px-3">
-      <h1 className="p-6 font-bold bg-white max-sm:p-5 rounded-b-3xl">Order Detail</h1>
+      <h1 className="p-6 font-bold bg-white max-sm:p-5 rounded-b-3xl">
+        Order Detail
+      </h1>
 
       <div className="flex flex-col gap-6 p-6 max-sm:p-5 text-sm font-normal bg-white rounded-3xl max-sm:text-[13px]">
         <div className="flex justify-between">
@@ -121,10 +143,15 @@ const OrderDetail = () => {
 
       {order.status === "Awaiting Payment" ? (
         <div className="flex justify-between p-6 max-sm:p-5 bg-[#FECACA] rounded-3xl border-2 border-dashed border-[#DC2626] gap-2 max-sm:gap-3">
-          <p className="max-sm:text-xs text-sm text-[#DC2626]">Upload payment proof before time runs out to avoid order cancellation.</p>
+          <p className="max-sm:text-xs text-sm text-[#DC2626]">
+            Upload payment proof before time runs out to avoid order
+            cancellation.
+          </p>
           <div className="flex items-center gap-2">
             <ClockCircleOutlined className="text-[#DC2626]" />
-            <p className="text-xs text-[#DC2626] font-bold">10:00</p>
+            <p className="text-xs text-[#DC2626] font-bold">
+              <Countdown endTime={tenMinutesAfterCreatedAt} />
+            </p>
           </div>
         </div>
       ) : (
@@ -164,11 +191,20 @@ const OrderDetail = () => {
                 }}
               >
                 {order.status === "Complete" || order.status === "Cancel" ? (
-                  <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
+                  <Button
+                    type="dashed"
+                    className="border-primary text-primary max-sm:text-xs"
+                    icon={<UploadOutlined />}
+                    disabled
+                  >
                     Click to Upload
                   </Button>
                 ) : (
-                  <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
+                  <Button
+                    type="dashed"
+                    className="border-primary text-primary max-sm:text-xs"
+                    icon={<UploadOutlined />}
+                  >
                     Click to Upload
                   </Button>
                 )}
@@ -197,7 +233,9 @@ const OrderDetail = () => {
           order.status === "Awaiting Payment" ? (
             <>
               <div className="flex items-center justify-between">
-                <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
+                <h1 className="text-base font-bold max-sm:text-sm">
+                  Payment Information
+                </h1>
                 {isEdit && (
                   <Button
                     style={{ padding: 0 }}
@@ -210,7 +248,12 @@ const OrderDetail = () => {
                   </Button>
                 )}
                 {!isEdit && (
-                  <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="max-sm:text-xs underline text-primary">
+                  <Button
+                    style={{ padding: 0 }}
+                    type="link"
+                    onClick={handleEdit}
+                    className="max-sm:text-xs underline text-primary"
+                  >
                     Edit Data
                   </Button>
                 )}
@@ -299,7 +342,9 @@ const OrderDetail = () => {
           ) : order.status === "Pending" ? (
             <>
               <div className="flex items-center justify-between">
-                <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
+                <h1 className="text-base font-bold max-sm:text-sm">
+                  Payment Information
+                </h1>
                 {isEdit && (
                   <Button
                     style={{ padding: 0 }}
@@ -312,7 +357,12 @@ const OrderDetail = () => {
                   </Button>
                 )}
                 {!isEdit && (
-                  <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="max-sm:text-xs underline text-primary">
+                  <Button
+                    style={{ padding: 0 }}
+                    type="link"
+                    onClick={handleEdit}
+                    className="max-sm:text-xs underline text-primary"
+                  >
                     Edit Data
                   </Button>
                 )}
@@ -401,7 +451,9 @@ const OrderDetail = () => {
           ) : (
             <>
               <div className="flex items-center justify-between">
-                <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
+                <h1 className="text-base font-bold max-sm:text-sm">
+                  Payment Information
+                </h1>
               </div>
               <Form
                 id="editForm"
@@ -425,7 +477,11 @@ const OrderDetail = () => {
                     },
                   ]}
                 >
-                  <Input placeholder="Bank Name" disabled className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border" />
+                  <Input
+                    placeholder="Bank Name"
+                    disabled
+                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                  />
                 </Form.Item>
                 <Form.Item
                   label="Bank Number"
@@ -485,7 +541,9 @@ const OrderDetail = () => {
         order.status === "Awaiting Payment" ? (
           <>
             <div className="flex items-center justify-between">
-              <h1 className="text-base font-bold max-sm:text-sm">Payment Information ali</h1>
+              <h1 className="text-base font-bold max-sm:text-sm">
+                Payment Information ali
+              </h1>
               {isEdit && (
                 <Button
                   style={{ padding: 0 }}
@@ -498,7 +556,12 @@ const OrderDetail = () => {
                 </Button>
               )}
               {!isEdit && (
-                <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="max-sm:text-xs underline text-primary">
+                <Button
+                  style={{ padding: 0 }}
+                  type="link"
+                  onClick={handleEdit}
+                  className="max-sm:text-xs underline text-primary"
+                >
                   Edit Data
                 </Button>
               )}
@@ -564,16 +627,28 @@ const OrderDetail = () => {
                       showDownloadIcon: false,
                     }}
                   >
-                    {order.status === "Complete" || order.status === "Cancel" ? (
-                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
+                    {order.status === "Complete" ||
+                    order.status === "Cancel" ? (
+                      <Button
+                        type="dashed"
+                        className="border-primary text-primary max-sm:text-xs"
+                        icon={<UploadOutlined />}
+                        disabled
+                      >
                         QR Code
                       </Button>
                     ) : (
-                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
+                      <Button
+                        type="dashed"
+                        className="border-primary text-primary max-sm:text-xs"
+                        icon={<UploadOutlined />}
+                      >
                         QR Code
                       </Button>
                     )}
-                    <span className="ml-2 max-sm:text-xs text-gray-500">(Optional)</span>
+                    <span className="ml-2 max-sm:text-xs text-gray-500">
+                      (Optional)
+                    </span>
                   </Upload>
                 </div>
               </Form.Item>
@@ -582,7 +657,9 @@ const OrderDetail = () => {
         ) : order.status === "Pending" ? (
           <>
             <div className="flex items-center justify-between">
-              <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
+              <h1 className="text-base font-bold max-sm:text-sm">
+                Payment Information
+              </h1>
               {isEdit && (
                 <Button
                   style={{ padding: 0 }}
@@ -595,7 +672,12 @@ const OrderDetail = () => {
                 </Button>
               )}
               {!isEdit && (
-                <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="max-sm:text-xs underline text-primary">
+                <Button
+                  style={{ padding: 0 }}
+                  type="link"
+                  onClick={handleEdit}
+                  className="max-sm:text-xs underline text-primary"
+                >
                   Edit Data
                 </Button>
               )}
@@ -661,16 +743,28 @@ const OrderDetail = () => {
                       showDownloadIcon: false,
                     }}
                   >
-                    {order.status === "Complete" || order.status === "Cancel" ? (
-                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
+                    {order.status === "Complete" ||
+                    order.status === "Cancel" ? (
+                      <Button
+                        type="dashed"
+                        className="border-primary text-primary max-sm:text-xs"
+                        icon={<UploadOutlined />}
+                        disabled
+                      >
                         QR Code
                       </Button>
                     ) : (
-                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
+                      <Button
+                        type="dashed"
+                        className="border-primary text-primary max-sm:text-xs"
+                        icon={<UploadOutlined />}
+                      >
                         QR Code
                       </Button>
                     )}
-                    <span className="ml-2 max-sm:text-xs text-gray-500">(Optional)</span>
+                    <span className="ml-2 max-sm:text-xs text-gray-500">
+                      (Optional)
+                    </span>
                   </Upload>
                 </div>
               </Form.Item>
@@ -679,7 +773,9 @@ const OrderDetail = () => {
         ) : (
           <>
             <div className="flex items-center justify-between">
-              <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
+              <h1 className="text-base font-bold max-sm:text-sm">
+                Payment Information
+              </h1>
             </div>
             <Form
               id="editForm"
@@ -703,7 +799,11 @@ const OrderDetail = () => {
                   },
                 ]}
               >
-                <Input placeholder="No / Email" disabled className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border" />
+                <Input
+                  placeholder="No / Email"
+                  disabled
+                  className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                />
               </Form.Item>
               <Form.Item
                 label="Name"
@@ -716,7 +816,11 @@ const OrderDetail = () => {
                   },
                 ]}
               >
-                <Input placeholder="Name" disabled className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border" />
+                <Input
+                  placeholder="Name"
+                  disabled
+                  className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                />
               </Form.Item>
               <Form.Item noStyle name="qr_qode" className="w-full">
                 <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center">
@@ -734,16 +838,28 @@ const OrderDetail = () => {
                       showDownloadIcon: false,
                     }}
                   >
-                    {order.status === "Complete" || order.status === "Cancel" ? (
-                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
+                    {order.status === "Complete" ||
+                    order.status === "Cancel" ? (
+                      <Button
+                        type="dashed"
+                        className="border-primary text-primary max-sm:text-xs"
+                        icon={<UploadOutlined />}
+                        disabled
+                      >
                         QR Code
                       </Button>
                     ) : (
-                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
+                      <Button
+                        type="dashed"
+                        className="border-primary text-primary max-sm:text-xs"
+                        icon={<UploadOutlined />}
+                      >
                         QR Code
                       </Button>
                     )}
-                    <span className="ml-2 max-sm:text-xs text-gray-500">(Optional)</span>
+                    <span className="ml-2 max-sm:text-xs text-gray-500">
+                      (Optional)
+                    </span>
                   </Upload>
                 </div>
               </Form.Item>
@@ -754,7 +870,9 @@ const OrderDetail = () => {
 
       <div className="flex items-center justify-between p-6 bg-white max-sm:p-5 rounded-3xl max-sm:text-sm">
         <span className="font-bold">Total Paid</span>
-        <span className="font-bold">{isPending ? "-" : `${formatRupiah(Number(order.amount) * order.selling_price)}`}</span>
+        <span className="font-bold">
+          {`${formatRupiah(Number(order.amount) * order.selling_price)}`}
+        </span>
       </div>
 
       {order.status === "Awaiting Payment" ? (
@@ -766,16 +884,26 @@ const OrderDetail = () => {
           >
             Cancel
           </Button>
-          <Form form={formConfirmOrder} onFinish={handleConfirmOrder} onFinishFailed={(errorInfo) => console.log("Failed:", errorInfo)}>
+          <Form
+            form={formConfirmOrder}
+            onFinish={handleConfirmOrder}
+            onFinishFailed={(errorInfo) => console.log("Failed:", errorInfo)}
+          >
             <Form.Item noStyle className="w-full">
-              <Button htmlType="submit" className="w-full px-2 py-6 font-semibold text-white rounded-full bg-primary max-sm:text-sm">
+              <Button
+                htmlType="submit"
+                className="w-full px-2 py-6 font-semibold text-white rounded-full bg-primary max-sm:text-sm"
+              >
                 Confirm Payment
               </Button>
             </Form.Item>
           </Form>
         </>
       ) : (
-        <Button onClick={() => navigate("/")} className="w-full px-2 py-6 font-semibold text-white bg-primary rounded-full max-sm:text-sm">
+        <Button
+          onClick={() => navigate("/")}
+          className="w-full px-2 py-6 font-semibold text-white bg-primary rounded-full max-sm:text-sm"
+        >
           Back
         </Button>
       )}
