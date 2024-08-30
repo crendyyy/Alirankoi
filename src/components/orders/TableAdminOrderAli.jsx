@@ -24,7 +24,10 @@ import FileSaver from "file-saver";
 import Status from "../shared/Status";
 import dayjs from "dayjs";
 import { useDeleteOrder } from "../service/admin/orders/useDeleteOrder";
-import { useUpdateStatusOrder } from "../service/admin/orders/useUpdateStatusOrder";
+import {
+  useUpdateDataOrder,
+  useUpdateStatusOrder,
+} from "../service/admin/orders/useUpdateStatusOrder";
 
 const dateFormat = "YYYY-MM-DD";
 
@@ -95,6 +98,7 @@ const TableAdminOrderAli = ({
 
   const { data: orders, isPending, isError } = useGetOrders();
   const updateStatusOrderMutation = useUpdateStatusOrder();
+  const updateDataOrdeMutation = useUpdateDataOrder();
 
   const deleteOrderMutation = useDeleteOrder();
 
@@ -123,6 +127,22 @@ const TableAdminOrderAli = ({
           ...item,
           ...row,
         };
+        console.log(updatedData);
+        console.log(item);
+
+        const newEditData = {
+          buying_price: updatedData.buying_price,
+          selling_price: updatedData.selling_price,
+          amount: updatedData.amount,
+          status: updatedData.status,
+          ali_number_or_email: updatedData.ali_number_or_email,
+          ali_name: updatedData.ali_name,
+        };
+
+        updateDataOrdeMutation.mutate({
+          id: item.id,
+          data: newEditData,
+        });
 
         // Call the mutation function with the updated status
         updateStatusOrderMutation.mutate({
