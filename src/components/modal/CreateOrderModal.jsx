@@ -112,6 +112,46 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                   className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 "
                 />
               </Form.Item>
+              <Form.Item noStyle name="account_name">
+                {/* <Form form={formConfirmOrder} className="w-full"> */}
+                <Form.Item noStyle name="invoice" className="w-full">
+                  <div className="flex w-full p-6 rounded-md bg-[#F7F9FC]">
+                    <Upload
+                      listType="picture"
+                      className="w-full"
+                      fileList={imageList}
+                      onPreview={handlePreview}
+                      onChange={handleChange}
+                      beforeUpload={() => false}
+                      maxCount={3}
+                      showUploadList={{
+                        showPreviewIcon: true,
+                        showRemoveIcon: true,
+                        showDownloadIcon: false,
+                      }}
+                    >
+                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
+                        Invoice
+                      </Button>
+                    </Upload>
+                  </div>
+                </Form.Item>
+                {/* </Form> */}
+                {previewImage && (
+                  <Image
+                    wrapperStyle={{
+                      display: "none",
+                    }}
+                    className="w-full"
+                    preview={{
+                      visible: previewOpen,
+                      onVisibleChange: (visible) => setPreviewOpen(visible),
+                      afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                    }}
+                    src={previewImage}
+                  />
+                )}
+              </Form.Item>
             </Flex>
           </Form>
         ) : (
@@ -149,7 +189,7 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                       }}
                     >
                       <Flex gap="small" align="center">
-                        <Button icon={<UploadOutlined />} className="bg-white">
+                        <Button type="dashed" icon={<UploadOutlined />} className="border-primary text-primary max-sm:text-xs">
                           Invoice
                         </Button>
                       </Flex>
