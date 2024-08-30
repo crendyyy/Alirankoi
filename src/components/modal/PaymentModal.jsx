@@ -67,7 +67,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
   //   setPreviewOpen(true);
   // };
   const handlePreviewQR = (file) => {
-    setPreviewImageQR(file.thumbUrl || file.url);
+    setPreviewImageQR(file.thumbUrl || file.preview);
     setPreviewOpen(true);
   };
 

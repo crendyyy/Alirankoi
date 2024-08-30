@@ -25,7 +25,6 @@ const OrderDetail = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [previewImageQR, setPreviewImageQR] = useState("");
   const { auth } = useContext(AuthContext);
 
   const editOrderMutation = useUpdateOrderUser();
@@ -53,15 +52,10 @@ const OrderDetail = () => {
     },
   ]);
 
-  // let dataInvoiceList = {
-  //   uid: "-1", // UID unik
-  //   name: order.invoice_name, // Nama file
-  //   status: "done", // Status
-  //   url: invoiceUrl, // URL gambar
-  // }
-
   const confirmOrderMutation = useConfirmOrderUser();
   const cancelOrderMutation = useCancelOrderUser();
+
+  const [imageList, setImageList] = useState([]);
 
   const [formConfirmOrder] = Form.useForm();
 
@@ -88,11 +82,11 @@ const OrderDetail = () => {
   ).toISOString();
 
   const handleConfirmOrder = async () => {
-    const file = invoiceList[0]?.originFileObj;
+    const file = imageList[0]?.originFileObj;
     console.log(file);
     const formData = new FormData();
 
-    formData.append("invoice", invoiceList[0]?.originFileObj);
+    formData.append("invoice", imageList[0]?.originFileObj);
 
     formData.append("token", auth.token);
 
@@ -108,16 +102,8 @@ const OrderDetail = () => {
     setPreviewImage(file.thumbUrl || file.url);
     setPreviewOpen(true);
   };
-  const handlePreviewQR = (file) => {
-    setPreviewImageQR(file.thumbUrl || file.url);
-    setPreviewOpen(true);
-  };
 
-  // const handleChange = ({ fileList }) => {
-  //   handleChange ? setInvoiceList(fileList) : !invoiceList;
-  // };
-  const handleChange = ({ fileList }) => setInvoiceList(fileList);
-  const handleChangeQR = ({ fileList }) => setqrCodeList(fileList);
+  const handleChange = ({ fileList }) => setImageList(fileList);
 
   // let tes = order.status;
   // let tes2 = "Complete";
@@ -175,23 +161,74 @@ const OrderDetail = () => {
       <div className="p-6 bg-white max-sm:p-5 rounded-3xl">
         <h1 className="text-base font-bold max-sm:text-sm">Payment Proof</h1>
         {order.status === "Awaiting Payment" ? (
-          <small className="flex gap-1 items-center my-2 max-sm:items-start text-[#9CA3AF]">
-            <InfoCircleOutlined className="max-sm:mt-1" />
-            Upload your payment proof below!
-          </small>
-        ) : order.status === "Pending" ? (
-          <small className="flex gap-1 items-center my-2 max-sm:items-start text-[#9CA3AF]">
-            <InfoCircleOutlined className="max-sm:mt-1" />
-            If you need to upload a new payment proof, click the button below!
-          </small>
+          <div>
+            <small className="flex gap-1 items-center my-2 max-sm:items-start text-[#9CA3AF]">
+              <InfoCircleOutlined className="max-sm:mt-1" />
+              Upload your payment proof below!
+            </small>
+            <div className="flex mt-5">
+              <Form form={formConfirmOrder} className="w-full">
+                <Form.Item noStyle name="invoice" className="w-full">
+                  <Upload
+                    listType="picture"
+                    className="w-full"
+                    fileList={imageList}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
+                    beforeUpload={() => false}
+                    maxCount={3}
+                    showUploadList={{
+                      showPreviewIcon: true,
+                      showRemoveIcon: false,
+                      showDownloadIcon: false,
+                    }}
+                  >
+                    {order.status === "Complete" ||
+                    order.status === "Cancel" ? (
+                      <Button
+                        type="dashed"
+                        className="border-primary text-primary max-sm:text-xs"
+                        icon={<UploadOutlined />}
+                        disabled
+                      >
+                        Click to Upload
+                      </Button>
+                    ) : (
+                      <Button
+                        type="dashed"
+                        className="border-primary text-primary max-sm:text-xs"
+                        icon={<UploadOutlined />}
+                      >
+                        Click to Upload
+                      </Button>
+                    )}
+                  </Upload>
+                </Form.Item>
+              </Form>
+              {previewImage && (
+                <Image
+                  wrapperStyle={{
+                    display: "none",
+                  }}
+                  className="w-full"
+                  preview={{
+                    visible: previewOpen,
+                    onVisibleChange: (visible) => setPreviewOpen(visible),
+                    afterOpenChange: (visible) =>
+                      !visible && setPreviewImage(""),
+                  }}
+                  src={previewImage}
+                />
+              )}
+            </div>
+          </div>
         ) : (
-          ""
-        )}
-
-        {/* Payment Proof Upload */}
-        <div className="flex mt-5">
-          <Form form={formConfirmOrder} className="w-full">
-            <Form.Item noStyle name="invoice" className="w-full">
+          <div>
+            <small className="flex gap-1 items-center my-2 max-sm:items-start text-[#9CA3AF]">
+              <InfoCircleOutlined className="max-sm:mt-1" />
+              If you need to upload a new payment proof, click the button below!
+            </small>
+            <div className="flex mt-5">
               <Upload
                 listType="picture"
                 className="w-full"
@@ -225,23 +262,24 @@ const OrderDetail = () => {
                   </Button>
                 )}
               </Upload>
-            </Form.Item>
-          </Form>
-          {previewImage && (
-            <Image
-              wrapperStyle={{
-                display: "none",
-              }}
-              className="w-full"
-              preview={{
-                visible: previewOpen,
-                onVisibleChange: (visible) => setPreviewOpen(visible),
-                afterOpenChange: (visible) => !visible && setPreviewImage(""),
-              }}
-              src={previewImage}
-            />
-          )}
-        </div>
+              {previewImage && (
+                <Image
+                  wrapperStyle={{
+                    display: "none",
+                  }}
+                  className="w-full"
+                  preview={{
+                    visible: previewOpen,
+                    onVisibleChange: (visible) => setPreviewOpen(visible),
+                    afterOpenChange: (visible) =>
+                      !visible && setPreviewImage(""),
+                  }}
+                  src={previewImage}
+                />
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-6 p-6 text-sm font-normal bg-white max-sm:p-5 rounded-3xl">
@@ -629,13 +667,12 @@ const OrderDetail = () => {
               </Form.Item>
               <Form.Item noStyle name="qr_qode" className="w-full">
                 <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center">
-                  {/* QR CODE */}
                   <Upload
                     listType="picture"
                     className="w-full"
                     fileList={qrCodeList}
-                    onPreview={handlePreviewQR}
-                    onChange={handleChangeQR}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
                     beforeUpload={() => false}
                     maxCount={3}
                     showUploadList={{
@@ -670,21 +707,6 @@ const OrderDetail = () => {
                 </div>
               </Form.Item>
             </Form>
-            {previewImageQR && (
-              <Image
-                wrapperStyle={{
-                  display: "none",
-                }}
-                className="w-full"
-                preview={{
-                  visible: previewOpen,
-                  onVisibleChange: (visible) => setPreviewOpen(visible),
-                  afterOpenChange: (visible) =>
-                    !visible && setPreviewImageQR(""),
-                }}
-                src={previewImageQR}
-              />
-            )}
           </>
         ) : order.status === "Pending" ? (
           <>
@@ -761,13 +783,12 @@ const OrderDetail = () => {
               </Form.Item>
               <Form.Item noStyle name="qr_qode" className="w-full">
                 <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center">
-                  {/* QR CODE PENDING */}
                   <Upload
                     listType="picture"
                     className="w-full"
                     fileList={qrCodeList}
-                    onPreview={handlePreviewQR}
-                    onChange={handleChangeQR}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
                     beforeUpload={() => false}
                     maxCount={3}
                     showUploadList={{
@@ -857,13 +878,12 @@ const OrderDetail = () => {
               </Form.Item>
               <Form.Item noStyle name="qr_qode" className="w-full">
                 <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center">
-                  {/* QR CODE COMPLETE CANCEL (DISABLED) */}
                   <Upload
                     listType="picture"
                     className="w-full"
                     fileList={qrCodeList}
-                    onPreview={handlePreviewQR}
-                    onChange={handleChangeQR}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
                     beforeUpload={() => false}
                     maxCount={3}
                     showUploadList={{
