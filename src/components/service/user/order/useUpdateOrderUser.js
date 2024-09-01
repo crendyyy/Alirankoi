@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../../../../Hooks/useAxios";
-import orderKeys from ".";
+import ordersKeys from ".";
 
 export const useUpdateOrderUser = () => {
   const queryClient = useQueryClient();
@@ -15,7 +15,7 @@ export const useUpdateOrderUser = () => {
     onSuccess: (response) => {
       console.log("Order updated successfully", "success", response);
       // Refresh data related to the stock after a successful update
-      queryClient.invalidateQueries({ queryKey: orderKeys.lists });
+      queryClient.invalidateQueries({ queryKey: ordersKeys.lists });
     },
 
     onError: (error) => {
@@ -37,7 +37,7 @@ export const useConfirmOrderUser = () => {
     onSuccess: (response) => {
       console.log("Order updated successfully", "success", response);
       // Refresh data related to the stock after a successful update
-      queryClient.invalidateQueries({ queryKey: orderKeys.lists });
+      queryClient.invalidateQueries({ queryKey: ordersKeys.lists });
     },
 
     onError: (error) => {

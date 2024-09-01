@@ -2,14 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../../../../Hooks/useAxios";
 import ordersKeys from ".";
 
-export const useCreateOrder = () => {
+export const useCreateManualOrder = () => {
   const queryClient = useQueryClient();
   const axiosClient = useAxios();
 
   return useMutation({
-    mutationFn: ({ id, data }) => {
+    mutationFn: (data) => {
       console.log("Creating order...", data);
-      return axiosClient._post(`/admin/order/${id}`, data);
+      return axiosClient._post(`/admin/order`, data);
     },
 
     onSuccess: (response) => {

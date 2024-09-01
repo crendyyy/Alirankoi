@@ -28,45 +28,38 @@ const OrderDetail = () => {
   const { auth } = useContext(AuthContext);
 
   const editOrderMutation = useUpdateOrderUser();
+  const confirmOrderMutation = useConfirmOrderUser();
+  const cancelOrderMutation = useCancelOrderUser();
 
-  // QR CODE
   const qrCodeUrl = `http://localhost:3000/picture/${order.ali_qr}`;
+  const invoiceUrl = `http://localhost:3000/picture/${order.invoice_name}`;
 
-  const [qrCodeList, setqrCodeList] = useState([
+  const [qrCodeList, setQrCodeList] = useState([
     {
-      uid: "-1", // UID unik
-      name: order.ali_qr, // Nama file
-      status: "done", // Status
-      url: qrCodeUrl, // URL gambar
+      uid: "-1",
+      name: order.ali_qr,
+      status: "done",
+      url: qrCodeUrl,
     },
   ]);
-
-  const invoiceUrl = `http://localhost:3000/picture/${order.invoice_name}`;
 
   const [invoiceList, setInvoiceList] = useState([
     {
-      uid: "-1", // UID unik
-      name: order.invoice_name, // Nama file
-      status: "done", // Status
-      url: invoiceUrl, // URL gambar
+      uid: "-1",
+      name: order.invoice_name,
+      status: "done",
+      url: invoiceUrl,
     },
   ]);
-
-  const confirmOrderMutation = useConfirmOrderUser();
-  const cancelOrderMutation = useCancelOrderUser();
 
   const [imageList, setImageList] = useState([]);
   const [imageEditList, setImageEditList] = useState([]);
 
   const [formConfirmOrder] = Form.useForm();
 
-  const handleEdit = () => {
-    setIsEdit(true);
-  };
+  const handleEdit = () => setIsEdit(true);
 
   const handleSubmitEditBank = async (value) => {
-    console.log("Submitting edit...");
-
     const data = {
       bank_number: value.bank_number,
       bank_detail: value.bank_detail,
@@ -74,17 +67,29 @@ const OrderDetail = () => {
       account_name: value.account_name,
     };
 
-    await editOrderMutation.mutate({ id: order.id, data: data });
+    await editOrderMutation.mutate({ id: order.id, data });
     setIsEdit(false);
   };
 
   const handleSubmitEditAli = async (value) => {
-    const file = imageEditList[0]?.originFileObj;
+    let file = null;
+
+    // Cek apakah ada file baru yang diunggah
+    if (order.ali_qr && order.ali_qr.length > 0) {
+      const uploadedFile = qrCodeList.find((item) => item?.originFileObj);
+      if (uploadedFile) {
+        file = uploadedFile.originFileObj;
+      }
+    } else {
+      file = imageEditList[0]?.originFileObj;
+    }
+
     const formData = new FormData();
     formData.append("ali_number_or_email", value.ali_number_or_email);
     formData.append("ali_name", value.ali_name);
 
     if (file) {
+      // Jika ada file baru, kirim file tersebut
       formData.append("file", file);
     }
 
@@ -92,26 +97,19 @@ const OrderDetail = () => {
     setIsEdit(false);
   };
 
-  const tenMinutesAfterCreatedAt = new Date(
-    new Date(order.createdAt).getTime() + 10 * 60 * 1000
-  ).toISOString();
-
   const handleConfirmOrder = async () => {
-    const file = imageList[0]?.originFileObj;
-    console.log(file);
     const formData = new FormData();
-
     formData.append("invoice", imageList[0]?.originFileObj);
-
     formData.append("token", auth.token);
 
-    await confirmOrderMutation.mutate({ id: order.id, data: formData });
+    await confirmOrderMutation.mutate({
+      id: order.id,
+      data: formData,
+    });
     formConfirmOrder.resetFields();
   };
 
-  const handleCancelOrder = () => {
-    cancelOrderMutation.mutate({ id: order.id });
-  };
+  const handleCancelOrder = () => cancelOrderMutation.mutate({ id: order.id });
 
   const handlePreview = (file) => {
     setPreviewImage(file.thumbUrl || file.url);
@@ -119,9 +117,15 @@ const OrderDetail = () => {
   };
 
   const handleChange = ({ fileList }) => setImageList(fileList);
-
-  // let tes = order.status;
-  // let tes2 = "Complete";
+  const handleChangeQr = ({ fileList }) => {
+    if (order.ali_qr.length > 0) {
+      // Update qrCodeList if order.ali_qr already has data
+      setQrCodeList(fileList);
+    } else {
+      // Update imageEditList if there's no initial QR data
+      setImageEditList(fileList);
+    }
+  };
 
   return (
     <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-4 max-sm:gap-3.5 mb-24 px-3">
@@ -156,7 +160,7 @@ const OrderDetail = () => {
         </div>
       </div>
 
-      {order.status === "Awaiting Payment" ? (
+      {order.status === "Awaiting Payment" && (
         <div className="flex justify-between p-6 max-sm:p-5 bg-[#FECACA] rounded-3xl border-2 border-dashed border-[#DC2626] gap-2 max-sm:gap-3">
           <p className="max-sm:text-xs text-sm text-[#DC2626]">
             Upload payment proof before time runs out to avoid order
@@ -165,12 +169,10 @@ const OrderDetail = () => {
           <div className="flex items-center gap-2">
             <ClockCircleOutlined className="text-[#DC2626]" />
             <p className="text-xs text-[#DC2626] font-bold">
-              <Countdown endTime={tenMinutesAfterCreatedAt} />
+              <Countdown endTime={""} />
             </p>
           </div>
         </div>
-      ) : (
-        ""
       )}
 
       <div className="p-6 bg-white max-sm:p-5 rounded-3xl">
@@ -316,7 +318,7 @@ const OrderDetail = () => {
                     type="link"
                     htmlType="submit"
                     form="editForm"
-                    className="max-sm:text-xs underline text-primary"
+                    className="underline max-sm:text-xs text-primary"
                   >
                     Submit Data
                   </Button>
@@ -326,7 +328,7 @@ const OrderDetail = () => {
                     style={{ padding: 0 }}
                     type="link"
                     onClick={handleEdit}
-                    className="max-sm:text-xs underline text-primary"
+                    className="underline max-sm:text-xs text-primary"
                   >
                     Edit Data
                   </Button>
@@ -425,7 +427,7 @@ const OrderDetail = () => {
                     type="link"
                     htmlType="submit"
                     form="editForm"
-                    className="max-sm:text-xs underline text-primary"
+                    className="underline max-sm:text-xs text-primary"
                   >
                     Submit Data
                   </Button>
@@ -435,7 +437,7 @@ const OrderDetail = () => {
                     style={{ padding: 0 }}
                     type="link"
                     onClick={handleEdit}
-                    className="max-sm:text-xs underline text-primary"
+                    className="underline max-sm:text-xs text-primary"
                   >
                     Edit Data
                   </Button>
@@ -624,7 +626,7 @@ const OrderDetail = () => {
                   type="link"
                   htmlType="submit"
                   form="editForm"
-                  className="max-sm:text-xs underline text-primary"
+                  className="underline max-sm:text-xs text-primary"
                 >
                   Submit Data
                 </Button>
@@ -634,7 +636,7 @@ const OrderDetail = () => {
                   style={{ padding: 0 }}
                   type="link"
                   onClick={handleEdit}
-                  className="max-sm:text-xs underline text-primary"
+                  className="underline max-sm:text-xs text-primary"
                 >
                   Edit Data
                 </Button>
@@ -685,22 +687,22 @@ const OrderDetail = () => {
               </Form.Item>
               <Form.Item noStyle name="file" className="w-full">
                 <span className="font-medium">
-                  <span className="text-red-500 text-xs">*</span> QR Code
+                  <span className="text-xs text-red-500">*</span> QR Code
                 </span>
                 <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
                   {order.ali_qr.length > 0 ? (
                     <Upload
                       listType="picture"
                       className="w-full"
-                      fileList={!isEdit ? qrCodeList : imageEditList}
+                      fileList={qrCodeList}
                       onPreview={handlePreview}
-                      onChange={handleChange}
+                      onChange={handleChangeQr}
                       beforeUpload={() => false}
                       maxCount={3}
                       disabled={!isEdit}
                       showUploadList={{
                         showPreviewIcon: true,
-                        showRemoveIcon: false,
+                        showRemoveIcon: isEdit,
                         showDownloadIcon: false,
                       }}
                     >
@@ -724,46 +726,40 @@ const OrderDetail = () => {
                           QR Code
                         </Button>
                       )}
-                      <span className="ml-2 max-sm:text-xs text-gray-500">
+                      <span className="ml-2 text-gray-500 max-sm:text-xs">
                         (Optional)
                       </span>
                     </Upload>
                   ) : (
                     <>
-                      {!isEdit ? (
-                        <span className="italic text-gray-400 text-xs">
-                          Not Uplouded
-                        </span>
-                      ) : (
-                        <Upload
-                          listType="picture"
-                          className="w-full"
-                          fileList={imageEditList}
-                          onPreview={handlePreview}
-                          onChange={handleChange}
-                          beforeUpload={() => false}
-                          maxCount={3}
+                      <Upload
+                        listType="picture"
+                        className="w-full"
+                        fileList={imageEditList}
+                        onPreview={handlePreview}
+                        onChange={handleChangeQr}
+                        beforeUpload={() => false}
+                        maxCount={3}
+                        disabled={!isEdit}
+                        showUploadList={{
+                          showPreviewIcon: true,
+                          showRemoveIcon: isEdit,
+                          showDownloadIcon: false,
+                        }}
+                      >
+                        <Button
+                          type="dashed"
+                          className="border-primary text-primary max-sm:text-xs"
+                          icon={<UploadOutlined />}
                           disabled={!isEdit}
-                          showUploadList={{
-                            showPreviewIcon: true,
-                            showRemoveIcon: false,
-                            showDownloadIcon: false,
-                          }}
                         >
-                          <Button
-                            type="dashed"
-                            className="border-primary text-primary max-sm:text-xs"
-                            icon={<UploadOutlined />}
-                            disabled={!isEdit}
-                          >
-                            QR Code
-                          </Button>
+                          QR Code
+                        </Button>
 
-                          <span className="ml-2 max-sm:text-xs text-gray-500">
-                            (Optional)
-                          </span>
-                        </Upload>
-                      )}
+                        <span className="ml-2 text-gray-500 max-sm:text-xs">
+                          (Optional)
+                        </span>
+                      </Upload>
                     </>
                   )}
                 </div>
@@ -782,7 +778,7 @@ const OrderDetail = () => {
                   type="link"
                   htmlType="submit"
                   form="editForm"
-                  className="max-sm:text-xs underline text-primary"
+                  className="underline max-sm:text-xs text-primary"
                 >
                   Submit Data
                 </Button>
@@ -792,7 +788,7 @@ const OrderDetail = () => {
                   style={{ padding: 0 }}
                   type="link"
                   onClick={handleEdit}
-                  className="max-sm:text-xs underline text-primary"
+                  className="underline max-sm:text-xs text-primary"
                 >
                   Edit Data
                 </Button>
@@ -843,16 +839,16 @@ const OrderDetail = () => {
               </Form.Item>
               <Form.Item noStyle name="file" className="w-full">
                 <span className="font-medium">
-                  <span className="text-red-500 text-xs">*</span> QR Code
+                  <span className="text-xs text-red-500">*</span> QR Code
                 </span>
                 <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
                   {order.ali_qr.length > 0 ? (
                     <Upload
                       listType="picture"
                       className="w-full"
-                      fileList={!isEdit ? qrCodeList : imageEditList}
+                      fileList={qrCodeList}
                       onPreview={handlePreview}
-                      onChange={handleChange}
+                      onChange={handleChangeQr}
                       beforeUpload={() => false}
                       maxCount={3}
                       disabled={!isEdit}
@@ -882,46 +878,40 @@ const OrderDetail = () => {
                           QR Code
                         </Button>
                       )}
-                      <span className="ml-2 max-sm:text-xs text-gray-500">
+                      <span className="ml-2 text-gray-500 max-sm:text-xs">
                         (Optional)
                       </span>
                     </Upload>
                   ) : (
                     <>
-                      {!isEdit ? (
-                        <span className="italic text-gray-400 text-xs">
-                          Not Uplouded
-                        </span>
-                      ) : (
-                        <Upload
-                          listType="picture"
-                          className="w-full"
-                          fileList={imageEditList}
-                          onPreview={handlePreview}
-                          onChange={handleChange}
-                          beforeUpload={() => false}
-                          maxCount={3}
+                      <Upload
+                        listType="picture"
+                        className="w-full"
+                        fileList={imageEditList}
+                        onPreview={handlePreview}
+                        onChange={handleChangeQr}
+                        beforeUpload={() => false}
+                        maxCount={3}
+                        disabled={!isEdit}
+                        showUploadList={{
+                          showPreviewIcon: true,
+                          showRemoveIcon: false,
+                          showDownloadIcon: false,
+                        }}
+                      >
+                        <Button
+                          type="dashed"
+                          className="border-primary text-primary max-sm:text-xs"
+                          icon={<UploadOutlined />}
                           disabled={!isEdit}
-                          showUploadList={{
-                            showPreviewIcon: true,
-                            showRemoveIcon: false,
-                            showDownloadIcon: false,
-                          }}
                         >
-                          <Button
-                            type="dashed"
-                            className="border-primary text-primary max-sm:text-xs"
-                            icon={<UploadOutlined />}
-                            disabled={!isEdit}
-                          >
-                            QR Code
-                          </Button>
+                          QR Code
+                        </Button>
 
-                          <span className="ml-2 max-sm:text-xs text-gray-500">
-                            (Optional)
-                          </span>
-                        </Upload>
-                      )}
+                        <span className="ml-2 text-gray-500 max-sm:text-xs">
+                          (Optional)
+                        </span>
+                      </Upload>
                     </>
                   )}
                 </div>
@@ -980,7 +970,7 @@ const OrderDetail = () => {
               </Form.Item>
               <Form.Item noStyle name="file" className="w-full">
                 <span className="font-medium">
-                  <span className="text-red-500 text-xs">*</span> QR Code
+                  <span className="text-xs text-red-500">*</span> QR Code
                 </span>
                 <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
                   {order.ali_qr.length > 0 ? (
@@ -1017,12 +1007,12 @@ const OrderDetail = () => {
                           QR Code
                         </Button>
                       )}
-                      <span className="ml-2 max-sm:text-xs text-gray-500">
+                      <span className="ml-2 text-gray-500 max-sm:text-xs">
                         (Optional)
                       </span>
                     </Upload>
                   ) : (
-                    <span className="italic text-gray-400 text-xs">
+                    <span className="text-xs italic text-gray-400">
                       Not Uplouded
                     </span>
                   )}
@@ -1067,7 +1057,7 @@ const OrderDetail = () => {
       ) : (
         <Button
           onClick={() => navigate("/")}
-          className="w-full px-2 py-6 font-semibold text-white bg-primary rounded-full max-sm:text-sm"
+          className="w-full px-2 py-6 font-semibold text-white rounded-full bg-primary max-sm:text-sm"
         >
           Back
         </Button>
