@@ -4,16 +4,32 @@ import { PlusCircleOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, InputNumber, Modal, Switch, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import ExcelJS from "exceljs";
 import { useNavigate } from "react-router";
 import EditCard from "../components/dashboard/EditCard";
 import DashboardTable from "../components/dashboard/DashboardTable";
 import { useGetStock } from "../components/service/stock/useGetStock";
 
-import { useOpenStatus, useSeperateStatus } from "../components/service/admin/useAdminService";
-import { useUpdateStock, useUpdateStockPlus } from "../components/service/admin/useUpdateStock";
-import { useUpdateBuyPrice, useUpdatePrice } from "../components/service/admin/useUpdatePrice";
+import {
+  useOpenStatus,
+  useSeperateStatus,
+} from "../components/service/admin/useAdminService";
+import {
+  useUpdateStock,
+  useUpdateStockPlus,
+} from "../components/service/admin/useUpdateStock";
+import {
+  useUpdateBuyPrice,
+  useUpdatePrice,
+} from "../components/service/admin/useUpdatePrice";
 import { useGetOrders } from "../components/service/admin/orders/useGetOrders";
 import dayjs from "dayjs";
 import PrintModal from "../components/modal/PrintModal";
@@ -51,7 +67,11 @@ const Dashboard = () => {
 
   const printAreaRef = useRef();
 
-  const { data: stock, isPending: isStockPending, isError: isStockError } = useGetStock();
+  const {
+    data: stock,
+    isPending: isStockPending,
+    isError: isStockError,
+  } = useGetStock();
   const { data: orders, isPending, isError } = useGetOrders();
 
   const openStatusMutation = useOpenStatus();
@@ -148,7 +168,15 @@ const Dashboard = () => {
     content: () => printAreaRef.current,
   });
 
-  const labels = ["January", "February", "March", "April", "May", "June", "July"];
+  const labels = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+  ];
 
   const chartData = {
     labels: labels,
@@ -181,7 +209,9 @@ const Dashboard = () => {
       title: "#",
       dataIndex: "no",
       width: 12,
-      render: (text, record, index) => <span className="text-sm font-normal">{index + 1}</span>,
+      render: (text, record, index) => (
+        <span className="text-sm font-normal">{index + 1}</span>
+      ),
     },
     {
       title: "Date",
@@ -238,7 +268,9 @@ const Dashboard = () => {
       title: "#",
       dataIndex: "no",
       width: 12,
-      render: (text, record, index) => <span className="text-sm font-normal">{index + 1}</span>,
+      render: (text, record, index) => (
+        <span className="text-sm font-normal">{index + 1}</span>
+      ),
     },
     {
       title: "Date",
@@ -269,13 +301,14 @@ const Dashboard = () => {
             onClick={() => {
               handleOpenModal("qrModal");
               setSelectedQr(record.ali_qr);
+              console.log(record.ali_qr);
             }}
             className="text-xs underline w-fit text-primary"
           >
             See QR Code
           </a>
         ) : (
-          <span className="italic text-xs text-gray-400">Not Uplouded</span>
+          <span className="text-xs italic text-gray-400">Not Uplouded</span>
         ),
     },
     {
@@ -308,7 +341,8 @@ const Dashboard = () => {
       .filter((order) => order.order_type === "Bank")
       .map((order) => ({
         key: order.id,
-        profit: (order.selling_price - order.buying_price) * Number(order.amount),
+        profit:
+          (order.selling_price - order.buying_price) * Number(order.amount),
         subtotal: order.selling_price * Number(order.amount),
         ...order,
       })) || [];
@@ -318,7 +352,8 @@ const Dashboard = () => {
       .filter((order) => order.order_type === "Alipay")
       .map((order) => ({
         key: order.id,
-        profit: (order.selling_price - order.buying_price) * Number(order.amount),
+        profit:
+          (order.selling_price - order.buying_price) * Number(order.amount),
         subtotal: order.selling_price * Number(order.amount),
         ...order,
       })) || [];
@@ -398,6 +433,7 @@ const Dashboard = () => {
     const blob = new Blob([buffer], { type: "application/octet-stream" });
     FileSaver.saveAs(blob, `${today}.xlsx`);
   };
+  console.log(stock?.payload[0].open);
 
   return (
     <Flex vertical gap={35}>
@@ -419,12 +455,19 @@ const Dashboard = () => {
         onOk={() => handleCloseModal("qrModal")}
         onCancel={() => handleCloseModal("qrModal")}
         footer={[
-          <Button key="submit" type="primary" onClick={() => handleCloseModal("qrModal")}>
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => handleCloseModal("qrModal")}
+          >
             Ok
           </Button>,
         ]}
       >
-        <img src={`http://localhost:3000/picture/${selectedQr}`} alt="Qr code" />
+        <img
+          src={`http://localhost:3000/picture/${selectedQr}`}
+          alt="Qr code"
+        />
       </Modal>
       <div className="flex items-start justify-between">
         <Flex vertical gap={4}>
@@ -439,7 +482,10 @@ const Dashboard = () => {
       </div>
       <Flex justify="space-between" className="mt-5">
         <div className="flex gap-2">
-          <button onClick={() => navigate("/register")} className="flex items-center gap-2 px-4 py-2 text-white rounded-xl bg-primary">
+          <button
+            onClick={() => navigate("/register")}
+            className="flex items-center gap-2 px-4 py-2 text-white rounded-xl bg-primary"
+          >
             <UserAddOutlined className="text-lg" />
             Add User
           </button>
@@ -457,7 +503,10 @@ const Dashboard = () => {
             <Title level={5} style={{ margin: 0 }}>
               Separate Mode
             </Title>
-            <Switch checked={stock?.payload[0].separateMode} onChange={onSeperate} />
+            <Switch
+              checked={stock?.payload[0].separateMode}
+              onChange={onSeperate}
+            />
           </div>
           <div className="flex items-center h-full gap-4 px-4 py-2 bg-white rounded-xl">
             <Title level={5} style={{ margin: 0 }}>
@@ -495,8 +544,12 @@ const Dashboard = () => {
           stockAli={`${!isStockPending ? stock?.payload[0].ali_stock : "-"}`}
           priceBank={`${!isStockPending ? stock?.payload[0].bank_price : "-"}`}
           priceAli={`${!isStockPending ? stock?.payload[0].ali_price : "-"}`}
-          capitalPriceBank={`${!isStockPending ? stock?.payload[0].bank_buy_price : "-"}`}
-          capitalPriceAli={`${!isStockPending ? stock?.payload[0].ali_buy_price : "-"}`}
+          capitalPriceBank={`${
+            !isStockPending ? stock?.payload[0].bank_buy_price : "-"
+          }`}
+          capitalPriceAli={`${
+            !isStockPending ? stock?.payload[0].ali_buy_price : "-"
+          }`}
         />
       ))}
       {typePayment.map((type) => (
@@ -516,8 +569,12 @@ const Dashboard = () => {
           onOpenModal={() => handleOpenModal("printTableModal")}
           priceBank={`${!isStockPending ? stock?.payload[0].bank_price : "-"}`}
           priceAli={`${!isStockPending ? stock?.payload[0].ali_price : "-"}`}
-          capitalPriceBank={`${!isStockPending ? stock?.payload[0].bank_buy_price : "-"}`}
-          capitalPriceAli={`${!isStockPending ? stock?.payload[0].ali_buy_price : "-"}`}
+          capitalPriceBank={`${
+            !isStockPending ? stock?.payload[0].bank_buy_price : "-"
+          }`}
+          capitalPriceAli={`${
+            !isStockPending ? stock?.payload[0].ali_buy_price : "-"
+          }`}
         />
       ))}
     </Flex>

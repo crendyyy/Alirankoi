@@ -88,14 +88,32 @@ const PaymentModal = ({ onClose, typeModal }) => {
           {typeModal === "Bank" ? (
             <Form form={formBank}>
               <Flex gap="small" vertical>
-                <Form.Item noStyle name="bank_detail">
+                <Form.Item
+                  noStyle
+                  name="bank_detail"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input Bank Name",
+                    },
+                  ]}
+                >
                   <Input
                     variant="filled"
                     placeholder="Bank Name"
                     className="flex items-center w-full h-12 max-sm:h-11 px-4 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
-                <Form.Item noStyle name="bank_number">
+                <Form.Item
+                  noStyle
+                  name="bank_number"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input Bank Number",
+                    },
+                  ]}
+                >
                   <Input
                     placeholder="Bank Number"
                     className="flex items-center w-full h-12 max-sm:h-11 px-4 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
@@ -103,14 +121,32 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     variant="filled"
                   />
                 </Form.Item>
-                <Form.Item noStyle name="bank_branch">
+                <Form.Item
+                  noStyle
+                  name="bank_branch"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input Bank Branch",
+                    },
+                  ]}
+                >
                   <Input
                     variant="filled"
                     placeholder="Bank Branch"
                     className="flex items-center w-full h-12 px-4 max-sm:h-11 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
-                <Form.Item noStyle name="account_name">
+                <Form.Item
+                  noStyle
+                  name="account_name"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input Account Name",
+                    },
+                  ]}
+                >
                   <Input
                     variant="filled"
                     placeholder="Account Name"
@@ -122,14 +158,32 @@ const PaymentModal = ({ onClose, typeModal }) => {
           ) : (
             <Form form={formAli}>
               <Flex vertical gap="small">
-                <Form.Item noStyle name="ali_number_or_email">
+                <Form.Item
+                  noStyle
+                  name="ali_number_or_email"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input Number Phone / Email",
+                    },
+                  ]}
+                >
                   <Input
                     variant="filled"
                     placeholder="Number Phone / Email"
                     className="flex items-center w-full h-12 max-sm:h-11 px-4 bg-[#1F222B] text-white placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B]"
                   />
                 </Form.Item>
-                <Form.Item noStyle name="ali_name">
+                <Form.Item
+                  noStyle
+                  name="ali_name"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input Ali Name",
+                    },
+                  ]}
+                >
                   <Input
                     variant="filled"
                     placeholder="Name"
@@ -137,7 +191,16 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   />
                 </Form.Item>
                 <Flex justify="space-between">
-                  <Form.Item noStyle name="file">
+                  <Form.Item
+                    noStyle
+                    name="file"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please Upload QR Code",
+                      },
+                    ]}
+                  >
                     <div className="flex bg-[#1F222B] w-full p-6 max-sm:p-4 rounded-md">
                       <Upload
                         listType="picture"
@@ -192,7 +255,16 @@ const PaymentModal = ({ onClose, typeModal }) => {
             Purhcase Amount
           </Title>
           <Form form={typeModal === "Bank" ? formBank : formAli}>
-            <Form.Item noStyle name="amount">
+            <Form.Item
+              noStyle
+              name="amount"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input Amount",
+                },
+              ]}
+            >
               <InputNumber
                 className="input-number-custom  flex items-center w-full h-12 px-4 max-sm:h-11 placeholder:text-[#9CA3AF] focus:bg-[#1F222B] focus:border-gray-700 hover:bg-[#1F222B] active:bg-[#1F222B] !bg-[#1F222B] !text-white !hover:text-white !active:text-white"
                 variant="filled"

@@ -116,6 +116,10 @@ const OrderDetail = () => {
     setPreviewOpen(true);
   };
 
+  const tenMinutesAfterCreatedAt = new Date(
+    new Date(order.createdAt).getTime() + 10 * 60 * 1000
+  ).toISOString();
+
   const handleChange = ({ fileList }) => setImageList(fileList);
   const handleChangeQr = ({ fileList }) => {
     if (order.ali_qr.length > 0) {
@@ -169,7 +173,7 @@ const OrderDetail = () => {
           <div className="flex items-center gap-2">
             <ClockCircleOutlined className="text-[#DC2626]" />
             <p className="text-xs text-[#DC2626] font-bold">
-              <Countdown endTime={""} />
+              <Countdown endTime={tenMinutesAfterCreatedAt} />
             </p>
           </div>
         </div>
