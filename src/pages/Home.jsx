@@ -113,9 +113,6 @@ const Home = () => {
       <div className="flex flex-col w-full gap-3 max-sm:gap-2">
         <div className="flex items-center justify-between max-sm:mb-2">
           <span className="text-lg font-semibold text-black max-sm:text-base">My History</span>
-          <Link to="/order" className="text-xs text-gray-500 underline">
-            View All
-          </Link>
         </div>
         {isOrderPending ? <p>Loading</p> : ""}
         {orders?.payload.map((order) => (
