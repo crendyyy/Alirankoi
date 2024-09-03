@@ -20,6 +20,11 @@ const Home = () => {
   const [paymentType, setPaymentType] = useState("");
   const { logout, auth } = useContext(AuthContext);
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   // console.log(auth.user?.username);
 
   const { data: orders, isPending: isOrderPending, isError: isOrderError } = useGetUserOrders();
@@ -42,7 +47,7 @@ const Home = () => {
       {isModalopen && <PaymentModal onClose={closeModal} typeModal={paymentType} />}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-black max-sm:text-base">Hello, {auth.user?.username} 👋</h1>
-        <LogoutButton onClick={logout} />
+        <LogoutButton onClick={handleLogout} />
       </div>
 
       <div className="flex w-full gap-6 max-sm:gap-3">
