@@ -8,11 +8,13 @@ export const useUpdatePrice = () => {
 
   return useMutation({
     mutationFn: (data) => {
+      toast.loading("Updating price...");
       console.log("Updating price...", data);
       return axiosClient._patch(`/price`, data);
     },
 
     onSuccess: (response) => {
+      toast.update("Price updated successfully.", "success");
       console.log("Price updated successfully", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: stockKeys.lists });
@@ -29,12 +31,14 @@ export const useUpdateBuyPrice = () => {
 
   return useMutation({
     mutationFn: (data) => {
+      toast.update("Updating buy price...");
       console.log("Updating buy price...", data);
       return axiosClient._patch(`/buyPrice`, data);
     },
 
     onSuccess: (response) => {
-      console.log("Buy Price updated successfully", "success", response);
+      toast.update("Buy Price updated successfully.", "success");
+      console.log("Buy Price updated successfully.", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: stockKeys.lists });
     },
