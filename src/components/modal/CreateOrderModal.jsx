@@ -1,21 +1,5 @@
-import {
-  AlipayOutlined,
-  BankOutlined,
-  ShoppingCartOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Flex,
-  Form,
-  Image,
-  Input,
-  InputNumber,
-  Modal,
-  Radio,
-  Select,
-  Upload,
-} from "antd";
+import { AlipayOutlined, BankOutlined, ShoppingCartOutlined, UploadOutlined } from "@ant-design/icons";
+import { Button, Flex, Form, Image, Input, InputNumber, Modal, Radio, Select, Upload } from "antd";
 import Title from "antd/es/typography/Title";
 import { useState } from "react";
 import { useGetUserList } from "../service/admin/orders/useGetUserList";
@@ -93,39 +77,28 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
   const handleChange = ({ fileList }) => setImageList(fileList);
   return (
     <Modal
-      title="Manual Order Bank"
+      title="Manual Order"
       open={isOpen}
       onOk={onConfirm}
       onCancel={onCancel}
       width={650}
       footer={[
-        <div
-          key="cancel"
-          className="w-full p-6 bg-[#111111] rounded-2xl flex gap-2"
-        >
+        <div key="cancel" className="w-full p-6 bg-[#F7F9FC] rounded-2xl flex gap-2">
           <Button
-            className="w-1/3 rounded-full py-6 text-black bg-white hover:!bg-gray-100 hover:!text-black"
+            className="w-1/3 rounded-full py-6 text-red-500 bg-white hover:!bg-red-100 hover:!text-red-500 border border-red-300 shadow-none"
             type="primary"
             onClick={onCancel}
           >
             Cancel
           </Button>
           <Form
-          className="w-full"
+            className="w-full"
             form={orderType === "Bank" ? formBank : formAli}
-            onFinish={
-              orderType === "Bank"
-                ? handleCreateOrderBank
-                : handleCreateOrderAli
-            }
+            onFinish={orderType === "Bank" ? handleCreateOrderBank : handleCreateOrderAli}
             onFinishFailed={(errorInfo) => console.log("Failed:", errorInfo)}
           >
             <Form.Item noStyle className="w-full">
-              <Button
-                className="w-full rounded-full py-6 text-white bg-primary hover:!bg-blue-400 "
-                type="primary"
-                htmlType="submit"
-              >
+              <Button className="w-full rounded-full py-6 text-white bg-primary hover:!bg-blue-400 " type="primary" htmlType="submit">
                 <ShoppingCartOutlined className="mb-1 text-xl" />
                 Pay Now
               </Button>
@@ -136,12 +109,18 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
     >
       <Flex className="w-full" vertical gap={24}>
         <Select
-          className="h-10 "
+          rules={[
+            {
+              required: true,
+              message: "Please choose username",
+            },
+          ]}
+          className="h-10"
           loading={isPending}
           onChange={selectUserChangeHandle}
           showSearch
           style={{ width: "100%" }}
-          placeholder="Search to Select Username"
+          placeholder="Search to select username"
           optionFilterProp="label"
           allowClear
           options={userList?.payload.map((user) => ({
@@ -149,21 +128,11 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
             label: user.username,
           }))}
         />
-        <Radio.Group
-          className="flex w-full gap-2"
-          defaultValue={orderType}
-          onChange={radioChangeHandle}
-        >
-          <Radio.Button
-            className="w-full !border-none !text-white flex items-center justify-center py-6 !rounded-full"
-            value="Bank"
-          >
+        <Radio.Group className="flex w-full gap-2" defaultValue={orderType} onChange={radioChangeHandle}>
+          <Radio.Button className="w-full !border-none !text-white flex items-center justify-center py-6 !rounded-full" value="Bank">
             <BankOutlined className="mr-1 text-lg" /> Buy Bank
           </Radio.Button>
-          <Radio.Button
-            className="w-full !border-none !text-white flex items-center justify-center py-6 !rounded-full"
-            value="Alipay"
-          >
+          <Radio.Button className="w-full !border-none !text-white flex items-center justify-center py-6 !rounded-full" value="Alipay">
             <AlipayOutlined className="mr-1 text-lg" /> Buy Ali
           </Radio.Button>
         </Radio.Group>
@@ -173,14 +142,32 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
         {orderType === "Bank" ? (
           <Form form={formBank}>
             <Flex gap="small" vertical>
-              <Form.Item noStyle name="bank_detail">
+              <Form.Item
+                noStyle
+                name="bank_detail"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input bank name",
+                  },
+                ]}
+              >
                 <Input
                   variant="filled"
                   placeholder="Bank Name"
                   className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 "
                 />
               </Form.Item>
-              <Form.Item noStyle name="bank_number">
+              <Form.Item
+                noStyle
+                name="bank_number"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input bank number",
+                  },
+                ]}
+              >
                 <Input
                   placeholder="Bank Number"
                   className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 "
@@ -188,22 +175,50 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                   variant="filled"
                 />
               </Form.Item>
-              <Form.Item noStyle name="bank_branch">
+              <Form.Item
+                noStyle
+                name="bank_branch"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input bank branch",
+                  },
+                ]}
+              >
                 <Input
                   variant="filled"
                   placeholder="Bank Branch"
                   className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 "
                 />
               </Form.Item>
-              <Form.Item noStyle name="account_name">
+              <Form.Item
+                noStyle
+                name="account_name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input account name",
+                  },
+                ]}
+              >
                 <Input
                   variant="filled"
                   placeholder="Account Name"
                   className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 "
                 />
               </Form.Item>
-              <Form.Item noStyle name="account_name">
-                <Form.Item noStyle name="invoice" className="w-full">
+              <Form.Item noStyle name="invoice">
+                <Form.Item
+                  noStyle
+                  name="invoice"
+                  className="w-full"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please upload your invoice!",
+                    },
+                  ]}
+                >
                   <div className="flex w-full p-6 rounded-md bg-[#F7F9FC]">
                     <Upload
                       listType="picture"
@@ -219,11 +234,7 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                         showDownloadIcon: false,
                       }}
                     >
-                      <Button
-                        type="dashed"
-                        className="border-primary text-primary max-sm:text-xs"
-                        icon={<UploadOutlined />}
-                      >
+                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
                         Invoice
                       </Button>
                     </Upload>
@@ -239,8 +250,7 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                     preview={{
                       visible: previewOpen,
                       onVisibleChange: (visible) => setPreviewOpen(visible),
-                      afterOpenChange: (visible) =>
-                        !visible && setPreviewImage(""),
+                      afterOpenChange: (visible) => !visible && setPreviewImage(""),
                     }}
                     src={previewImage}
                   />
@@ -251,14 +261,32 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
         ) : (
           <Form form={formAli}>
             <Flex vertical gap="small">
-              <Form.Item noStyle name="ali_number_or_email">
+              <Form.Item
+                noStyle
+                name="ali_number_or_email"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input ur phone number or email",
+                  },
+                ]}
+              >
                 <Input
                   variant="filled"
                   placeholder="Number Phone / Email"
                   className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 "
                 />
               </Form.Item>
-              <Form.Item noStyle name="ali_name">
+              <Form.Item
+                noStyle
+                name="ali_name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your name",
+                  },
+                ]}
+              >
                 <Input
                   variant="filled"
                   placeholder="Name"
@@ -266,7 +294,16 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                 />
               </Form.Item>
               <Flex justify="space-between">
-                <Form.Item noStyle name="file">
+                <Form.Item
+                  noStyle
+                  name="file"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your invoice",
+                    },
+                  ]}
+                >
                   <div className="flex w-full p-6 rounded-md bg-[#F7F9FC]">
                     <Upload
                       listType="picture"
@@ -283,11 +320,7 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                       }}
                     >
                       <Flex gap="small" align="center">
-                        <Button
-                          type="dashed"
-                          icon={<UploadOutlined />}
-                          className="border-primary text-primary max-sm:text-xs"
-                        >
+                        <Button type="dashed" icon={<UploadOutlined />} className="border-primary text-primary max-sm:text-xs">
                           Invoice
                         </Button>
                       </Flex>
@@ -303,8 +336,7 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                     preview={{
                       visible: previewOpen,
                       onVisibleChange: (visible) => setPreviewOpen(visible),
-                      afterOpenChange: (visible) =>
-                        !visible && setPreviewImage(""),
+                      afterOpenChange: (visible) => !visible && setPreviewImage(""),
                     }}
                     src={previewImage}
                   />
@@ -315,15 +347,22 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
         )}
         <Title level={5}>Purchase Amount</Title>
         <Form form={orderType === "Bank" ? formBank : formAli}>
-          <Form.Item noStyle name="amount">
+          <Form.Item
+            noStyle
+            name="amount"
+            rules={[
+              {
+                required: true,
+                message: "Please input amount",
+              },
+            ]}
+          >
             <InputNumber
               className="bg-[#F7F9FC] placeholder:text-[#B3B8D0] text-sm px-4 py-3 border-0 rounded-xl hover:bg-[#F7F9FC] focus:bg-[#F7F9FC] focus:ring-1 w-full"
               variant="filled"
               prefix="¥"
-              min={0}
-              formatter={(value) =>
-                value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""
-              }
+              min={1}
+              formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
               parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
             />
           </Form.Item>

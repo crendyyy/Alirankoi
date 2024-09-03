@@ -102,7 +102,7 @@ input[type="number"] {
 
 /* Manual Order */
 .ant-radio-button-checked {
-  @apply bg-[#11CD9F] rounded-full !text-white !opacity-100;
+  @apply bg-primary rounded-full !text-white !opacity-100;
 }
 
 .ant-radio-button-wrapper.ant-radio-button-checked {
@@ -110,7 +110,7 @@ input[type="number"] {
 }
 
 .ant-radio-button-wrapper {
-  @apply !bg-gray-300;
+  @apply !bg-blue-200;
 }
 
 .ant-radio-button-wrapper:not(:first-child)::before {
