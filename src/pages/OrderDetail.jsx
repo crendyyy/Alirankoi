@@ -200,12 +200,13 @@ const OrderDetail = () => {
                     maxCount={3}
                     showUploadList={{
                       showPreviewIcon: true,
-                      showRemoveIcon: false,
+                      showRemoveIcon: true,
                       showDownloadIcon: false,
                     }}
                   >
                     {order.status === "Complete" ||
-                    order.status === "Cancel" ? (
+                    order.status === "Cancel" ||
+                    order.status === "Pending" ? (
                       <Button
                         type="dashed"
                         className="border-primary text-primary max-sm:text-xs"
@@ -245,9 +246,7 @@ const OrderDetail = () => {
           </div>
         ) : (
           <div>
-            {order.status === "Cancel" || order.status === "Complete" ? (
-              ""
-            ) : (
+            {order.status === "Awaiting Payment" && (
               <small className="flex gap-1 items-center my-2 max-sm:items-start text-[#9CA3AF]">
                 <InfoCircleOutlined className="max-sm:mt-1" />
                 If you need to upload a new payment proof, click the button
@@ -269,7 +268,9 @@ const OrderDetail = () => {
                   showDownloadIcon: false,
                 }}
               >
-                {order.status === "Complete" || order.status === "Cancel" ? (
+                {order.status === "Complete" ||
+                order.status === "Cancel" ||
+                order.status === "Pending" ? (
                   <Button
                     type="dashed"
                     className="border-primary text-primary max-sm:text-xs"
