@@ -162,23 +162,34 @@ const Dashboard = () => {
 
   const labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+  const getMonth = (dateString) => {
+    const date = new Date(dateString);
+    return date.getMonth(); // getMonth() returns month index (0 for January, 11 for December)
+  };
+
   const chartData = {
     labels: labels,
     datasets: [
       {
         label: "Ali",
-        data: orders?.payload
-          .filter((order) => order.order_type === "Alipay")
-          .filter((order) => order.status === "Complete")
-          .map((order) => order.amount),
+        data: labels.map((_, index) =>
+          orders?.payload
+            .filter((order) => order.order_type === "Alipay")
+            .filter((order) => order.status === "Complete")
+            .filter((order) => getMonth(order.createdAt) === index)
+            .reduce((sum, order) => sum + parseFloat(order.amount), 0)
+        ),
         backgroundColor: "#1367FF",
       },
       {
         label: "Bank",
-        data: orders?.payload
-          .filter((order) => order.order_type === "Bank")
-          .filter((order) => order.status === "Complete")
-          .map((order) => order.amount),
+        data: labels.map((_, index) =>
+          orders?.payload
+            .filter((order) => order.order_type === "Bank")
+            .filter((order) => order.status === "Complete")
+            .filter((order) => getMonth(order.createdAt) === index)
+            .reduce((sum, order) => sum + parseFloat(order.amount), 0)
+        ),
         backgroundColor: "#464646",
       },
     ],
@@ -188,7 +199,7 @@ const Dashboard = () => {
     scales: {
       y: {
         beginAtZero: true,
-        max: 1000,
+        max: 10000,
         type: "linear",
       },
     },
@@ -286,8 +297,8 @@ const Dashboard = () => {
           <a
             onClick={() => {
               handleOpenModal("qrModal");
-              setSelectedQr(record.ali_qr);
-              console.log(record.ali_qr);
+              setSelectedQr(record?.ali_qr);
+              console.log(record?.ali_qr);
             }}
             className="text-xs underline w-fit text-primary"
           >

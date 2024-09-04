@@ -37,6 +37,7 @@ const AdminOrders = () => {
 
   const handleUpdateStatusSelectedRow = (selectedRowId) => {
     selectedRowId.forEach((orderId) => {
+      if (updateStatusOrderMutation.isPending) return;
       updateStatusOrderMutation.mutate({
         id: orderId,
         data: { status: selectedStatus },
@@ -47,7 +48,10 @@ const AdminOrders = () => {
 
   const handleDeleteSelectedRow = (selectedRowId) => {
     selectedRowId.forEach((orderId) => {
-      deleteOrderMutation.mutate(orderId);
+      updateStatusOrderMutation.mutate({
+        id: orderId,
+        data: { status: "Cancel" },
+      });
     });
     setSelectedRowKeys([]);
     setSelectedRow([]);

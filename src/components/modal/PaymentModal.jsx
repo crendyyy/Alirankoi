@@ -19,6 +19,7 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { useCreateOrder } from "../service/user/order/useCreateOrder";
 import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const PaymentModal = ({ onClose, typeModal }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -27,7 +28,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
   const [qrCodeList, setqrCodeList] = useState([]);
   const { auth } = useContext(AuthContext);
 
-  console.log(typeModal);
+  const navigate = useNavigate();
 
   const createOrderMutation = useCreateOrder();
   console.log(createOrderMutation);
@@ -46,10 +47,21 @@ const PaymentModal = ({ onClose, typeModal }) => {
     formData.append("token", auth.token);
     formData.append("order_type", typeModal);
 
-    await createOrderMutation.mutate(formData);
-    formBank.resetFields();
-    setqrCodeList([]);
-    onClose();
+    try {
+      const response = await createOrderMutation.mutateAsync(formData);
+      const order = response.data.payload;
+      console.log(order);
+      navigate(`/order/${order.order_type.toLowerCase()}/${order.id}`, {
+        state: { order },
+      });
+
+      formBank.resetFields();
+      setqrCodeList([]);
+      onClose();
+    } catch (error) {
+      console.error("Failed to create order", error);
+      // Kamu bisa menambahkan penanganan error tambahan di sini
+    }
   };
 
   const handleCreateOrderAli = async (value) => {
@@ -66,10 +78,21 @@ const PaymentModal = ({ onClose, typeModal }) => {
     formData.append("token", auth.token);
     formData.append("order_type", typeModal);
 
-    await createOrderMutation.mutate(formData);
-    formAli.resetFields();
-    setqrCodeList([]);
-    onClose();
+    try {
+      const response = await createOrderMutation.mutateAsync(formData);
+      const order = response.data.payload;
+      console.log(order);
+      navigate(`/order/${order.order_type.toLowerCase()}/${order.id}`, {
+        state: { order },
+      });
+
+      formAli.resetFields();
+      setqrCodeList([]);
+      onClose();
+    } catch (error) {
+      console.error("Failed to create order", error);
+      // Kamu bisa menambahkan penanganan error tambahan di sini
+    }
   };
 
   // const handlePreview = (file) => {

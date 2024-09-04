@@ -1,17 +1,46 @@
-import { Button, DatePicker, Flex, Form, Input, InputNumber, Modal, Popconfirm, Select, Table, Typography } from "antd";
+import {
+  Button,
+  DatePicker,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Popconfirm,
+  Select,
+  Table,
+  Typography,
+} from "antd";
 import React, { useState } from "react";
 import { useGetOrders } from "../service/admin/orders/useGetOrders";
-import { DeleteOutlined, EditOutlined, ExclamationCircleFilled, PrinterOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleFilled,
+  PrinterOutlined,
+} from "@ant-design/icons";
 import ExcelJS from "exceljs";
 import FileSaver from "file-saver";
 import Status from "../shared/Status";
 import dayjs from "dayjs";
 import { useDeleteOrder } from "../service/admin/orders/useDeleteOrder";
-import { useUpdateDataOrder, useUpdateStatusOrder } from "../service/admin/orders/useUpdateStatusOrder";
+import {
+  useUpdateDataOrder,
+  useUpdateStatusOrder,
+} from "../service/admin/orders/useUpdateStatusOrder";
 
 const dateFormat = "YYYY-MM-DD";
 
-const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
   const inputNode =
     inputType === "date" ? (
       <DatePicker format={dateFormat} />
@@ -29,7 +58,11 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
   return (
     <td {...restProps}>
       {editing ? (
-        <Form.Item name={dataIndex} style={{ margin: 0 }} rules={[{ required: true, message: `Please Input ${title}!` }]}>
+        <Form.Item
+          name={dataIndex}
+          style={{ margin: 0 }}
+          rules={[{ required: true, message: `Please Input ${title}!` }]}
+        >
           {inputNode}
         </Form.Item>
       ) : (
@@ -50,7 +83,13 @@ const groupBy = (array, getKey) => {
   }, {});
 };
 
-const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, onOpenModalPrint, selectedRow }) => {
+const NewTableAdminOrder = ({
+  selectedDate,
+  setSelectedRowKeys,
+  setSelectedRow,
+  onOpenModalPrint,
+  selectedRow,
+}) => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,7 +106,9 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
 
   const edit = (record) => {
     form.setFieldsValue({
-      date: dayjs(record.date).isValid() ? dayjs(record.date) : dayjs(new Date(record.date)),
+      date: dayjs(record.date).isValid()
+        ? dayjs(record.date)
+        : dayjs(new Date(record.date)),
       ...record,
     });
     setEditingKey(record.key);
@@ -125,12 +166,16 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
 
   const showConfirm = (id) => {
     Modal.confirm({
-      title: "Do you want to delete this item?",
+      title: "Do you want to Cancel this item?",
       icon: <ExclamationCircleFilled />,
       content: "Deleted data cannot be recovered!",
       okText: "Yes",
       okType: "danger",
-      onOk: () => deleteOrderMutation.mutate(id),
+      onOk: () =>
+        updateStatusOrderMutation.mutate({
+          id: id,
+          data: { status: "Cancel" },
+        }),
     });
   };
 
@@ -158,14 +203,18 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
       username: order.user_id?.username,
     })) || [];
 
-  const groupedOrders = Array.isArray(dataSource) ? groupBy(dataSource, (order) => order.username) || [] : {};
+  const groupedOrders = Array.isArray(dataSource)
+    ? groupBy(dataSource, (order) => order.username) || []
+    : {};
 
   const columns = [
     {
       title: "#",
       dataIndex: "no",
       width: 5,
-      render: (text, record, index) => <span className="text-sm font-normal">{index + 1}</span>,
+      render: (text, record, index) => (
+        <span className="text-sm font-normal">{index + 1}</span>
+      ),
     },
     {
       title: "Date",
@@ -247,12 +296,18 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
           </span>
         ) : (
           <div className="flex gap-0.5">
-            <Typography.Link disabled={editingKey !== ""} onClick={() => edit(record)}>
+            <Typography.Link
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            >
               <Button className="px-2 py-1 text-white rounded-md bg-primary">
                 <EditOutlined />
               </Button>
             </Typography.Link>
-            <Button className="px-2 py-1 text-white bg-red-500 rounded-md" onClick={() => showConfirm(record.key)}>
+            <Button
+              className="px-2 py-1 text-white bg-red-500 rounded-md"
+              onClick={() => showConfirm(record.key)}
+            >
               <DeleteOutlined />
             </Button>
           </div>
@@ -345,7 +400,10 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
           <div className="flex flex-col bg-white rounded-lg" key={username}>
             <div className="flex items-center justify-between px-5 py-6">
               <h1 className="text-lg font-semibold ">
-                <small className="text-xs font-semibold text-gray-400">USERNAME :</small> {username}
+                <small className="text-xs font-semibold text-gray-400">
+                  USERNAME :
+                </small>{" "}
+                {username}
               </h1>
               <div className="flex gap-3">
                 <button
@@ -355,7 +413,10 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
                   <PrinterOutlined className="text-lg" />
                   Print
                 </button>
-                <button className="text-white bg-primary border hover:!bg-blue-300 px-3 py-1 rounded-lg" onClick={handelSaveExcel}>
+                <button
+                  className="text-white bg-primary border hover:!bg-blue-300 px-3 py-1 rounded-lg"
+                  onClick={handelSaveExcel}
+                >
                   Export to Excel
                 </button>
               </div>
@@ -379,17 +440,24 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
                         .flat()
                         .map((row) => row.key)
                     );
-                    setSelectedRow(Object.values(newSelectedRowsByGroup).flat());
+                    setSelectedRow(
+                      Object.values(newSelectedRowsByGroup).flat()
+                    );
                   },
                   onSelect: (record, selected) => {
                     const newSelectedRowsByGroup = { ...selectedRowsByGroup };
 
                     if (selected) {
                       // Tambahkan baris ke grup yang dipilih
-                      newSelectedRowsByGroup[username] = [...(newSelectedRowsByGroup[username] || []), record];
+                      newSelectedRowsByGroup[username] = [
+                        ...(newSelectedRowsByGroup[username] || []),
+                        record,
+                      ];
                     } else {
                       // Hapus baris dari grup yang dipilih
-                      newSelectedRowsByGroup[username] = (newSelectedRowsByGroup[username] || []).filter((row) => row.key !== record.key);
+                      newSelectedRowsByGroup[username] = (
+                        newSelectedRowsByGroup[username] || []
+                      ).filter((row) => row.key !== record.key);
                     }
 
                     // Perbarui state untuk grup dan semua baris yang dipilih
@@ -399,7 +467,9 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
                         .flat()
                         .map((row) => row.key)
                     );
-                    setSelectedRow(Object.values(newSelectedRowsByGroup).flat());
+                    setSelectedRow(
+                      Object.values(newSelectedRowsByGroup).flat()
+                    );
                   },
                   onSelectAll: (selected, selectedRows) => {
                     const newSelectedRowsByGroup = { ...selectedRowsByGroup };
@@ -419,7 +489,9 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
                         .flat()
                         .map((row) => row.key)
                     );
-                    setSelectedRow(Object.values(newSelectedRowsByGroup).flat());
+                    setSelectedRow(
+                      Object.values(newSelectedRowsByGroup).flat()
+                    );
                   },
                 }}
                 loading={isPending}
@@ -439,12 +511,21 @@ const NewTableAdminOrder = ({ selectedDate, setSelectedRowKeys, setSelectedRow, 
         onOk={() => setIsModalOpen(false)}
         onCancel={() => setIsModalOpen(false)}
         footer={[
-          <Button key="submit" type="primary" onClick={() => setIsModalOpen(false)}>
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => setIsModalOpen(false)}
+          >
             Ok
           </Button>,
         ]}
       >
-        <img src={`http://localhost:3000/picture/${selectedInvoice}`} alt="Invoice" width="500" height="600" />
+        <img
+          src={`http://localhost:3000/picture/${selectedInvoice}`}
+          alt="Invoice"
+          width="500"
+          height="600"
+        />
       </Modal>
     </>
   );
