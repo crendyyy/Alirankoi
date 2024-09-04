@@ -6,7 +6,6 @@ import useLoadingToast from "../../../Hooks/useToast";
 export const useUpdateStock = () => {
   const queryClient = useQueryClient();
   const axiosClient = useAxios();
-
   const toast = useLoadingToast();
 
   return useMutation({
@@ -32,6 +31,7 @@ export const useUpdateStock = () => {
 export const useUpdateStockPlus = () => {
   const queryClient = useQueryClient();
   const axiosClient = useAxios();
+  const toast = useLoadingToast();
 
   return useMutation({
     mutationFn: (data) => {

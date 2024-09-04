@@ -1,8 +1,4 @@
-import {
-  ClockCircleOutlined,
-  InfoCircleOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { ClockCircleOutlined, InfoCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import Status from "../components/shared/Status";
 import { Button, Form, Image, Input, Upload } from "antd";
 import Title from "antd/es/typography/Title";
@@ -10,11 +6,7 @@ import { useLocation, useNavigate } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { useGetStock } from "../components/service/stock/useGetStock";
 import { formatRupiah } from "../libs/utils";
-import {
-  useCancelOrderUser,
-  useConfirmOrderUser,
-  useUpdateOrderUser,
-} from "../components/service/user/order/useUpdateOrderUser";
+import { useCancelOrderUser, useConfirmOrderUser, useUpdateOrderUser } from "../components/service/user/order/useUpdateOrderUser";
 import { AuthContext } from "../context/AuthContext";
 import Countdown from "../components/shared/Countdown";
 
@@ -75,7 +67,7 @@ const OrderDetail = () => {
     let file = null;
 
     // Cek apakah ada file baru yang diunggah
-    if (order.ali_qr && order.ali_qr.length > 0) {
+    if (order.ali_qr && order.ali_qr?.length > 0) {
       const uploadedFile = qrCodeList.find((item) => item?.originFileObj);
       if (uploadedFile) {
         file = uploadedFile.originFileObj;
@@ -102,27 +94,35 @@ const OrderDetail = () => {
     formData.append("invoice", imageList[0]?.originFileObj);
     formData.append("token", auth.token);
 
-    await confirmOrderMutation.mutate({
-      id: order.id,
-      data: formData,
-    });
+    try {
+      await confirmOrderMutation.mutate({
+        id: order.id,
+        data: formData,
+      });
+      console.log("Confirm order successfully.");
+      navigate("/");
+    } catch (error) {
+      console.error("Error confirm order", error);
+    }
+
     formConfirmOrder.resetFields();
   };
 
-  const handleCancelOrder = () => cancelOrderMutation.mutate({ id: order.id });
+  const handleCancelOrder = () => {
+    cancelOrderMutation.mutate({ id: order.id });
+    navigate("/");
+  };
 
   const handlePreview = (file) => {
     setPreviewImage(file.thumbUrl || file.url);
     setPreviewOpen(true);
   };
 
-  const tenMinutesAfterCreatedAt = new Date(
-    new Date(order.createdAt).getTime() + 10 * 60 * 1000
-  ).toISOString();
+  const tenMinutesAfterCreatedAt = new Date(new Date(order.createdAt).getTime() + 10 * 60 * 1000).toISOString();
 
   const handleChange = ({ fileList }) => setImageList(fileList);
   const handleChangeQr = ({ fileList }) => {
-    if (order.ali_qr.length > 0) {
+    if (order.ali_qr?.length > 0) {
       // Update qrCodeList if order.ali_qr already has data
       setQrCodeList(fileList);
     } else {
@@ -133,9 +133,7 @@ const OrderDetail = () => {
 
   return (
     <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-4 max-sm:gap-3.5 mb-24 px-3">
-      <h1 className="p-6 font-bold bg-white max-sm:p-5 rounded-b-3xl">
-        Order Detail
-      </h1>
+      <h1 className="p-6 font-bold bg-white max-sm:p-5 rounded-b-3xl">Order Detail</h1>
 
       <div className="flex flex-col gap-6 p-6 max-sm:p-5 text-sm font-normal bg-white rounded-3xl max-sm:text-[13px]">
         <div className="flex justify-between">
@@ -166,10 +164,7 @@ const OrderDetail = () => {
 
       {order.status === "Awaiting Payment" && (
         <div className="flex justify-between p-6 max-sm:p-5 bg-[#FECACA] rounded-3xl border-2 border-dashed border-[#DC2626] gap-2 max-sm:gap-3">
-          <p className="max-sm:text-xs text-sm text-[#DC2626]">
-            Upload payment proof before time runs out to avoid order
-            cancellation.
-          </p>
+          <p className="max-sm:text-xs text-sm text-[#DC2626]">Upload payment proof before time runs out to avoid order cancellation.</p>
           <div className="flex items-center gap-2">
             <ClockCircleOutlined className="text-[#DC2626]" />
             <p className="text-xs text-[#DC2626] font-bold">
@@ -204,23 +199,12 @@ const OrderDetail = () => {
                       showDownloadIcon: false,
                     }}
                   >
-                    {order.status === "Complete" ||
-                    order.status === "Cancel" ||
-                    order.status === "Pending" ? (
-                      <Button
-                        type="dashed"
-                        className="border-primary text-primary max-sm:text-xs"
-                        icon={<UploadOutlined />}
-                        disabled
-                      >
+                    {order.status === "Complete" || order.status === "Cancel" || order.status === "Pending" ? (
+                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
                         Click to Upload
                       </Button>
                     ) : (
-                      <Button
-                        type="dashed"
-                        className="border-primary text-primary max-sm:text-xs"
-                        icon={<UploadOutlined />}
-                      >
+                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
                         Click to Upload
                       </Button>
                     )}
@@ -236,8 +220,7 @@ const OrderDetail = () => {
                   preview={{
                     visible: previewOpen,
                     onVisibleChange: (visible) => setPreviewOpen(visible),
-                    afterOpenChange: (visible) =>
-                      !visible && setPreviewImage(""),
+                    afterOpenChange: (visible) => !visible && setPreviewImage(""),
                   }}
                   src={previewImage}
                 />
@@ -249,8 +232,7 @@ const OrderDetail = () => {
             {order.status === "Awaiting Payment" && (
               <small className="flex gap-1 items-center my-2 max-sm:items-start text-[#9CA3AF]">
                 <InfoCircleOutlined className="max-sm:mt-1" />
-                If you need to upload a new payment proof, click the button
-                below!
+                If you need to upload a new payment proof, click the button below!
               </small>
             )}
             <div className="flex mt-5">
@@ -268,23 +250,12 @@ const OrderDetail = () => {
                   showDownloadIcon: false,
                 }}
               >
-                {order.status === "Complete" ||
-                order.status === "Cancel" ||
-                order.status === "Pending" ? (
-                  <Button
-                    type="dashed"
-                    className="border-primary text-primary max-sm:text-xs"
-                    icon={<UploadOutlined />}
-                    disabled
-                  >
+                {order.status === "Complete" || order.status === "Cancel" || order.status === "Pending" ? (
+                  <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
                     Click to Upload
                   </Button>
                 ) : (
-                  <Button
-                    type="dashed"
-                    className="border-primary text-primary max-sm:text-xs"
-                    icon={<UploadOutlined />}
-                  >
+                  <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
                     Click to Upload
                   </Button>
                 )}
@@ -298,8 +269,7 @@ const OrderDetail = () => {
                   preview={{
                     visible: previewOpen,
                     onVisibleChange: (visible) => setPreviewOpen(visible),
-                    afterOpenChange: (visible) =>
-                      !visible && setPreviewImage(""),
+                    afterOpenChange: (visible) => !visible && setPreviewImage(""),
                   }}
                   src={previewImage}
                 />
@@ -314,9 +284,7 @@ const OrderDetail = () => {
           order.status === "Awaiting Payment" ? (
             <>
               <div className="flex items-center justify-between">
-                <h1 className="text-base font-bold max-sm:text-sm">
-                  Payment Information
-                </h1>
+                <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
                 {isEdit && (
                   <Button
                     style={{ padding: 0 }}
@@ -329,12 +297,7 @@ const OrderDetail = () => {
                   </Button>
                 )}
                 {!isEdit && (
-                  <Button
-                    style={{ padding: 0 }}
-                    type="link"
-                    onClick={handleEdit}
-                    className="underline max-sm:text-xs text-primary"
-                  >
+                  <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
                     Edit Data
                   </Button>
                 )}
@@ -423,9 +386,7 @@ const OrderDetail = () => {
           ) : order.status === "Pending" ? (
             <>
               <div className="flex items-center justify-between">
-                <h1 className="text-base font-bold max-sm:text-sm">
-                  Payment Information
-                </h1>
+                <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
                 {isEdit && (
                   <Button
                     style={{ padding: 0 }}
@@ -438,12 +399,7 @@ const OrderDetail = () => {
                   </Button>
                 )}
                 {!isEdit && (
-                  <Button
-                    style={{ padding: 0 }}
-                    type="link"
-                    onClick={handleEdit}
-                    className="underline max-sm:text-xs text-primary"
-                  >
+                  <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
                     Edit Data
                   </Button>
                 )}
@@ -532,9 +488,7 @@ const OrderDetail = () => {
           ) : (
             <>
               <div className="flex items-center justify-between">
-                <h1 className="text-base font-bold max-sm:text-sm">
-                  Payment Information
-                </h1>
+                <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
               </div>
               <Form
                 id="editForm"
@@ -558,11 +512,7 @@ const OrderDetail = () => {
                     },
                   ]}
                 >
-                  <Input
-                    placeholder="Bank Name"
-                    disabled
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
+                  <Input placeholder="Bank Name" disabled className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border" />
                 </Form.Item>
                 <Form.Item
                   label="Bank Number"
@@ -622,9 +572,7 @@ const OrderDetail = () => {
         order.status === "Awaiting Payment" ? (
           <>
             <div className="flex items-center justify-between">
-              <h1 className="text-base font-bold max-sm:text-sm">
-                Payment Information ali
-              </h1>
+              <h1 className="text-base font-bold max-sm:text-sm">Payment Information ali</h1>
               {isEdit && (
                 <Button
                   style={{ padding: 0 }}
@@ -637,12 +585,7 @@ const OrderDetail = () => {
                 </Button>
               )}
               {!isEdit && (
-                <Button
-                  style={{ padding: 0 }}
-                  type="link"
-                  onClick={handleEdit}
-                  className="underline max-sm:text-xs text-primary"
-                >
+                <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
                   Edit Data
                 </Button>
               )}
@@ -695,7 +638,7 @@ const OrderDetail = () => {
                   <span className="text-xs text-red-500">*</span> QR Code
                 </span>
                 <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
-                  {order.ali_qr.length > 0 ? (
+                  {order.ali_qr?.length > 0 ? (
                     <Upload
                       listType="picture"
                       className="w-full"
@@ -711,14 +654,8 @@ const OrderDetail = () => {
                         showDownloadIcon: false,
                       }}
                     >
-                      {order.status === "Complete" ||
-                      order.status === "Cancel" ? (
-                        <Button
-                          type="dashed"
-                          className="border-primary text-primary max-sm:text-xs"
-                          icon={<UploadOutlined />}
-                          disabled
-                        >
+                      {order.status === "Complete" || order.status === "Cancel" ? (
+                        <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
                           QR Code
                         </Button>
                       ) : (
@@ -731,9 +668,7 @@ const OrderDetail = () => {
                           QR Code
                         </Button>
                       )}
-                      <span className="ml-2 text-gray-500 max-sm:text-xs">
-                        (Optional)
-                      </span>
+                      <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
                     </Upload>
                   ) : (
                     <>
@@ -761,9 +696,7 @@ const OrderDetail = () => {
                           QR Code
                         </Button>
 
-                        <span className="ml-2 text-gray-500 max-sm:text-xs">
-                          (Optional)
-                        </span>
+                        <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
                       </Upload>
                     </>
                   )}
@@ -774,9 +707,7 @@ const OrderDetail = () => {
         ) : order.status === "Pending" ? (
           <>
             <div className="flex items-center justify-between">
-              <h1 className="text-base font-bold max-sm:text-sm">
-                Payment Information
-              </h1>
+              <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
               {isEdit && (
                 <Button
                   style={{ padding: 0 }}
@@ -789,12 +720,7 @@ const OrderDetail = () => {
                 </Button>
               )}
               {!isEdit && (
-                <Button
-                  style={{ padding: 0 }}
-                  type="link"
-                  onClick={handleEdit}
-                  className="underline max-sm:text-xs text-primary"
-                >
+                <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
                   Edit Data
                 </Button>
               )}
@@ -847,7 +773,7 @@ const OrderDetail = () => {
                   <span className="text-xs text-red-500">*</span> QR Code
                 </span>
                 <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
-                  {order.ali_qr.length > 0 ? (
+                  {order.ali_qr?.length > 0 ? (
                     <Upload
                       listType="picture"
                       className="w-full"
@@ -863,14 +789,8 @@ const OrderDetail = () => {
                         showDownloadIcon: false,
                       }}
                     >
-                      {order.status === "Complete" ||
-                      order.status === "Cancel" ? (
-                        <Button
-                          type="dashed"
-                          className="border-primary text-primary max-sm:text-xs"
-                          icon={<UploadOutlined />}
-                          disabled
-                        >
+                      {order.status === "Complete" || order.status === "Cancel" ? (
+                        <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
                           QR Code
                         </Button>
                       ) : (
@@ -883,9 +803,7 @@ const OrderDetail = () => {
                           QR Code
                         </Button>
                       )}
-                      <span className="ml-2 text-gray-500 max-sm:text-xs">
-                        (Optional)
-                      </span>
+                      <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
                     </Upload>
                   ) : (
                     <>
@@ -913,9 +831,7 @@ const OrderDetail = () => {
                           QR Code
                         </Button>
 
-                        <span className="ml-2 text-gray-500 max-sm:text-xs">
-                          (Optional)
-                        </span>
+                        <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
                       </Upload>
                     </>
                   )}
@@ -926,9 +842,7 @@ const OrderDetail = () => {
         ) : (
           <>
             <div className="flex items-center justify-between">
-              <h1 className="text-base font-bold max-sm:text-sm">
-                Payment Information
-              </h1>
+              <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
             </div>
             <Form
               id="editForm"
@@ -950,11 +864,7 @@ const OrderDetail = () => {
                   },
                 ]}
               >
-                <Input
-                  placeholder="No / Email"
-                  disabled
-                  className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                />
+                <Input placeholder="No / Email" disabled className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border" />
               </Form.Item>
               <Form.Item
                 label="Name"
@@ -967,18 +877,14 @@ const OrderDetail = () => {
                   },
                 ]}
               >
-                <Input
-                  placeholder="Name"
-                  disabled
-                  className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                />
+                <Input placeholder="Name" disabled className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border" />
               </Form.Item>
               <Form.Item noStyle name="file" className="w-full">
                 <span className="font-medium">
                   <span className="text-xs text-red-500">*</span> QR Code
                 </span>
                 <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
-                  {order.ali_qr.length > 0 ? (
+                  {order.ali_qr?.length > 0 ? (
                     <Upload
                       listType="picture"
                       className="w-full"
@@ -993,33 +899,19 @@ const OrderDetail = () => {
                         showDownloadIcon: false,
                       }}
                     >
-                      {order.status === "Complete" ||
-                      order.status === "Cancel" ? (
-                        <Button
-                          type="dashed"
-                          className="border-primary text-primary max-sm:text-xs"
-                          icon={<UploadOutlined />}
-                          disabled
-                        >
+                      {order.status === "Complete" || order.status === "Cancel" ? (
+                        <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
                           QR Code
                         </Button>
                       ) : (
-                        <Button
-                          type="dashed"
-                          className="border-primary text-primary max-sm:text-xs"
-                          icon={<UploadOutlined />}
-                        >
+                        <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
                           QR Code
                         </Button>
                       )}
-                      <span className="ml-2 text-gray-500 max-sm:text-xs">
-                        (Optional)
-                      </span>
+                      <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
                     </Upload>
                   ) : (
-                    <span className="text-xs italic text-gray-400">
-                      Not Uplouded
-                    </span>
+                    <span className="text-xs italic text-gray-400">Not Uplouded</span>
                   )}
                 </div>
               </Form.Item>
@@ -1030,9 +922,7 @@ const OrderDetail = () => {
 
       <div className="flex items-center justify-between p-6 bg-white max-sm:p-5 rounded-3xl max-sm:text-sm">
         <span className="font-bold">Total Paid</span>
-        <span className="font-bold">{`${formatRupiah(
-          Number(order.amount) * order.selling_price
-        )}`}</span>
+        <span className="font-bold">{`${formatRupiah(Number(order.amount) * order.selling_price)}`}</span>
       </div>
 
       {order.status === "Awaiting Payment" ? (
@@ -1044,26 +934,16 @@ const OrderDetail = () => {
           >
             Cancel
           </Button>
-          <Form
-            form={formConfirmOrder}
-            onFinish={handleConfirmOrder}
-            onFinishFailed={(errorInfo) => console.log("Failed:", errorInfo)}
-          >
+          <Form form={formConfirmOrder} onFinish={handleConfirmOrder} onFinishFailed={(errorInfo) => console.log("Failed:", errorInfo)}>
             <Form.Item noStyle className="w-full">
-              <Button
-                htmlType="submit"
-                className="w-full px-2 py-6 font-semibold text-white rounded-full bg-primary max-sm:text-sm"
-              >
+              <Button htmlType="submit" className="w-full px-2 py-6 font-semibold text-white rounded-full bg-primary max-sm:text-sm">
                 Confirm Payment
               </Button>
             </Form.Item>
           </Form>
         </>
       ) : (
-        <Button
-          onClick={() => navigate("/")}
-          className="w-full px-2 py-6 font-semibold text-white rounded-full bg-primary max-sm:text-sm"
-        >
+        <Button onClick={() => navigate("/")} className="w-full px-2 py-6 font-semibold text-white rounded-full bg-primary max-sm:text-sm">
           Back
         </Button>
       )}

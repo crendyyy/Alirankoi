@@ -35,15 +35,14 @@ const Login = () => {
             login(user, token);
             navigate(user.is_admin ? "/dashboard" : "/");
           } else {
-            alert("Invalid Credentials");
+            console.log("Invalid Credentials");
           }
         } else {
-          alert("Unexpected response format. Please try again.");
+          console.log("Unexpected response format. Please try again.");
         }
       },
       onError: (error) => {
         console.error("Login error:", error);
-        alert("An error occurred during login. Please try again.");
       },
     });
   };

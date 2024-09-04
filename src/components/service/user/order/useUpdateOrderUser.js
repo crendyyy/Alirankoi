@@ -6,7 +6,6 @@ import useLoadingToast from "../../../../Hooks/useToast";
 export const useUpdateOrderUser = () => {
   const queryClient = useQueryClient();
   const axiosClient = useAxios();
-
   const toast = useLoadingToast();
 
   return useMutation({
@@ -33,6 +32,7 @@ export const useUpdateOrderUser = () => {
 export const useConfirmOrderUser = () => {
   const queryClient = useQueryClient();
   const axiosClient = useAxios();
+  const toast = useLoadingToast();
 
   return useMutation({
     mutationFn: ({ id, data }) => {
@@ -49,7 +49,7 @@ export const useConfirmOrderUser = () => {
     },
 
     onError: (error) => {
-      toast.loading("Error confirming the order. Please try again.");
+      toast.update("Error confirming the order. Please try again.", "error");
       console.log(error.response.data.message, "error");
     },
   });
@@ -58,6 +58,7 @@ export const useConfirmOrderUser = () => {
 export const useCancelOrderUser = () => {
   const queryClient = useQueryClient();
   const axiosClient = useAxios();
+  const toast = useLoadingToast();
 
   return useMutation({
     mutationFn: ({ id }) => {
@@ -67,14 +68,14 @@ export const useCancelOrderUser = () => {
     },
 
     onSuccess: (response) => {
-      toast.loading("Order canceled successfully.");
+      toast.update("Order canceled successfully.", "success");
       console.log("Order canceled successfully.", "success", response);
       // Refresh data related to the stock after a successful update
-      queryClient.invalidateQueries({ queryKey: orderKeys.lists });
+      queryClient.invalidateQueries({ queryKey: ordersKeys.lists });
     },
 
     onError: (error) => {
-      toast.loading("Error ordered. Please try again.");
+      toast.update("Error cancel ordered. Please try again.", "error");
       console.log(error.response.data.message, "error");
     },
   });

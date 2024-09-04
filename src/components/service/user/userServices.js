@@ -5,7 +5,6 @@ import useLoadingToast from "../../../Hooks/useToast";
 
 export const useLogin = () => {
   const axiosClient = useAxios();
-
   const toast = useLoadingToast();
 
   return useMutation({
@@ -21,11 +20,11 @@ export const useLogin = () => {
       });
     },
     onSuccess: ({ data }) => {
-      toast.update("Login success", "success");
+      toast.update("Login successful.", "success");
       console.log(data.message, "success");
     },
     onError: (error) => {
-      toast.update("Gagal, silahkan coba lagi", "error");
+      toast.update("Login failed. Please check your credentials and try again.", "error");
       console.log(error.response.data.message, "error");
     },
   });
@@ -44,13 +43,13 @@ export const useRegister = () => {
     },
 
     onSuccess: (response) => {
-      toast.update("Account create successfully", "success");
-      console.log("Account create successfully", "success", response);
+      toast.update("Account create successfully.", "success");
+      console.log("Account create successfully.", "success", response);
       navigate("/login");
     },
 
     onError: () => {
-      toast.update("Gagal, silahkan coba lagi", "error");
+      toast.update("Creating account failed. Please check your details and try again.", "error");
     },
   });
 };

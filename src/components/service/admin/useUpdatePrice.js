@@ -1,10 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../../../Hooks/useAxios";
 import stockKeys from "../stock";
+import useLoadingToast from "../../../Hooks/useToast";
 
 export const useUpdatePrice = () => {
   const queryClient = useQueryClient();
   const axiosClient = useAxios();
+
+  const toast = useLoadingToast();
 
   return useMutation({
     mutationFn: (data) => {
@@ -25,20 +28,22 @@ export const useUpdatePrice = () => {
     },
   });
 };
+
 export const useUpdateBuyPrice = () => {
   const queryClient = useQueryClient();
   const axiosClient = useAxios();
+  const toast = useLoadingToast();
 
   return useMutation({
     mutationFn: (data) => {
-      toast.update("Updating buy price...");
-      console.log("Updating buy price...", data);
+      toast.loading("Updating capital price...");
+      console.log("Updating capital price...", data);
       return axiosClient._patch(`/buyPrice`, data);
     },
 
     onSuccess: (response) => {
-      toast.update("Buy Price updated successfully.", "success");
-      console.log("Buy Price updated successfully.", "success", response);
+      toast.update("Capital price updated successfully.", "success");
+      console.log("Capital price updated successfully.", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: stockKeys.lists });
     },

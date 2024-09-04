@@ -12,6 +12,7 @@ import { useGetStock } from "../components/service/stock/useGetStock";
 import { formatRupiah } from "../libs/utils";
 import LogoutButton from "../components/shared/LogoutButton";
 import { AlipayOutlined, BankOutlined, CheckCircleOutlined, WalletOutlined } from "@ant-design/icons";
+import useLoadingToast from "../Hooks/useToast";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -19,10 +20,17 @@ const Home = () => {
   const { isModalopen, openModal, closeModal } = useModal();
   const [paymentType, setPaymentType] = useState("");
   const { logout, auth } = useContext(AuthContext);
+  const toast = useLoadingToast();
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
+    toast.loading("Logout...");
+    try {
+      toast.update("Logout successfully.", "success");
+      logout();
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // console.log(auth.user?.username);

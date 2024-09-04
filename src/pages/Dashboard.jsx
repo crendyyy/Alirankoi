@@ -19,6 +19,7 @@ import dayjs from "dayjs";
 import PrintModal from "../components/modal/PrintModal";
 import FileSaver from "file-saver";
 import LogoutButton from "../components/shared/LogoutButton";
+import useLoadingToast from "../Hooks/useToast";
 
 import { AuthContext } from "../context/AuthContext";
 import { formatRupiah } from "../libs/utils";
@@ -28,10 +29,17 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const Dashboard = () => {
   const { logout } = useContext(AuthContext);
+  const toast = useLoadingToast();
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
+    toast.loading("Logout...");
+    try {
+      toast.update("Logout successfully.", "success");
+      logout();
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [formUpdateStockBank] = Form.useForm();
@@ -274,7 +282,7 @@ const Dashboard = () => {
       title: "Qr Code",
       dataIndex: "ali_qr",
       render: (_, record) =>
-        record.ali_qr.length > 0 ? (
+        record.ali_qr?.length > 0 ? (
           <a
             onClick={() => {
               handleOpenModal("qrModal");
