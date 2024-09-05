@@ -141,3 +141,19 @@ input[type="number"] {
 .slick-next::after {
   @apply !translate-y-8 !rotate-[135deg];
 }
+
+/* Carousel Order Detail */
+.carousel-order-detail .slick-arrow.slick-next {
+  @apply max-sm:!-mr-6 !-mr-8 !h-20 !w-6 max-sm:!w-4 !align-middle !text-center text-black;
+}
+
+.carousel-order-detail .slick-arrow.slick-prev {
+  @apply max-sm:!-ml-6 !-ml-6 !h-20 !w-6 max-sm:!w-4 !align-middle !text-center text-black;
+}
+
+.carousel-order-detail .slick-dots.slick-dots-bottom .slick-active button {
+  @apply bg-gray-800;
+}
+.carousel-order-detail .slick-dots.slick-dots-bottom button {
+  @apply bg-gray-500;
+}

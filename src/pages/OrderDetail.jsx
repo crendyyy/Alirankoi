@@ -1,6 +1,6 @@
 import { ClockCircleOutlined, InfoCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import Status from "../components/shared/Status";
-import { Button, Form, Image, Input, Upload } from "antd";
+import { Button, Carousel, Form, Image, Input, Upload } from "antd";
 import Title from "antd/es/typography/Title";
 import { useLocation, useNavigate } from "react-router";
 import { useContext, useEffect, useState } from "react";
@@ -134,7 +134,6 @@ const OrderDetail = () => {
   return (
     <div className="bg-[#F8F8F8] h-full w-full flex flex-col gap-4 max-sm:gap-3.5 mb-24 px-3">
       <h1 className="p-6 font-bold bg-white max-sm:p-5 rounded-b-3xl">Order Detail</h1>
-
       <div className="flex flex-col gap-6 p-6 max-sm:p-5 text-sm font-normal bg-white rounded-3xl max-sm:text-[13px]">
         <div className="flex justify-between">
           <p>Status</p>
@@ -161,7 +160,6 @@ const OrderDetail = () => {
           <p>¥ {formatRupiah(order.amount, false)}</p>
         </div>
       </div>
-
       {order.status === "Awaiting Payment" && (
         <div className="flex justify-between p-6 max-sm:p-5 bg-[#FECACA] rounded-3xl border-2 border-dashed border-[#DC2626] gap-2 max-sm:gap-3">
           <p className="max-sm:text-xs text-sm text-[#DC2626]">Upload payment proof before time runs out to avoid order cancellation.</p>
@@ -173,7 +171,6 @@ const OrderDetail = () => {
           </div>
         </div>
       )}
-
       <div className="p-6 bg-white max-sm:p-5 rounded-3xl">
         <h1 className="text-base font-bold max-sm:text-sm">Payment Proof</h1>
         {order.status === "Awaiting Payment" ? (
@@ -278,404 +275,393 @@ const OrderDetail = () => {
           </div>
         )}
       </div>
-
-      <div className="flex flex-col gap-6 p-6 text-sm font-normal bg-white max-sm:p-5 rounded-3xl">
+      <div className="flex flex-col gap-6 p-6 text-sm font-normal bg-white max-sm:p-5 rounded-3xl h-auto">
         {order.order_type === "Bank" ? (
           order.status === "Awaiting Payment" ? (
-            <>
-              <div className="flex items-center justify-between">
-                <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
-                {isEdit && (
-                  <Button
-                    style={{ padding: 0 }}
-                    type="link"
-                    htmlType="submit"
-                    form="editForm"
-                    className="underline max-sm:text-xs text-primary"
+            // Carousel Bank
+            <Carousel arrows infinite={false} className="carousel-order-detail">
+              <>
+                <div className="flex items-center justify-between mb-5">
+                  <h1 className="text-base font-bold max-sm:text-sm">
+                    <span className="mr-2">#1</span>Payment Information
+                  </h1>
+                  {isEdit && (
+                    <Button
+                      style={{ padding: 0 }}
+                      type="link"
+                      htmlType="submit"
+                      form="editForm"
+                      className="underline max-sm:text-xs text-primary"
+                    >
+                      Submit Data
+                    </Button>
+                  )}
+                  {!isEdit && (
+                    <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
+                      Edit Data
+                    </Button>
+                  )}
+                </div>
+                <Form
+                  id="editForm"
+                  layout="vertical"
+                  initialValues={{
+                    bank_detail: order.bank_detail,
+                    bank_number: order.bank_number,
+                    bank_branch: order.bank_branch,
+                    account_name: order.account_name,
+                  }}
+                  onFinish={handleSubmitEditBank}
+                >
+                  <Form.Item
+                    label="Bank Name"
+                    name="bank_detail"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your bank name!",
+                      },
+                    ]}
                   >
-                    Submit Data
-                  </Button>
-                )}
-                {!isEdit && (
-                  <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
-                    Edit Data
-                  </Button>
-                )}
-              </div>
-              <Form
-                id="editForm"
-                layout="vertical"
-                initialValues={{
-                  bank_detail: order.bank_detail,
-                  bank_number: order.bank_number,
-                  bank_branch: order.bank_branch,
-                  account_name: order.account_name,
-                }}
-                onFinish={handleSubmitEditBank}
-              >
-                <Form.Item
-                  label="Bank Name"
-                  name="bank_detail"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your bank name!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Bank Name"
-                    disabled={!isEdit}
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Bank Number"
-                  name="bank_number"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your bank number!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Bank Number"
-                    disabled={!isEdit}
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Bank Branch"
-                  name="bank_branch"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your bank branch!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Bank Branch"
-                    disabled={!isEdit}
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Account Name"
-                  name="account_name"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your account name!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Account Name"
-                    disabled={!isEdit}
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-              </Form>
-            </>
+                    <Input
+                      placeholder="Bank Name"
+                      disabled={!isEdit}
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Bank Number"
+                    name="bank_number"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your bank number!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Bank Number"
+                      disabled={!isEdit}
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Bank Branch"
+                    name="bank_branch"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your bank branch!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Bank Branch"
+                      disabled={!isEdit}
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Account Name"
+                    name="account_name"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your account name!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Account Name"
+                      disabled={!isEdit}
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <span className="font-medium text-sm text-[#9CA3AF] flex mb-4">Amount : ¥ 1.000 </span>
+                </Form>
+              </>
+            </Carousel>
           ) : order.status === "Pending" ? (
-            <>
-              <div className="flex items-center justify-between">
-                <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
-                {isEdit && (
-                  <Button
-                    style={{ padding: 0 }}
-                    type="link"
-                    htmlType="submit"
-                    form="editForm"
-                    className="underline max-sm:text-xs text-primary"
+            <Carousel arrows infinite={false} className="carousel-order-detail">
+              <>
+                <div className="flex items-center justify-between mb-5">
+                  <h1 className="text-base font-bold max-sm:text-sm">
+                    <span className="mr-2">#1</span>Payment Information
+                  </h1>
+                  {isEdit && (
+                    <Button
+                      style={{ padding: 0 }}
+                      type="link"
+                      htmlType="submit"
+                      form="editForm"
+                      className="underline max-sm:text-xs text-primary"
+                    >
+                      Submit Data
+                    </Button>
+                  )}
+                  {!isEdit && (
+                    <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
+                      Edit Data
+                    </Button>
+                  )}
+                </div>
+                <Form
+                  id="editForm"
+                  layout="vertical"
+                  initialValues={{
+                    bank_detail: order.bank_detail,
+                    bank_number: order.bank_number,
+                    bank_branch: order.bank_branch,
+                    account_name: order.account_name,
+                  }}
+                  onFinish={handleSubmitEditBank}
+                >
+                  <Form.Item
+                    label="Bank Name"
+                    name="bank_detail"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your bank name!",
+                      },
+                    ]}
                   >
-                    Submit Data
-                  </Button>
-                )}
-                {!isEdit && (
-                  <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
-                    Edit Data
-                  </Button>
-                )}
-              </div>
-              <Form
-                id="editForm"
-                layout="vertical"
-                initialValues={{
-                  bank_detail: order.bank_detail,
-                  bank_number: order.bank_number,
-                  bank_branch: order.bank_branch,
-                  account_name: order.account_name,
-                }}
-                onFinish={handleSubmitEditBank}
-              >
-                <Form.Item
-                  label="Bank Name"
-                  name="bank_detail"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your bank name!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Bank Name"
-                    disabled={!isEdit}
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Bank Number"
-                  name="bank_number"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your bank number!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Bank Number"
-                    disabled={!isEdit}
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Bank Branch"
-                  name="bank_branch"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your bank branch!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Bank Branch"
-                    disabled={!isEdit}
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Account Name"
-                  name="account_name"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your account name!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Account Name"
-                    disabled={!isEdit}
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-              </Form>
-            </>
+                    <Input
+                      placeholder="Bank Name"
+                      disabled={!isEdit}
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Bank Number"
+                    name="bank_number"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your bank number!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Bank Number"
+                      disabled={!isEdit}
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Bank Branch"
+                    name="bank_branch"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your bank branch!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Bank Branch"
+                      disabled={!isEdit}
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Account Name"
+                    name="account_name"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your account name!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Account Name"
+                      disabled={!isEdit}
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <span className="font-medium text-sm text-[#9CA3AF] flex mb-4">Amount : ¥ 1.000 </span>
+                </Form>
+              </>
+            </Carousel>
           ) : (
-            <>
-              <div className="flex items-center justify-between">
-                <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
-              </div>
-              <Form
-                id="editForm"
-                layout="vertical"
-                initialValues={{
-                  bank_detail: order.bank_detail,
-                  bank_number: order.bank_number,
-                  bank_branch: order.bank_branch,
-                  account_name: order.account_name,
-                }}
-                onFinish={handleSubmitEditBank}
-              >
-                <Form.Item
-                  label="Bank Name"
-                  name="bank_detail"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your bank name!",
-                    },
-                  ]}
+            <Carousel arrows infinite={false} className="carousel-order-detail">
+              <>
+                <div className="flex items-center justify-between mb-5">
+                  <h1 className="text-base font-bold max-sm:text-sm">
+                    <span className="mr-2">#1</span>Payment Information
+                  </h1>
+                </div>
+                <Form
+                  id="editForm"
+                  layout="vertical"
+                  initialValues={{
+                    bank_detail: order.bank_detail,
+                    bank_number: order.bank_number,
+                    bank_branch: order.bank_branch,
+                    account_name: order.account_name,
+                  }}
+                  onFinish={handleSubmitEditBank}
                 >
-                  <Input placeholder="Bank Name" disabled className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border" />
-                </Form.Item>
-                <Form.Item
-                  label="Bank Number"
-                  name="bank_number"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your bank number!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Bank Number"
-                    disabled
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Bank Branch"
-                  name="bank_branch"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your bank branch!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Bank Branch"
-                    disabled
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Account Name"
-                  name="account_name"
-                  className="font-medium"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your account name!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Account Name"
-                    disabled
-                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                  />
-                </Form.Item>
-              </Form>
-            </>
+                  <Form.Item
+                    label="Bank Name"
+                    name="bank_detail"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your bank name!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Bank Name"
+                      disabled
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Bank Number"
+                    name="bank_number"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your bank number!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Bank Number"
+                      disabled
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Bank Branch"
+                    name="bank_branch"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your bank branch!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Bank Branch"
+                      disabled
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Account Name"
+                    name="account_name"
+                    className="font-medium"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your account name!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Account Name"
+                      disabled
+                      className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                    />
+                  </Form.Item>
+                  <span className="font-medium text-sm text-[#9CA3AF] flex mb-4">Amount : ¥ 1.000 </span>
+                </Form>
+              </>
+            </Carousel>
           )
         ) : // ALI FORM
         order.status === "Awaiting Payment" ? (
-          <>
-            <div className="flex items-center justify-between">
-              <h1 className="text-base font-bold max-sm:text-sm">Payment Information ali</h1>
-              {isEdit && (
-                <Button
-                  style={{ padding: 0 }}
-                  type="link"
-                  htmlType="submit"
-                  form="editForm"
-                  className="underline max-sm:text-xs text-primary"
+          <Carousel arrows infinite={false} className="carousel-order-detail">
+            <>
+              <div className="flex items-center justify-between mb-5">
+                <h1 className="text-base font-bold max-sm:text-sm">
+                  <span className="mr-2">#1</span>Payment Information
+                </h1>
+                {isEdit && (
+                  <Button
+                    style={{ padding: 0 }}
+                    type="link"
+                    htmlType="submit"
+                    form="editForm"
+                    className="underline max-sm:text-xs text-primary"
+                  >
+                    Submit Data
+                  </Button>
+                )}
+                {!isEdit && (
+                  <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
+                    Edit Data
+                  </Button>
+                )}
+              </div>
+              <Form
+                id="editForm"
+                layout="vertical"
+                initialValues={{
+                  ali_number_or_email: order.ali_number_or_email,
+                  ali_name: order.ali_name,
+                }}
+                onFinish={handleSubmitEditAli}
+              >
+                <Form.Item
+                  label="No / Email"
+                  name="ali_number_or_email"
+                  className="font-medium"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your no / email!",
+                    },
+                  ]}
                 >
-                  Submit Data
-                </Button>
-              )}
-              {!isEdit && (
-                <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
-                  Edit Data
-                </Button>
-              )}
-            </div>
-            <Form
-              id="editForm"
-              layout="vertical"
-              initialValues={{
-                ali_number_or_email: order.ali_number_or_email,
-                ali_name: order.ali_name,
-              }}
-              onFinish={handleSubmitEditAli}
-            >
-              <Form.Item
-                label="No / Email"
-                name="ali_number_or_email"
-                className="font-medium"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your no / email!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="No / Email"
-                  disabled={!isEdit}
-                  className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                />
-              </Form.Item>
-              <Form.Item
-                label="Name"
-                name="ali_name"
-                className="font-medium"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your name!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Name"
-                  disabled={!isEdit}
-                  className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                />
-              </Form.Item>
-              <Form.Item noStyle name="file" className="w-full">
-                <span className="font-medium">
-                  <span className="text-xs text-red-500">*</span> QR Code
-                </span>
-                <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
-                  {order.ali_qr?.length > 0 ? (
-                    <Upload
-                      listType="picture"
-                      className="w-full"
-                      fileList={qrCodeList}
-                      onPreview={handlePreview}
-                      onChange={handleChangeQr}
-                      beforeUpload={() => false}
-                      maxCount={3}
-                      disabled={!isEdit}
-                      showUploadList={{
-                        showPreviewIcon: true,
-                        showRemoveIcon: isEdit,
-                        showDownloadIcon: false,
-                      }}
-                    >
-                      {order.status === "Complete" || order.status === "Cancel" ? (
-                        <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
-                          QR Code
-                        </Button>
-                      ) : (
-                        <Button
-                          type="dashed"
-                          className="border-primary text-primary max-sm:text-xs"
-                          icon={<UploadOutlined />}
-                          disabled={!isEdit}
-                        >
-                          QR Code
-                        </Button>
-                      )}
-                      <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
-                    </Upload>
-                  ) : (
-                    <>
+                  <Input
+                    placeholder="No / Email"
+                    disabled={!isEdit}
+                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Name"
+                  name="ali_name"
+                  className="font-medium"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your name!",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Name"
+                    disabled={!isEdit}
+                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                  />
+                </Form.Item>
+                <Form.Item noStyle name="file" className="w-full">
+                  <span className="font-medium">
+                    <span className="text-xs text-red-500">*</span> QR Code
+                  </span>
+                  <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
+                    {order.ali_qr?.length > 0 ? (
                       <Upload
                         listType="picture"
                         className="w-full"
-                        fileList={imageEditList}
+                        fileList={qrCodeList}
                         onPreview={handlePreview}
                         onChange={handleChangeQr}
                         beforeUpload={() => false}
@@ -687,130 +673,135 @@ const OrderDetail = () => {
                           showDownloadIcon: false,
                         }}
                       >
-                        <Button
-                          type="dashed"
-                          className="border-primary text-primary max-sm:text-xs"
-                          icon={<UploadOutlined />}
-                          disabled={!isEdit}
-                        >
-                          QR Code
-                        </Button>
-
+                        {order.status === "Complete" || order.status === "Cancel" ? (
+                          <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
+                            QR Code
+                          </Button>
+                        ) : (
+                          <Button
+                            type="dashed"
+                            className="border-primary text-primary max-sm:text-xs"
+                            icon={<UploadOutlined />}
+                            disabled={!isEdit}
+                          >
+                            QR Code
+                          </Button>
+                        )}
                         <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
                       </Upload>
-                    </>
-                  )}
-                </div>
-              </Form.Item>
-            </Form>
-          </>
-        ) : order.status === "Pending" ? (
-          <>
-            <div className="flex items-center justify-between">
-              <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
-              {isEdit && (
-                <Button
-                  style={{ padding: 0 }}
-                  type="link"
-                  htmlType="submit"
-                  form="editForm"
-                  className="underline max-sm:text-xs text-primary"
-                >
-                  Submit Data
-                </Button>
-              )}
-              {!isEdit && (
-                <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
-                  Edit Data
-                </Button>
-              )}
-            </div>
-            <Form
-              id="editForm"
-              layout="vertical"
-              initialValues={{
-                ali_number_or_email: order.ali_number_or_email,
-                ali_name: order.ali_name,
-              }}
-              onFinish={handleSubmitEditAli}
-            >
-              <Form.Item
-                label="No / Email"
-                name="ali_number_or_email"
-                className="font-medium"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your no / email!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="No / Email"
-                  disabled={!isEdit}
-                  className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                />
-              </Form.Item>
-              <Form.Item
-                label="Name"
-                name="ali_name"
-                className="font-medium"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your name!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Name"
-                  disabled={!isEdit}
-                  className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
-                />
-              </Form.Item>
-              <Form.Item noStyle name="file" className="w-full">
-                <span className="font-medium">
-                  <span className="text-xs text-red-500">*</span> QR Code
-                </span>
-                <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
-                  {order.ali_qr?.length > 0 ? (
-                    <Upload
-                      listType="picture"
-                      className="w-full"
-                      fileList={qrCodeList}
-                      onPreview={handlePreview}
-                      onChange={handleChangeQr}
-                      beforeUpload={() => false}
-                      maxCount={3}
-                      disabled={!isEdit}
-                      showUploadList={{
-                        showPreviewIcon: true,
-                        showRemoveIcon: false,
-                        showDownloadIcon: false,
-                      }}
-                    >
-                      {order.status === "Complete" || order.status === "Cancel" ? (
-                        <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
-                          QR Code
-                        </Button>
-                      ) : (
-                        <Button
-                          type="dashed"
-                          className="border-primary text-primary max-sm:text-xs"
-                          icon={<UploadOutlined />}
+                    ) : (
+                      <>
+                        <Upload
+                          listType="picture"
+                          className="w-full"
+                          fileList={imageEditList}
+                          onPreview={handlePreview}
+                          onChange={handleChangeQr}
+                          beforeUpload={() => false}
+                          maxCount={3}
                           disabled={!isEdit}
+                          showUploadList={{
+                            showPreviewIcon: true,
+                            showRemoveIcon: isEdit,
+                            showDownloadIcon: false,
+                          }}
                         >
-                          QR Code
-                        </Button>
-                      )}
-                      <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
-                    </Upload>
-                  ) : (
-                    <>
+                          <Button
+                            type="dashed"
+                            className="border-primary text-primary max-sm:text-xs"
+                            icon={<UploadOutlined />}
+                            disabled={!isEdit}
+                          >
+                            QR Code
+                          </Button>
+
+                          <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
+                        </Upload>
+                      </>
+                    )}
+                  </div>
+                </Form.Item>
+                <span className="font-medium text-sm text-[#9CA3AF] flex mb-4 mt-4">Amount : ¥ 1.000 </span>
+              </Form>
+            </>
+          </Carousel>
+        ) : order.status === "Pending" ? (
+          <Carousel arrows infinite={false} className="carousel-order-detail">
+            <>
+              <div className="flex items-center justify-between mb-5">
+                <h1 className="text-base font-bold max-sm:text-sm">
+                  <span className="mr-2">#1</span>Payment Information
+                </h1>
+                {isEdit && (
+                  <Button
+                    style={{ padding: 0 }}
+                    type="link"
+                    htmlType="submit"
+                    form="editForm"
+                    className="underline max-sm:text-xs text-primary"
+                  >
+                    Submit Data
+                  </Button>
+                )}
+                {!isEdit && (
+                  <Button style={{ padding: 0 }} type="link" onClick={handleEdit} className="underline max-sm:text-xs text-primary">
+                    Edit Data
+                  </Button>
+                )}
+              </div>
+              <Form
+                id="editForm"
+                layout="vertical"
+                initialValues={{
+                  ali_number_or_email: order.ali_number_or_email,
+                  ali_name: order.ali_name,
+                }}
+                onFinish={handleSubmitEditAli}
+              >
+                <Form.Item
+                  label="No / Email"
+                  name="ali_number_or_email"
+                  className="font-medium"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your no / email!",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="No / Email"
+                    disabled={!isEdit}
+                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Name"
+                  name="ali_name"
+                  className="font-medium"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your name!",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Name"
+                    disabled={!isEdit}
+                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                  />
+                </Form.Item>
+                <Form.Item noStyle name="file" className="w-full">
+                  <span className="font-medium">
+                    <span className="text-xs text-red-500">*</span> QR Code
+                  </span>
+                  <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
+                    {order.ali_qr?.length > 0 ? (
                       <Upload
                         listType="picture"
                         className="w-full"
-                        fileList={imageEditList}
+                        fileList={qrCodeList}
                         onPreview={handlePreview}
                         onChange={handleChangeQr}
                         beforeUpload={() => false}
@@ -822,109 +813,151 @@ const OrderDetail = () => {
                           showDownloadIcon: false,
                         }}
                       >
-                        <Button
-                          type="dashed"
-                          className="border-primary text-primary max-sm:text-xs"
-                          icon={<UploadOutlined />}
-                          disabled={!isEdit}
-                        >
-                          QR Code
-                        </Button>
-
+                        {order.status === "Complete" || order.status === "Cancel" ? (
+                          <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
+                            QR Code
+                          </Button>
+                        ) : (
+                          <Button
+                            type="dashed"
+                            className="border-primary text-primary max-sm:text-xs"
+                            icon={<UploadOutlined />}
+                            disabled={!isEdit}
+                          >
+                            QR Code
+                          </Button>
+                        )}
                         <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
                       </Upload>
-                    </>
-                  )}
-                </div>
-              </Form.Item>
-            </Form>
-          </>
+                    ) : (
+                      <>
+                        <Upload
+                          listType="picture"
+                          className="w-full"
+                          fileList={imageEditList}
+                          onPreview={handlePreview}
+                          onChange={handleChangeQr}
+                          beforeUpload={() => false}
+                          maxCount={3}
+                          disabled={!isEdit}
+                          showUploadList={{
+                            showPreviewIcon: true,
+                            showRemoveIcon: false,
+                            showDownloadIcon: false,
+                          }}
+                        >
+                          <Button
+                            type="dashed"
+                            className="border-primary text-primary max-sm:text-xs"
+                            icon={<UploadOutlined />}
+                            disabled={!isEdit}
+                          >
+                            QR Code
+                          </Button>
+
+                          <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
+                        </Upload>
+                      </>
+                    )}
+                  </div>
+                </Form.Item>
+                <span className="font-medium text-sm text-[#9CA3AF] flex mb-4 mt-4">Amount : ¥ 1.000 </span>
+              </Form>
+            </>
+          </Carousel>
         ) : (
-          <>
-            <div className="flex items-center justify-between">
-              <h1 className="text-base font-bold max-sm:text-sm">Payment Information</h1>
-            </div>
-            <Form
-              id="editForm"
-              layout="vertical"
-              initialValues={{
-                ali_number_or_email: order.ali_number_or_email,
-                ali_name: order.ali_name,
-              }}
-              onFinish={handleSubmitEditBank}
-            >
-              <Form.Item
-                label="No / Email"
-                name="ali_number_or_email"
-                className="font-medium"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your no / email!",
-                  },
-                ]}
+          <Carousel arrows infinite={false} className="carousel-order-detail">
+            <>
+              <div className="flex items-center justify-between mb-5">
+                <h1 className="text-base font-bold max-sm:text-sm">
+                  <span className="mr-2">#1</span>Payment Information
+                </h1>
+              </div>
+              <Form
+                id="editForm"
+                layout="vertical"
+                initialValues={{
+                  ali_number_or_email: order.ali_number_or_email,
+                  ali_name: order.ali_name,
+                }}
+                onFinish={handleSubmitEditBank}
               >
-                <Input placeholder="No / Email" disabled className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border" />
-              </Form.Item>
-              <Form.Item
-                label="Name"
-                name="ali_name"
-                className="font-medium"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your name!",
-                  },
-                ]}
-              >
-                <Input placeholder="Name" disabled className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border" />
-              </Form.Item>
-              <Form.Item noStyle name="file" className="w-full">
-                <span className="font-medium">
-                  <span className="text-xs text-red-500">*</span> QR Code
-                </span>
-                <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
-                  {order.ali_qr?.length > 0 ? (
-                    <Upload
-                      listType="picture"
-                      className="w-full"
-                      fileList={qrCodeList}
-                      onPreview={handlePreview}
-                      onChange={handleChange}
-                      beforeUpload={() => false}
-                      maxCount={3}
-                      showUploadList={{
-                        showPreviewIcon: true,
-                        showRemoveIcon: false,
-                        showDownloadIcon: false,
-                      }}
-                    >
-                      {order.status === "Complete" || order.status === "Cancel" ? (
-                        <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
-                          QR Code
-                        </Button>
-                      ) : (
-                        <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
-                          QR Code
-                        </Button>
-                      )}
-                      <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
-                    </Upload>
-                  ) : (
-                    <span className="text-xs italic text-gray-400">Not Uplouded</span>
-                  )}
-                </div>
-              </Form.Item>
-            </Form>
-          </>
+                <Form.Item
+                  label="No / Email"
+                  name="ali_number_or_email"
+                  className="font-medium"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your no / email!",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="No / Email"
+                    disabled
+                    className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Name"
+                  name="ali_name"
+                  className="font-medium"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your name!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Name" disabled className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border" />
+                </Form.Item>
+                <Form.Item noStyle name="file" className="w-full">
+                  <span className="font-medium">
+                    <span className="text-xs text-red-500">*</span> QR Code
+                  </span>
+                  <div className="p-4 bg-[#F7F9FC] rounded-md !w-full flex justify-between items-center mt-2">
+                    {order.ali_qr?.length > 0 ? (
+                      <Upload
+                        listType="picture"
+                        className="w-full"
+                        fileList={qrCodeList}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                        beforeUpload={() => false}
+                        maxCount={3}
+                        showUploadList={{
+                          showPreviewIcon: true,
+                          showRemoveIcon: false,
+                          showDownloadIcon: false,
+                        }}
+                      >
+                        {order.status === "Complete" || order.status === "Cancel" ? (
+                          <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />} disabled>
+                            QR Code
+                          </Button>
+                        ) : (
+                          <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
+                            QR Code
+                          </Button>
+                        )}
+                        <span className="ml-2 text-gray-500 max-sm:text-xs">(Optional)</span>
+                      </Upload>
+                    ) : (
+                      <span className="text-xs italic text-gray-400">Not Uplouded</span>
+                    )}
+                  </div>
+                </Form.Item>
+                <span className="font-medium text-sm text-[#9CA3AF] flex mb-4 mt-4">Amount : ¥ 1.000 </span>
+              </Form>
+            </>
+          </Carousel>
         )}
       </div>
-
       <div className="flex items-center justify-between p-6 bg-white max-sm:p-5 rounded-3xl max-sm:text-sm">
         <span className="font-bold">Total Paid</span>
         <span className="font-bold">{`${formatRupiah(Number(order.amount) * order.selling_price)}`}</span>
       </div>
-
       {order.status === "Awaiting Payment" ? (
         <>
           <Button
