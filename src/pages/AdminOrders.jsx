@@ -8,6 +8,7 @@ import { useReactToPrint } from "react-to-print";
 import PrintModal from "../components/modal/PrintModal";
 import { useLocation } from "react-router-dom";
 import TableAdminOrderAli from "../components/orders/TableAdminOrderAli";
+import useLoadingToast from "../Hooks/useToast";
 
 const AdminOrders = () => {
   const [selectedDate, setSelectedDate] = useState("");
@@ -23,9 +24,9 @@ const AdminOrders = () => {
 
   const printAreaRef = useRef();
 
-  const updateStatusOrderMutation = useUpdateStatusOrder();
+  const toast = useLoadingToast();
 
-  const deleteOrderMutation = useDeleteOrder();
+  const updateStatusOrderMutation = useUpdateStatusOrder();
 
   const onChangeDate = (date, dateString) => {
     setSelectedDate(dateString);
@@ -35,15 +36,25 @@ const AdminOrders = () => {
     setSelectedStatus(value);
   };
 
-  const handleUpdateStatusSelectedRow = (selectedRowId) => {
-    selectedRowId.forEach((orderId) => {
-      if (updateStatusOrderMutation.isPending) return;
-      updateStatusOrderMutation.mutate({
-        id: orderId,
-        data: { status: selectedStatus },
-      });
-    });
-    setSelectedRowKeys([]);
+  const handleUpdateStatusSelectedRow = async (selectedRowId) => {
+    toast.loading("Updating status for selected orders...");
+
+    try {
+      await Promise.all(
+        selectedRowId.map((orderId) =>
+          updateStatusOrderMutation.mutateAsync({
+            id: orderId,
+            data: { status: selectedStatus },
+          })
+        )
+      );
+      // Update success toast setelah semua berhasil
+      toast.update("Status updated successfully", "success");
+    } catch (error) {
+      toast.update("Failed to update some orders", "error");
+    } finally {
+      setSelectedRowKeys([]); // Reset selection
+    }
   };
 
   const handleDeleteSelectedRow = (selectedRowId) => {

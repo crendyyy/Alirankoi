@@ -6,7 +6,7 @@ import useModal from "../Hooks/useModal";
 import PaymentModal from "../components/modal/PaymentModal";
 import WalletIcon from "../components/icons/WalletIcon";
 import { useGetUserOrders } from "../components/service/user/order/useGetUserOrder";
-import { Button } from "antd";
+import { Button, Empty, Typography } from "antd";
 import { AuthContext } from "../context/AuthContext";
 import { useGetStock } from "../components/service/stock/useGetStock";
 import { formatRupiah } from "../libs/utils";
@@ -156,19 +156,25 @@ const Home = () => {
           </span>
         </div>
         {isOrderPending ? <p>Loading</p> : ""}
-        {orders?.payload
-          .filter((order) => dayjs(order.createdAt).isSame(today, "day"))
-          .map((order) => (
-            <HistoryCard
-              onClick={() => handleOrderDetail(order)}
-              key={order.id}
-              date={order.createdAt.slice(0, 10)}
-              rate={order.selling_price}
-              status={order.status}
-              totalAmount={order.amount}
-              orderType={order.order_type}
-            />
-          ))}
+        {orders?.payload.filter((order) =>
+          dayjs(order.createdAt).isSame(today, "day")
+        ).length > 0 ? (
+          orders?.payload
+            .filter((order) => dayjs(order.createdAt).isSame(today, "day"))
+            .map((order) => (
+              <HistoryCard
+                onClick={() => handleOrderDetail(order)}
+                key={order.id}
+                date={order.createdAt.slice(0, 10)}
+                rate={order.selling_price}
+                status={order.status}
+                totalAmount={order.amount}
+                orderType={order.order_type}
+              />
+            ))
+        ) : (
+          <Empty description="No Order Today" />
+        )}
       </div>
     </div>
   );

@@ -7,24 +7,23 @@ export const useUpdateStatusOrder = () => {
   const queryClient = useQueryClient();
   const axiosClient = useAxios();
 
-  const toast = useLoadingToast();
-
   return useMutation({
     mutationFn: ({ id, data }) => {
-      toast.loading("Updating status order...");
-      console.log("Updating status order...");
       return axiosClient._patch(`/order/status/${id}`, data);
     },
 
     onSuccess: (response) => {
-      toast.update("Status order updated successfully.", "success");
       console.log("Status Order updated successfully.", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: orderKeys.lists });
     },
 
-    onError: () => {
-      toast.update("Failed to update status, please try again", "error");
+    onError: (response) => {
+      console.log(
+        "Failed to update status, please try again",
+        "error",
+        response
+      );
     },
   });
 };
@@ -32,6 +31,8 @@ export const useUpdateStatusOrder = () => {
 export const useUpdateDataOrder = () => {
   const queryClient = useQueryClient();
   const axiosClient = useAxios();
+
+  const toast = useLoadingToast();
 
   return useMutation({
     mutationFn: ({ id, data }) => {

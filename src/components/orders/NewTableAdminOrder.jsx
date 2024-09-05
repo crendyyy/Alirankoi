@@ -147,12 +147,6 @@ const NewTableAdminOrder = ({
           data: newEditData,
         });
 
-        // Call the mutation function with the updated status
-        updateStatusOrderMutation.mutate({
-          id: item._id,
-          data: { status: updatedData.status },
-        });
-
         newData.splice(index, 1, updatedData);
         setEditingKey("");
       } else {

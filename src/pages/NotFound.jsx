@@ -7,16 +7,18 @@ const NotFound = () => {
     navigate("/login");
   };
   return (
-    <Result
-      status="404"
-      title="404"
-      subTitle="Sorry, the page you visited does not exist."
-      extra={
-        <Button onClick={handleBack} type="primary">
-          Back Home
-        </Button>
-      }
-    />
+    <main className="flex flex-col items-center justify-center h-screen">
+      <Result
+        status="404"
+        title="404"
+        subTitle="Sorry, the page you visited does not exist."
+        extra={
+          <Button onClick={handleBack} type="primary">
+            Back Home
+          </Button>
+        }
+      />
+    </main>
   );
 };
 export default NotFound;
