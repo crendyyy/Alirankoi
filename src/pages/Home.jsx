@@ -55,7 +55,7 @@ const Home = () => {
 
   const handleOrderDetail = (order) => {
     navigate(
-      `/order/${order.orders[0]?.order_type.toLowerCase()}/${order._id}`,
+      `/order/${order.order_type.toLowerCase()}/${order._id}`,
       {
         state: { order },
       }
@@ -169,10 +169,10 @@ const Home = () => {
                 onClick={() => handleOrderDetail(order)}
                 key={order._id}
                 date={order.createdAt.slice(0, 10)}
-                rate={order.orders[0]?.selling_price}
-                status={order.orders[0]?.status}
+                rate={order.selling_price}
+                status={order.status}
                 totalAmount={order.totalAmount}
-                orderType={order.orders[0]?.order_type}
+                orderType={order.order_type}
               />
             ))
         ) : (
