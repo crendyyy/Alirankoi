@@ -12,7 +12,7 @@ import useLoadingToast from "../Hooks/useToast";
 
 const AdminOrders = () => {
   const [selectedDate, setSelectedDate] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("Select order");
+  const [selectedStatus, setSelectedStatus] = useState();
   const [printType, setPrintType] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRow, setSelectedRow] = useState([]);
@@ -55,8 +55,9 @@ const AdminOrders = () => {
       toast.update("Failed to update some orders", "error");
     } finally {
       setSelectedRowKeys([]);
+      setSelectedRowsByGroup({});
       setSelectedRow([]);
-      setSelectedStatus("Select order");
+      setSelectedStatus();
     }
   };
 
@@ -166,7 +167,9 @@ const AdminOrders = () => {
               setSelectedRow={setSelectedRow}
               selectedRow={selectedRow}
               selectedRowKeys={selectedRowKeys}
-              onOpenModalPrint={() => handleOpenModal("printPageOrders")}
+              selectedRowsByGroup={selectedRowsByGroup}
+              setSelectedRowsByGroup={setSelectedRowsByGroup}
+              onOpenModalPrint={() => handleOpenModal("printPageOrdersAli")}
               selectedDate={selectedDate}
               selectedStatus={selectedStatus}
             />

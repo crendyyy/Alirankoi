@@ -176,6 +176,7 @@ const NewTableAdminOrder = ({
   const filteredOrders =
     orders?.payload
       .filter((order) => order.order_type === "Bank")
+      .filter((order) => order.status !== "Awaiting Payment")
       .filter((order) => {
         const orderDate = dayjs(order.createdAt).format(dateFormat);
         const matchDate = selectedDate ? orderDate === selectedDate : true;
@@ -430,10 +431,13 @@ const NewTableAdminOrder = ({
 
                     // Perbarui state untuk grup dan semua baris yang dipilih
                     setSelectedRowsByGroup(newSelectedRowsByGroup);
+
+                    // Hanya tambahkan baris yang memiliki `key`
                     setSelectedRowKeys(
                       Object.values(newSelectedRowsByGroup)
                         .flat()
-                        .map((row) => row.key)
+                        .map((row) => (row ? row.key : null)) // Pastikan row tidak undefined
+                        .filter(Boolean) // Hilangkan nilai null
                     );
                     setSelectedRow(
                       Object.values(newSelectedRowsByGroup).flat()
@@ -452,15 +456,18 @@ const NewTableAdminOrder = ({
                       // Hapus baris dari grup yang dipilih
                       newSelectedRowsByGroup[username] = (
                         newSelectedRowsByGroup[username] || []
-                      ).filter((row) => row.key !== record.key);
+                      ).filter((row) => row && row.key !== record.key); // Cek apakah row ada
                     }
 
                     // Perbarui state untuk grup dan semua baris yang dipilih
                     setSelectedRowsByGroup(newSelectedRowsByGroup);
+
+                    // Pastikan row ada sebelum mengakses `key`
                     setSelectedRowKeys(
                       Object.values(newSelectedRowsByGroup)
                         .flat()
-                        .map((row) => row.key)
+                        .map((row) => (row ? row.key : null)) // Cek apakah row ada
+                        .filter(Boolean) // Hilangkan nilai null
                     );
                     setSelectedRow(
                       Object.values(newSelectedRowsByGroup).flat()
@@ -479,10 +486,13 @@ const NewTableAdminOrder = ({
 
                     // Perbarui state untuk grup dan semua baris yang dipilih
                     setSelectedRowsByGroup(newSelectedRowsByGroup);
+
+                    // Tambahkan pengecekan apakah row ada sebelum mengakses `key`
                     setSelectedRowKeys(
                       Object.values(newSelectedRowsByGroup)
                         .flat()
-                        .map((row) => row.key)
+                        .map((row) => (row ? row.key : null)) // Cek apakah row ada
+                        .filter(Boolean) // Hilangkan nilai null
                     );
                     setSelectedRow(
                       Object.values(newSelectedRowsByGroup).flat()
@@ -493,7 +503,7 @@ const NewTableAdminOrder = ({
                 dataSource={groupedOrders[username]}
                 columns={mergedColumns}
                 rowClassName="editable-row"
-                pagination={{ pageSize: 5 }}
+                pagination={{ pageSize: 10 }}
               />
             </Form>
           </div>

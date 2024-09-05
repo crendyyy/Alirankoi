@@ -1,26 +1,57 @@
 import Title from "antd/es/typography/Title";
 import Modal from "../shared/Modal";
-import { Button, Flex, Input, InputNumber, Upload, Image, Form, Carousel } from "antd";
-import { AlipayOutlined, BankOutlined, PlusCircleOutlined, ShoppingCartOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Flex,
+  Input,
+  InputNumber,
+  Upload,
+  Image,
+  Form,
+  Carousel,
+} from "antd";
+import {
+  AlipayOutlined,
+  BankOutlined,
+  PlusCircleOutlined,
+  ShoppingCartOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { useContext, useEffect, useState } from "react";
 import { useCreateOrder } from "../service/user/order/useCreateOrder";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useCreateOrderGroup } from "../service/user/order/useCreateOrderGroup";
 
 const PaymentModal = ({ onClose, typeModal }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   // const [previewImage, setPreviewImage] = useState("");
   const [previewImageQR, setPreviewImageQR] = useState("");
+  const [formAdd, setFormAdd] = useState([]);
   const [qrCodeList, setqrCodeList] = useState([]);
   const { auth } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
+  const createOrderGroupMutation = useCreateOrderGroup();
+
   const createOrderMutation = useCreateOrder();
-  console.log(createOrderMutation);
 
   const [formBank] = Form.useForm();
   const [formAli] = Form.useForm();
+
+  const handleAddCreateOrderBank = (value) => {
+    const formData = new FormData();
+    formData.append("amount", value.amount);
+    formData.append("bank_number", value.bank_number);
+    formData.append("bank_detail", value.bank_detail);
+    formData.append("bank_branch", value.bank_branch);
+    formData.append("account_name", value.account_name);
+
+    formData.append("token", auth.token);
+    formData.append("order_type", typeModal);
+    setFormAdd(formData);
+  };
 
   const handleCreateOrderBank = async (value) => {
     const formData = new FormData();
@@ -32,12 +63,13 @@ const PaymentModal = ({ onClose, typeModal }) => {
 
     formData.append("token", auth.token);
     formData.append("order_type", typeModal);
+    createOrderGroupMutation.mutate();
 
     try {
       const response = await createOrderMutation.mutateAsync(formData);
-      const order = response.data.payload;
+      const order = response.data.payload[0];
       console.log(order);
-      navigate(`/order/${order.order_type.toLowerCase()}/${order.id}`, {
+      navigate(`/order/${order?.order_type.toLowerCase()}/${order.id}`, {
         state: { order },
       });
 
@@ -81,16 +113,11 @@ const PaymentModal = ({ onClose, typeModal }) => {
     }
   };
 
-  // const handlePreview = (file) => {
-  //   setPreviewImage(file.thumbUrl || file.preview);
-  //   setPreviewOpen(true);
-  // };
   const handlePreviewQR = (file) => {
     setPreviewImageQR(file.thumbUrl || file.preview);
     setPreviewOpen(true);
   };
 
-  // const handleChange = ({ fileList }) => setqrCodeList(fileList);
   const handleChangeQR = ({ fileList }) => setqrCodeList(fileList);
   return (
     <Modal onCancel={onclose}>
@@ -232,10 +259,15 @@ const PaymentModal = ({ onClose, typeModal }) => {
                             }}
                           >
                             <Flex gap="small" align="center">
-                              <Button icon={<UploadOutlined />} className="hover:!border-black hover:!text-black max-sm:text-xs">
+                              <Button
+                                icon={<UploadOutlined />}
+                                className="hover:!border-black hover:!text-black max-sm:text-xs"
+                              >
                                 QR code
                               </Button>
-                              <span className="text-[#9CA3AF] text-sm max-sm:text-xs">{"(Optional)"}</span>
+                              <span className="text-[#9CA3AF] text-sm max-sm:text-xs">
+                                {"(Optional)"}
+                              </span>
                             </Flex>
                           </Upload>
                         </div>
@@ -248,8 +280,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
                           }}
                           preview={{
                             visible: previewOpen,
-                            onVisibleChange: (visible) => setPreviewOpen(visible),
-                            afterOpenChange: (visible) => !visible && setPreviewImageQR(""),
+                            onVisibleChange: (visible) =>
+                              setPreviewOpen(visible),
+                            afterOpenChange: (visible) =>
+                              !visible && setPreviewImageQR(""),
                           }}
                           src={previewImageQR}
                         />
@@ -279,7 +313,11 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     variant="filled"
                     prefix="¥"
                     min={0}
-                    formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
+                    formatter={(value) =>
+                      value
+                        ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        : ""
+                    }
                     parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
                   />
                 </Form.Item>
@@ -297,7 +335,11 @@ const PaymentModal = ({ onClose, typeModal }) => {
           <Form
             className="w-full"
             form={typeModal === "Bank" ? formBank : formAli}
-            onFinish={typeModal === "Bank" ? handleCreateOrderBank : handleCreateOrderAli}
+            onFinish={
+              typeModal === "Bank"
+                ? handleCreateOrderBank
+                : handleCreateOrderAli
+            }
             onFinishFailed={(errorInfo) => console.log("Failed:", errorInfo)}
           >
             <Form.Item noStyle className="w-full">
@@ -311,7 +353,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
             </Form.Item>
           </Form>
           <button
-            // onClick={onClose}
+            onClick={handleAddCreateOrderBank}
             className="after:content-['1'] after:border after:border-red-500 after:px-1.5 relative after:bg-red-100 after:text-[10px] after:rounded-full after:absolute after:top-0 after:right-0 after:text-red-500 !bg-[#F3F4F6] rounded-full max-sm:!w-[89px] px-[15px] max-sm:px-0 font-semibold text-black flex justify-center items-center"
           >
             <PlusCircleOutlined className="text-xl" />

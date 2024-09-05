@@ -90,12 +90,13 @@ const TableAdminOrderAli = ({
   onOpenModalPrint,
   selectedRow,
   selectedRowKeys,
+  selectedRowsByGroup,
+  setSelectedRowsByGroup,
 }) => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState("");
-  const [selectedRowsByGroup, setSelectedRowsByGroup] = useState({});
 
   const { data: orders, isPending, isError } = useGetOrders();
   const updateStatusOrderMutation = useUpdateStatusOrder();
@@ -170,6 +171,7 @@ const TableAdminOrderAli = ({
   const filteredOrders =
     orders?.payload
       .filter((order) => order.order_type === "Alipay")
+      .filter((order) => order.status !== "Awaiting Payment")
       .filter((order) => {
         const orderDate = dayjs(order.createdAt).format(dateFormat);
         const matchDate = selectedDate ? orderDate === selectedDate : true;
@@ -409,10 +411,13 @@ const TableAdminOrderAli = ({
 
                     // Perbarui state untuk grup dan semua baris yang dipilih
                     setSelectedRowsByGroup(newSelectedRowsByGroup);
+
+                    // Hanya tambahkan baris yang memiliki `key`
                     setSelectedRowKeys(
                       Object.values(newSelectedRowsByGroup)
                         .flat()
-                        .map((row) => row.key)
+                        .map((row) => (row ? row.key : null)) // Pastikan row tidak undefined
+                        .filter(Boolean) // Hilangkan nilai null
                     );
                     setSelectedRow(
                       Object.values(newSelectedRowsByGroup).flat()
@@ -431,15 +436,18 @@ const TableAdminOrderAli = ({
                       // Hapus baris dari grup yang dipilih
                       newSelectedRowsByGroup[username] = (
                         newSelectedRowsByGroup[username] || []
-                      ).filter((row) => row.key !== record.key);
+                      ).filter((row) => row && row.key !== record.key); // Cek apakah row ada
                     }
 
                     // Perbarui state untuk grup dan semua baris yang dipilih
                     setSelectedRowsByGroup(newSelectedRowsByGroup);
+
+                    // Pastikan row ada sebelum mengakses `key`
                     setSelectedRowKeys(
                       Object.values(newSelectedRowsByGroup)
                         .flat()
-                        .map((row) => row.key)
+                        .map((row) => (row ? row.key : null)) // Cek apakah row ada
+                        .filter(Boolean) // Hilangkan nilai null
                     );
                     setSelectedRow(
                       Object.values(newSelectedRowsByGroup).flat()
@@ -458,10 +466,13 @@ const TableAdminOrderAli = ({
 
                     // Perbarui state untuk grup dan semua baris yang dipilih
                     setSelectedRowsByGroup(newSelectedRowsByGroup);
+
+                    // Tambahkan pengecekan apakah row ada sebelum mengakses `key`
                     setSelectedRowKeys(
                       Object.values(newSelectedRowsByGroup)
                         .flat()
-                        .map((row) => row.key)
+                        .map((row) => (row ? row.key : null)) // Cek apakah row ada
+                        .filter(Boolean) // Hilangkan nilai null
                     );
                     setSelectedRow(
                       Object.values(newSelectedRowsByGroup).flat()

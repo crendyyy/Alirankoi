@@ -54,9 +54,12 @@ const Home = () => {
   console.log(orders);
 
   const handleOrderDetail = (order) => {
-    navigate(`/order/${order.order_type.toLowerCase()}/${order.id}`, {
-      state: { order },
-    });
+    navigate(
+      `/order/${order.orders[0]?.order_type.toLowerCase()}/${order._id}`,
+      {
+        state: { order },
+      }
+    );
   };
 
   const handleOpenModal = (type) => {
@@ -164,12 +167,12 @@ const Home = () => {
             .map((order) => (
               <HistoryCard
                 onClick={() => handleOrderDetail(order)}
-                key={order.id}
+                key={order._id}
                 date={order.createdAt.slice(0, 10)}
-                rate={order.selling_price}
-                status={order.status}
-                totalAmount={order.amount}
-                orderType={order.order_type}
+                rate={order.orders[0]?.selling_price}
+                status={order.orders[0]?.status}
+                totalAmount={order.totalAmount}
+                orderType={order.orders[0]?.order_type}
               />
             ))
         ) : (
