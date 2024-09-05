@@ -120,3 +120,24 @@ input[type="number"] {
 /* .ant-radio:hover .ant-radio-inner {
   border-color: red;
 } */
+
+/* CAROUSEL DOTS */
+.slick-dots.slick-dots-bottom {
+  @apply static mt-2;
+}
+
+.slick-arrow.slick-next {
+  @apply max-sm:!-mr-1.5 !-mr-2 !h-20 !w-6 max-sm:!w-4 !align-middle !text-center;
+}
+
+.slick-arrow.slick-prev {
+  @apply max-sm:!-ml-1.5 !-ml-0.5 !h-20 !w-6 max-sm:!w-4 !align-middle !text-center;
+}
+
+.slick-prev::after {
+  @apply !translate-y-8 !-rotate-45;
+}
+
+.slick-next::after {
+  @apply !translate-y-8 !rotate-[135deg];
+}
