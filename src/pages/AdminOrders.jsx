@@ -12,10 +12,11 @@ import useLoadingToast from "../Hooks/useToast";
 
 const AdminOrders = () => {
   const [selectedDate, setSelectedDate] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("Select order");
   const [printType, setPrintType] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRow, setSelectedRow] = useState([]);
+  const [selectedRowsByGroup, setSelectedRowsByGroup] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const location = useLocation();
@@ -53,7 +54,9 @@ const AdminOrders = () => {
     } catch (error) {
       toast.update("Failed to update some orders", "error");
     } finally {
-      setSelectedRowKeys([]); // Reset selection
+      setSelectedRowKeys([]);
+      setSelectedRow([]);
+      setSelectedStatus("Select order");
     }
   };
 
@@ -114,6 +117,7 @@ const AdminOrders = () => {
                 placeholder="Select order"
                 className="w-full"
                 allowClear
+                value={selectedStatus}
                 onChange={handleChangeStatus}
               >
                 <Select.Option value="Complete">Complete</Select.Option>
@@ -149,6 +153,9 @@ const AdminOrders = () => {
               setSelectedRowKeys={setSelectedRowKeys}
               setSelectedRow={setSelectedRow}
               selectedRow={selectedRow}
+              selectedRowKeys={selectedRowKeys}
+              selectedRowsByGroup={selectedRowsByGroup}
+              setSelectedRowsByGroup={setSelectedRowsByGroup}
               onOpenModalPrint={() => handleOpenModal("printPageOrders")}
               selectedDate={selectedDate}
               selectedStatus={selectedStatus}
@@ -158,6 +165,7 @@ const AdminOrders = () => {
               setSelectedRowKeys={setSelectedRowKeys}
               setSelectedRow={setSelectedRow}
               selectedRow={selectedRow}
+              selectedRowKeys={selectedRowKeys}
               onOpenModalPrint={() => handleOpenModal("printPageOrders")}
               selectedDate={selectedDate}
               selectedStatus={selectedStatus}

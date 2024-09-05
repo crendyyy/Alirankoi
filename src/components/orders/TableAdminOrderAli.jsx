@@ -89,6 +89,7 @@ const TableAdminOrderAli = ({
   setSelectedRow,
   onOpenModalPrint,
   selectedRow,
+  selectedRowKeys,
 }) => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
@@ -399,6 +400,7 @@ const TableAdminOrderAli = ({
                 components={{ body: { cell: EditableCell } }}
                 rowSelection={{
                   type: "checkbox",
+                  selectedRowKeys,
                   onChange: (selectedRowKeys, selectedRows) => {
                     const newSelectedRowsByGroup = { ...selectedRowsByGroup };
 

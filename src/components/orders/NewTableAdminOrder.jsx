@@ -89,18 +89,18 @@ const NewTableAdminOrder = ({
   setSelectedRow,
   onOpenModalPrint,
   selectedRow,
+  selectedRowsByGroup,
+  setSelectedRowsByGroup,
+  selectedRowKeys,
 }) => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState("");
-  const [selectedRowsByGroup, setSelectedRowsByGroup] = useState({});
 
   const { data: orders, isPending, isError } = useGetOrders();
   const updateStatusOrderMutation = useUpdateStatusOrder();
   const updateDataOrdeMutation = useUpdateDataOrder();
-
-  const deleteOrderMutation = useDeleteOrder();
 
   const isEditing = (record) => record.key === editingKey;
 
@@ -421,6 +421,7 @@ const NewTableAdminOrder = ({
                 components={{ body: { cell: EditableCell } }}
                 rowSelection={{
                   type: "checkbox",
+                  selectedRowKeys,
                   onChange: (selectedRowKeys, selectedRows) => {
                     const newSelectedRowsByGroup = { ...selectedRowsByGroup };
 
