@@ -85,9 +85,7 @@ const OrderDetail = () => {
 
     // Cek apakah ada file baru yang diunggah
     if (order.ali_qr && order.ali_qr?.length > 0) {
-      const uploadedFile = qrCodeList.find(
-        (item) => item.uid === `${orderId}`
-      )?.originFileObj;
+      const uploadedFile = qrCodeList.find((item) => item?.originFileObj);
       if (uploadedFile) {
         file = uploadedFile.originFileObj;
       }
@@ -142,20 +140,13 @@ const OrderDetail = () => {
   ).toISOString();
 
   const handleChange = ({ fileList }) => setImageList(fileList);
-  const handleChangeQr = ({ fileList }, index) => {
-    if (order.orders[index]?.ali_qr?.length > 0) {
-      // Update qrCodeList[index] if order[index].ali_qr already has data
-      let updatedQrCodeList = [...qrCodeList];
-      updatedQrCodeList[index] = { ...updatedQrCodeList[index], fileList };
-      setQrCodeList(updatedQrCodeList);
+  const handleChangeQr = ({ fileList }) => {
+    if (order.ali_qr?.length > 0) {
+      // Update qrCodeList if order.ali_qr already has data
+      setQrCodeList(fileList);
     } else {
-      // Update imageEditList[index] if there's no initial QR data
-      let updatedImageEditList = [...imageEditList];
-      updatedImageEditList[index] = {
-        ...updatedImageEditList[index],
-        fileList,
-      };
-      setImageEditList(updatedImageEditList);
+      // Update imageEditList if there's no initial QR data
+      setImageEditList(fileList);
     }
   };
 
@@ -751,8 +742,8 @@ const OrderDetail = () => {
                           fileList={
                             qrCodeList[index] ? [qrCodeList[index]] : []
                           }
+                          onChange={handleChangeQr}
                           beforeUpload={() => false}
-                          onChange={(info) => handleChangeQr(info, index)}
                           maxCount={3}
                           disabled={!isEdit || orderId !== order?._id}
                           showUploadList={{
@@ -792,8 +783,8 @@ const OrderDetail = () => {
                             className="w-full"
                             fileList={imageEditList}
                             onPreview={handlePreview}
+                            onChange={handleChangeQr}
                             beforeUpload={() => false}
-                            onChange={(info) => handleChangeQr(info, index)}
                             maxCount={3}
                             disabled={!isEdit || orderId !== order?._id}
                             showUploadList={{
@@ -909,12 +900,10 @@ const OrderDetail = () => {
                         <Upload
                           listType="picture"
                           className="w-full"
-                          fileList={
-                            qrCodeList[index] ? [qrCodeList[index]] : []
-                          }
+                          fileList={qrCodeList}
                           onPreview={handlePreview}
+                          onChange={handleChangeQr}
                           beforeUpload={() => false}
-                          onChange={(info) => handleChangeQr(info, index)}
                           maxCount={3}
                           disabled={!isEdit || orderId !== order?._id}
                           showUploadList={{
@@ -954,8 +943,8 @@ const OrderDetail = () => {
                             className="w-full"
                             fileList={imageEditList}
                             onPreview={handlePreview}
+                            onChange={handleChangeQr}
                             beforeUpload={() => false}
-                            onChange={(info) => handleChangeQr(info, index)}
                             maxCount={3}
                             disabled={!isEdit || orderId !== order?._id}
                             showUploadList={{
@@ -1050,11 +1039,9 @@ const OrderDetail = () => {
                         <Upload
                           listType="picture"
                           className="w-full"
-                          fileList={
-                            qrCodeList[index] ? [qrCodeList[index]] : []
-                          }
+                          fileList={qrCodeList}
                           onPreview={handlePreview}
-                          onChange={(info) => handleChangeQr(info, index)}
+                          onChange={handleChange}
                           beforeUpload={() => false}
                           maxCount={3}
                           showUploadList={{
