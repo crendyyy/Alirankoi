@@ -146,6 +146,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
     const newForm = {
       id: formAdd.length + 1,
       formData,
+      qrFile: file,
     };
 
     setFormAdd([...formAdd, newForm]);
@@ -749,9 +750,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
             <Form.Item noStyle className="w-full">
               <Button
                 htmlType="submit"
-                className={`after:content-['${
-                  formAdd.length === 0 ? "0" : formAdd.length + 1
-                }'] after:border after:border-red-500 after:px-1.5 relative after:bg-red-100 after:text-[10px] after:rounded-full after:absolute after:top-0 after:right-0 after:text-red-500 !bg-[#F3F4F6] rounded-full max-sm:!w-[89px] px-[15px] max-sm:px-0 font-semibold text-black flex justify-center items-center`}
+                className={`after:content-['${2}'] after:border after:border-red-500 after:px-1.5 relative after:bg-red-100 after:text-[10px] after:rounded-full after:absolute after:top-0 after:right-0 after:text-red-500 !bg-[#F3F4F6] rounded-full max-sm:!w-[89px] px-[15px] max-sm:px-0 font-semibold text-black flex justify-center items-center`}
                 onClick={() => setSubmitType("addPayment")} // Set submit type to add payment
               >
                 <PlusCircleOutlined className="text-xl" />
