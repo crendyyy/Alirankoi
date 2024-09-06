@@ -30,6 +30,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
   const [submitType, setSubmitType] = useState("");
   const [formAdd, setFormAdd] = useState([]);
   const [qrCodeList, setqrCodeList] = useState([]);
+  const [qrFiles, setQrFiles] = useState([]);
   const { auth } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -127,25 +128,29 @@ const PaymentModal = ({ onClose, typeModal }) => {
     }
   };
 
-  const handleAddCreateOrderAli = (value) => {
-    const file = qrCodeList[0]?.originFileObj;
+  const handleAddCreateOrderAli = (values) => {
+    const file = qrCodeList[0]?.originFileObj || null; // Get the current QR file
     const formData = new FormData();
-    formData.append("amount", value.amount);
-    formData.append("ali_number_or_email", value.ali_number_or_email);
-    formData.append("ali_name", value.ali_name);
+
+    formData.append("amount", values.amount);
+    formData.append("ali_number_or_email", values.ali_number_or_email);
+    formData.append("ali_name", values.ali_name);
 
     if (file) {
-      formData.append("file", file);
+      formData.append("qr", file); // Add QR file if it exists
     }
 
     formData.append("token", auth.token);
     formData.append("order_type", typeModal);
+
     const newForm = {
       id: formAdd.length + 1,
       formData,
     };
 
     setFormAdd([...formAdd, newForm]);
+
+    // Clear the current QR code state and form
     setqrCodeList([]);
     formAli.resetFields();
   };
@@ -155,7 +160,6 @@ const PaymentModal = ({ onClose, typeModal }) => {
       // Step 1: Generate order_group_id first using createOrderGroupMutation
       const orderGroupResponse = await createOrderGroupMutation.mutateAsync();
       const order_group_id = orderGroupResponse?.data?.payload?.order_group_id;
-      console.log(order_group_id);
 
       if (!order_group_id) {
         console.error("Failed to retrieve order_group_id");
@@ -167,7 +171,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
         // Loop through each form in formAdd
         for (const form of formAdd) {
           const formData = new FormData();
-          const file = form.formData.get("file");
+          const file = form.formData.get("qr");
 
           // Append fields for each order
           formData.append("amount", form.formData.get("amount"));
@@ -238,13 +242,23 @@ const PaymentModal = ({ onClose, typeModal }) => {
       // Handle error here, e.g., show an error notification
     }
   };
-
-  const handlePreviewQR = (file) => {
-    setPreviewImageQR(file.thumbUrl || file.preview);
-    setPreviewOpen(true);
+  const handlePreviewQR = async (file) => {
+    setPreviewImageQR(file.url || file.preview); // Show the preview image from the file
+    setPreviewOpen(true); // Open the modal
   };
 
   const handleChangeQR = ({ fileList }) => setqrCodeList(fileList);
+
+  const handleChangeQRForm = (formId, { fileList }) => {
+    setFormAdd((prevForms) =>
+      prevForms.map((form) =>
+        form.id === formId
+          ? { ...form, qrFile: fileList[0]?.originFileObj || null }
+          : form
+      )
+    );
+  };
+
   return (
     <Modal onCancel={onclose}>
       <div className="flex flex-col gap-2 bg-black rounded-t-3xl">
@@ -547,16 +561,16 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   </Form>
                 ) : (
                   <Form
+                    key={form.id} // Use unique ID for the form
                     initialValues={{
-                      ali_number_or_email: form.formData.get(
-                        "ali_number_or_email"
-                      ),
-                      ali_name: form.formData.get("ali_name"),
-                      qr: form.formData.get("qr"),
+                      ali_number_or_email:
+                        form?.formData?.get("ali_number_or_email") || "",
+                      ali_name: form?.formData?.get("ali_name") || "",
                     }}
                     onFinish={handleAddCreateOrderBank}
                   >
                     <Flex vertical gap="small">
+                      ˝
                       <Form.Item
                         noStyle
                         name="ali_number_or_email"
@@ -595,9 +609,22 @@ const PaymentModal = ({ onClose, typeModal }) => {
                             <Upload
                               listType="picture"
                               className="w-full upload-payment-modal-user"
-                              fileList={qrCodeList}
+                              fileList={
+                                form.qrFile
+                                  ? [
+                                      {
+                                        uid: "-1",
+                                        name: "QR Code",
+                                        status: "done",
+                                        url: URL.createObjectURL(form.qrFile),
+                                      },
+                                    ]
+                                  : []
+                              }
                               onPreview={handlePreviewQR}
-                              onChange={handleChangeQR}
+                              onChange={(info) =>
+                                handleChangeQRForm(form.id, info)
+                              }
                               beforeUpload={() => false}
                               maxCount={1}
                               showUploadList={{
@@ -623,9 +650,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
 
                         {previewImageQR && (
                           <Image
-                            wrapperStyle={{
-                              display: "none",
-                            }}
+                            wrapperStyle={{ display: "none" }}
                             preview={{
                               visible: previewOpen,
                               onVisibleChange: (visible) =>

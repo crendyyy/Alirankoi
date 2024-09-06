@@ -25,25 +25,29 @@ const OrderDetail = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [orderId, setOrderId] = useState()
+  const [orderId, setOrderId] = useState();
   const { auth } = useContext(AuthContext);
 
   const editOrderMutation = useUpdateOrderUser();
   const confirmOrderMutation = useConfirmOrderUser();
   const cancelOrderMutation = useCancelOrderUser();
 
-  const qrCodeUrl = `http://localhost:3000/picture/${order.ali_qr}`;
+  const [qrCodeList, setQrCodeList] = useState([]);
+  useEffect(() => {
+    if (order.orders && order.orders.length > 0) {
+      const updatedQrCodeList = order.orders.map((orderItem, index) => ({
+        uid: `${index}`,
+        name: orderItem.ali_qr || `qr_code_${index}`, // Berikan nama default jika tidak ada QR
+        status: "done",
+        url: orderItem.ali_qr
+          ? `http://localhost:3000/picture/${orderItem.ali_qr}`
+          : "",
+      }));
+      setQrCodeList(updatedQrCodeList);
+    }
+  }, [order.orders]);
+
   const invoiceUrl = `http://localhost:3000/picture/${order.invoice_name}`;
-
-  const [qrCodeList, setQrCodeList] = useState([
-    {
-      uid: "-1",
-      name: order.ali_qr,
-      status: "done",
-      url: qrCodeUrl,
-    },
-  ]);
-
   const [invoiceList, setInvoiceList] = useState([
     {
       uid: "-1",
@@ -59,7 +63,10 @@ const OrderDetail = () => {
 
   const [formConfirmOrder] = Form.useForm();
 
-  const handleEdit = () => setIsEdit(true);
+  const handleEdit = (orderItemId) => {
+    setOrderId(orderItemId); // Set orderId dari item yang diedit
+    setIsEdit(true); // Aktifkan mode edit
+  };
 
   const handleSubmitEditBank = (value) => {
     const data = {
@@ -95,7 +102,7 @@ const OrderDetail = () => {
       formData.append("file", file);
     }
 
-    await editOrderMutation.mutate({ id: order.id, data: formData });
+    await editOrderMutation.mutate({ id: orderId, data: formData });
     setIsEdit(false);
   };
 
@@ -332,12 +339,12 @@ const OrderDetail = () => {
                       <span className="mr-2">#{index + 1}</span>Payment
                       Information
                     </h1>
-                    {isEdit && (
+                    {isEdit && orderId === order._id && (
                       <Button
                         style={{ padding: 0 }}
                         type="link"
                         htmlType="submit"
-                        form="editForm"
+                        form={`editForm_${order._id}`} // Set form ID dinamis sesuai dengan orderItem._id
                         className="underline max-sm:text-xs text-primary"
                       >
                         Submit Data
@@ -347,7 +354,7 @@ const OrderDetail = () => {
                       <Button
                         style={{ padding: 0 }}
                         type="link"
-                        onClick={()=> {handleEdit(); setOrderId(order._id)}}
+                        onClick={() => handleEdit(order._id)} // Set orderId saat tombol edit ditekan
                         className="underline max-sm:text-xs text-primary"
                       >
                         Edit Data
@@ -355,7 +362,7 @@ const OrderDetail = () => {
                     )}
                   </div>
                   <Form
-                    id="editForm"
+                    id={`editForm_${order._id}`}
                     layout="vertical"
                     initialValues={{
                       bank_detail: order.bank_detail,
@@ -378,7 +385,7 @@ const OrderDetail = () => {
                     >
                       <Input
                         placeholder="Bank Name"
-                        disabled={!isEdit}
+                        disabled={!isEdit || orderId !== order._id}
                         className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                       />
                     </Form.Item>
@@ -395,7 +402,7 @@ const OrderDetail = () => {
                     >
                       <Input
                         placeholder="Bank Number"
-                        disabled={!isEdit}
+                        disabled={!isEdit || orderId !== order._id}
                         className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                       />
                     </Form.Item>
@@ -412,7 +419,7 @@ const OrderDetail = () => {
                     >
                       <Input
                         placeholder="Bank Branch"
-                        disabled={!isEdit}
+                        disabled={!isEdit || orderId !== order._id}
                         className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                       />
                     </Form.Item>
@@ -429,7 +436,7 @@ const OrderDetail = () => {
                     >
                       <Input
                         placeholder="Account Name"
-                        disabled={!isEdit}
+                        disabled={!isEdit || orderId !== order._id}
                         className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                       />
                     </Form.Item>
@@ -447,12 +454,12 @@ const OrderDetail = () => {
                       <span className="mr-2">#{index + 1}</span>Payment
                       Information
                     </h1>
-                    {isEdit && (
+                    {isEdit && orderId === order._id && (
                       <Button
                         style={{ padding: 0 }}
                         type="link"
                         htmlType="submit"
-                        form="editForm"
+                        form={`editForm_${order._id}`} // Set form ID dinamis sesuai dengan orderItem._id
                         className="underline max-sm:text-xs text-primary"
                       >
                         Submit Data
@@ -462,7 +469,7 @@ const OrderDetail = () => {
                       <Button
                         style={{ padding: 0 }}
                         type="link"
-                        onClick={handleEdit}
+                        onClick={() => handleEdit(order._id)} // Set orderId saat tombol edit ditekan
                         className="underline max-sm:text-xs text-primary"
                       >
                         Edit Data
@@ -470,7 +477,7 @@ const OrderDetail = () => {
                     )}
                   </div>
                   <Form
-                    id="editForm"
+                    id={`editForm_${order._id}`}
                     layout="vertical"
                     initialValues={{
                       bank_detail: order.bank_detail,
@@ -493,7 +500,7 @@ const OrderDetail = () => {
                     >
                       <Input
                         placeholder="Bank Name"
-                        disabled={!isEdit}
+                        disabled={!isEdit || orderId !== order._id}
                         className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                       />
                     </Form.Item>
@@ -510,7 +517,7 @@ const OrderDetail = () => {
                     >
                       <Input
                         placeholder="Bank Number"
-                        disabled={!isEdit}
+                        disabled={!isEdit || orderId !== order._id}
                         className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                       />
                     </Form.Item>
@@ -527,7 +534,7 @@ const OrderDetail = () => {
                     >
                       <Input
                         placeholder="Bank Branch"
-                        disabled={!isEdit}
+                        disabled={!isEdit || orderId !== order._id}
                         className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                       />
                     </Form.Item>
@@ -544,7 +551,7 @@ const OrderDetail = () => {
                     >
                       <Input
                         placeholder="Account Name"
-                        disabled={!isEdit}
+                        disabled={!isEdit || orderId !== order._id}
                         className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                       />
                     </Form.Item>
@@ -658,12 +665,12 @@ const OrderDetail = () => {
                     <span className="mr-2">#{index + 1}</span>Payment
                     Information
                   </h1>
-                  {isEdit && (
+                  {isEdit && orderId === order?._id && (
                     <Button
                       style={{ padding: 0 }}
                       type="link"
                       htmlType="submit"
-                      form="editForm"
+                      form={`editForm_${order?._id}`} // Set form ID dinamis sesuai dengan orderItem._id
                       className="underline max-sm:text-xs text-primary"
                     >
                       Submit Data
@@ -673,7 +680,7 @@ const OrderDetail = () => {
                     <Button
                       style={{ padding: 0 }}
                       type="link"
-                      onClick={handleEdit}
+                      onClick={() => handleEdit(order?._id)} // Set orderId saat tombol edit ditekan
                       className="underline max-sm:text-xs text-primary"
                     >
                       Edit Data
@@ -681,7 +688,7 @@ const OrderDetail = () => {
                   )}
                 </div>
                 <Form
-                  id="editForm"
+                  id={`editForm_${order?._id}`}
                   layout="vertical"
                   initialValues={{
                     ali_number_or_email: order.ali_number_or_email,
@@ -702,7 +709,7 @@ const OrderDetail = () => {
                   >
                     <Input
                       placeholder="No / Email"
-                      disabled={!isEdit}
+                      disabled={!isEdit || orderId !== order?._id}
                       className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                     />
                   </Form.Item>
@@ -719,7 +726,7 @@ const OrderDetail = () => {
                   >
                     <Input
                       placeholder="Name"
-                      disabled={!isEdit}
+                      disabled={!isEdit || orderId !== order?._id}
                       className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                     />
                   </Form.Item>
@@ -732,12 +739,13 @@ const OrderDetail = () => {
                         <Upload
                           listType="picture"
                           className="w-full"
-                          fileList={qrCodeList}
-                          onPreview={handlePreview}
+                          fileList={
+                            qrCodeList[index] ? [qrCodeList[index]] : []
+                          }
                           onChange={handleChangeQr}
                           beforeUpload={() => false}
                           maxCount={3}
-                          disabled={!isEdit}
+                          disabled={!isEdit || orderId !== order?._id}
                           showUploadList={{
                             showPreviewIcon: true,
                             showRemoveIcon: isEdit,
@@ -759,7 +767,7 @@ const OrderDetail = () => {
                               type="dashed"
                               className="border-primary text-primary max-sm:text-xs"
                               icon={<UploadOutlined />}
-                              disabled={!isEdit}
+                              disabled={!isEdit || orderId !== order?._id}
                             >
                               QR Code
                             </Button>
@@ -778,7 +786,7 @@ const OrderDetail = () => {
                             onChange={handleChangeQr}
                             beforeUpload={() => false}
                             maxCount={3}
-                            disabled={!isEdit}
+                            disabled={!isEdit || orderId !== order?._id}
                             showUploadList={{
                               showPreviewIcon: true,
                               showRemoveIcon: isEdit,
@@ -789,7 +797,7 @@ const OrderDetail = () => {
                               type="dashed"
                               className="border-primary text-primary max-sm:text-xs"
                               icon={<UploadOutlined />}
-                              disabled={!isEdit}
+                              disabled={!isEdit || orderId !== order?._id}
                             >
                               QR Code
                             </Button>
@@ -818,12 +826,12 @@ const OrderDetail = () => {
                     <span className="mr-2">#{index + 1}</span>Payment
                     Information
                   </h1>
-                  {isEdit && (
+                  {isEdit && orderId === order?._id && (
                     <Button
                       style={{ padding: 0 }}
                       type="link"
                       htmlType="submit"
-                      form="editForm"
+                      form={`editForm_${order?._id}`} // Set form ID dinamis sesuai dengan orderItem._id
                       className="underline max-sm:text-xs text-primary"
                     >
                       Submit Data
@@ -833,7 +841,7 @@ const OrderDetail = () => {
                     <Button
                       style={{ padding: 0 }}
                       type="link"
-                      onClick={handleEdit}
+                      onClick={() => handleEdit(order?._id)} // Set orderId saat tombol edit ditekan
                       className="underline max-sm:text-xs text-primary"
                     >
                       Edit Data
@@ -841,7 +849,7 @@ const OrderDetail = () => {
                   )}
                 </div>
                 <Form
-                  id="editForm"
+                  id={`editForm_${order?._id}`}
                   layout="vertical"
                   initialValues={{
                     ali_number_or_email: order.ali_number_or_email,
@@ -862,7 +870,7 @@ const OrderDetail = () => {
                   >
                     <Input
                       placeholder="No / Email"
-                      disabled={!isEdit}
+                      disabled={!isEdit || orderId !== order?._id}
                       className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                     />
                   </Form.Item>
@@ -879,7 +887,7 @@ const OrderDetail = () => {
                   >
                     <Input
                       placeholder="Name"
-                      disabled={!isEdit}
+                      disabled={!isEdit || orderId !== order?._id}
                       className="bg-[#F7F9FC] p-2.5 rounded-md font-medium border-white hover:border"
                     />
                   </Form.Item>
@@ -897,7 +905,7 @@ const OrderDetail = () => {
                           onChange={handleChangeQr}
                           beforeUpload={() => false}
                           maxCount={3}
-                          disabled={!isEdit}
+                          disabled={!isEdit || orderId !== order?._id}
                           showUploadList={{
                             showPreviewIcon: true,
                             showRemoveIcon: false,
@@ -919,7 +927,7 @@ const OrderDetail = () => {
                               type="dashed"
                               className="border-primary text-primary max-sm:text-xs"
                               icon={<UploadOutlined />}
-                              disabled={!isEdit}
+                              disabled={!isEdit || orderId !== order?._id}
                             >
                               QR Code
                             </Button>
@@ -938,7 +946,7 @@ const OrderDetail = () => {
                             onChange={handleChangeQr}
                             beforeUpload={() => false}
                             maxCount={3}
-                            disabled={!isEdit}
+                            disabled={!isEdit || orderId !== order?._id}
                             showUploadList={{
                               showPreviewIcon: true,
                               showRemoveIcon: false,
@@ -949,7 +957,7 @@ const OrderDetail = () => {
                               type="dashed"
                               className="border-primary text-primary max-sm:text-xs"
                               icon={<UploadOutlined />}
-                              disabled={!isEdit}
+                              disabled={!isEdit || orderId !== order?._id}
                             >
                               QR Code
                             </Button>
