@@ -42,6 +42,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
   const [formBank] = Form.useForm();
   const [formAli] = Form.useForm();
   console.log(formAdd);
+  console.log(formAdd.length + 1);
 
   const handleAddCreateOrderBank = (values) => {
     const formData = new FormData();
@@ -68,11 +69,6 @@ const PaymentModal = ({ onClose, typeModal }) => {
     // Add the common fields (token and order_type)
     formData.append("token", auth.token);
     formData.append("order_type", typeModal);
-    formData.append("amount", value.amount);
-    formData.append("bank_number", value.bank_number);
-    formData.append("bank_detail", value.bank_detail);
-    formData.append("bank_branch", value.bank_branch);
-    formData.append("account_name", value.account_name);
 
     if (formAdd.length > 0) {
       // If there are additional forms in formAdd, add all their fields one after another
@@ -84,6 +80,11 @@ const PaymentModal = ({ onClose, typeModal }) => {
         formData.append("account_name", form.formData.get("account_name"));
       });
 
+      formData.append("amount", value.amount);
+      formData.append("bank_number", value.bank_number);
+      formData.append("bank_detail", value.bank_detail);
+      formData.append("bank_branch", value.bank_branch);
+      formData.append("account_name", value.account_name);
       try {
         const response = await createOrderMutation.mutateAsync(formData);
         const order = response.data.payload;
@@ -158,7 +159,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
 
   const handleCreateOrderAli = async (value) => {
     try {
-      // Step 1: Generate order_group_id first using createOrderGroupMutation
+      // Step 1: Generate order_group_id using createOrderGroupMutation
       const orderGroupResponse = await createOrderGroupMutation.mutateAsync();
       const order_group_id = orderGroupResponse?.data?.payload?.order_group_id;
 
@@ -167,77 +168,69 @@ const PaymentModal = ({ onClose, typeModal }) => {
         return;
       }
 
-      // Step 2: If formAdd has entries, handle multiple orders
-      if (formAdd.length > 0) {
-        // Loop through each form in formAdd
-        for (const form of formAdd) {
-          const formData = new FormData();
-          const file = form.formData.get("qr");
+      // Create a list to loop through (combine formAdd with the current form)
+      const formsToSubmit = [...formAdd];
 
-          // Append fields for each order
-          formData.append("amount", form.formData.get("amount"));
-          formData.append(
-            "ali_number_or_email",
-            form.formData.get("ali_number_or_email")
-          );
-          formData.append("ali_name", form.formData.get("ali_name"));
-          if (file) {
-            formData.append("qr", file);
-          }
-
-          // Add common fields
-          formData.append("token", auth.token);
-          formData.append("order_type", typeModal);
-          formData.append("order_group_id", order_group_id); // Attach the generated order_group_id
-
-          // Step 3: Send each order one by one
-          const response = await createOrderMutation.mutateAsync(formData);
-          const order = response.data.payload;
-          console.log(order);
-
-          // Navigate to the order detail page (for the last order)
-          navigate(`/order/${order?.order_type.toLowerCase()}/${order._id}`, {
-            state: { order },
-          });
-        }
-
-        // Clear the forms and close the modal after all orders are sent
-        formAli.resetFields();
-        setFormAdd([]);
-        setqrCodeList([]);
-        onClose();
-      } else {
-        // Step 4: If there is only one order (no entries in formAdd)
+      // Add the current form (value) to formsToSubmit if it exists
+      if (value) {
+        const currentFormData = new FormData();
         const file = qrCodeList[0]?.originFileObj;
+
+        currentFormData.append("amount", value.amount);
+        currentFormData.append(
+          "ali_number_or_email",
+          value.ali_number_or_email
+        );
+        currentFormData.append("ali_name", value.ali_name);
+        if (file) {
+          currentFormData.append("qr", file);
+        }
+        currentFormData.append("token", auth.token);
+        currentFormData.append("order_type", typeModal);
+        currentFormData.append("order_group_id", order_group_id);
+        formsToSubmit.push({ formData: currentFormData });
+      }
+
+      // Step 2: Loop through each form in formsToSubmit
+      for (const form of formsToSubmit) {
         const formData = new FormData();
 
-        // Append fields for the single order
-        formData.append("amount", value.amount);
-        formData.append("ali_number_or_email", value.ali_number_or_email);
-        formData.append("ali_name", value.ali_name);
+        formData.append("amount", form?.formData?.get("amount") || "");
+        formData.append(
+          "ali_number_or_email",
+          form?.formData?.get("ali_number_or_email") || ""
+        );
+        formData.append("ali_name", form?.formData?.get("ali_name") || "");
+
+        const file = form.formData.get("qr");
         if (file) {
           formData.append("qr", file);
         }
 
-        // Add common fields
+        // Append additional fields
         formData.append("token", auth.token);
         formData.append("order_type", typeModal);
-        formData.append("order_group_id", order_group_id); // Attach the generated order_group_id
+        formData.append("total_order", formsToSubmit.length);
+        formData.append("order_group_id", order_group_id); // Attach the same order_group_id
 
-        // Step 5: Send the single order
+        // Step 3: Send each order one by one
         const response = await createOrderMutation.mutateAsync(formData);
         const order = response.data.payload;
-
         console.log(order);
-        navigate(`/order/${order?.order_type.toLowerCase()}/${order._id}`, {
-          state: { order },
-        });
 
-        // Clear the forms and close the modal
-        formAli.resetFields();
-        setqrCodeList([]);
-        onClose();
+        // Navigate to the order detail page for the last order
+        if (order) {
+          navigate(`/order/${order?.order_type.toLowerCase()}/${order._id}`, {
+            state: { order },
+          });
+        }
       }
+
+      // Step 4: Clear forms and close modal
+      formAli.resetFields();
+      setFormAdd([]);
+      setqrCodeList([]);
+      onClose();
     } catch (error) {
       console.error("Failed to create Ali order", error);
       // Handle error here, e.g., show an error notification

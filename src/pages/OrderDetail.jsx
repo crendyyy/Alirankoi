@@ -40,14 +40,14 @@ const OrderDetail = () => {
         name: orderItem.ali_qr || `qr_code_${index}`, // Berikan nama default jika tidak ada QR
         status: "done",
         url: orderItem.ali_qr
-          ? `http://localhost:3000/picture/${orderItem.ali_qr}`
+          ? `http://192.168.1.12:3000/picture/${orderItem.ali_qr}`
           : "",
       }));
       setQrCodeList(updatedQrCodeList);
     }
   }, [order.orders]);
 
-  const invoiceUrl = `http://localhost:3000/picture/${order.invoice_name}`;
+  const invoiceUrl = `http://192.168.1.12:3000/picture/${order.invoice_name}`;
   const [invoiceList, setInvoiceList] = useState([
     {
       uid: "-1",
@@ -85,7 +85,9 @@ const OrderDetail = () => {
 
     // Cek apakah ada file baru yang diunggah
     if (order.ali_qr && order.ali_qr?.length > 0) {
-      const uploadedFile = qrCodeList.find((item) => item?.originFileObj);
+      const uploadedFile = qrCodeList.find(
+        (item) => item.uid === `${orderId}`
+      )?.originFileObj;
       if (uploadedFile) {
         file = uploadedFile.originFileObj;
       }
@@ -99,7 +101,7 @@ const OrderDetail = () => {
 
     if (file) {
       // Jika ada file baru, kirim file tersebut
-      formData.append("file", file);
+      formData.append("qr", file);
     }
 
     await editOrderMutation.mutate({ id: orderId, data: formData });
@@ -140,13 +142,20 @@ const OrderDetail = () => {
   ).toISOString();
 
   const handleChange = ({ fileList }) => setImageList(fileList);
-  const handleChangeQr = ({ fileList }) => {
-    if (order.ali_qr?.length > 0) {
-      // Update qrCodeList if order.ali_qr already has data
-      setQrCodeList(fileList);
+  const handleChangeQr = ({ fileList }, index) => {
+    if (order.orders[index]?.ali_qr?.length > 0) {
+      // Update qrCodeList[index] if order[index].ali_qr already has data
+      let updatedQrCodeList = [...qrCodeList];
+      updatedQrCodeList[index] = { ...updatedQrCodeList[index], fileList };
+      setQrCodeList(updatedQrCodeList);
     } else {
-      // Update imageEditList if there's no initial QR data
-      setImageEditList(fileList);
+      // Update imageEditList[index] if there's no initial QR data
+      let updatedImageEditList = [...imageEditList];
+      updatedImageEditList[index] = {
+        ...updatedImageEditList[index],
+        fileList,
+      };
+      setImageEditList(updatedImageEditList);
     }
   };
 
@@ -742,8 +751,8 @@ const OrderDetail = () => {
                           fileList={
                             qrCodeList[index] ? [qrCodeList[index]] : []
                           }
-                          onChange={handleChangeQr}
                           beforeUpload={() => false}
+                          onChange={(info) => handleChangeQr(info, index)}
                           maxCount={3}
                           disabled={!isEdit || orderId !== order?._id}
                           showUploadList={{
@@ -783,8 +792,8 @@ const OrderDetail = () => {
                             className="w-full"
                             fileList={imageEditList}
                             onPreview={handlePreview}
-                            onChange={handleChangeQr}
                             beforeUpload={() => false}
+                            onChange={(info) => handleChangeQr(info, index)}
                             maxCount={3}
                             disabled={!isEdit || orderId !== order?._id}
                             showUploadList={{
@@ -900,10 +909,12 @@ const OrderDetail = () => {
                         <Upload
                           listType="picture"
                           className="w-full"
-                          fileList={qrCodeList}
+                          fileList={
+                            qrCodeList[index] ? [qrCodeList[index]] : []
+                          }
                           onPreview={handlePreview}
-                          onChange={handleChangeQr}
                           beforeUpload={() => false}
+                          onChange={(info) => handleChangeQr(info, index)}
                           maxCount={3}
                           disabled={!isEdit || orderId !== order?._id}
                           showUploadList={{
@@ -943,8 +954,8 @@ const OrderDetail = () => {
                             className="w-full"
                             fileList={imageEditList}
                             onPreview={handlePreview}
-                            onChange={handleChangeQr}
                             beforeUpload={() => false}
+                            onChange={(info) => handleChangeQr(info, index)}
                             maxCount={3}
                             disabled={!isEdit || orderId !== order?._id}
                             showUploadList={{
@@ -1039,9 +1050,11 @@ const OrderDetail = () => {
                         <Upload
                           listType="picture"
                           className="w-full"
-                          fileList={qrCodeList}
+                          fileList={
+                            qrCodeList[index] ? [qrCodeList[index]] : []
+                          }
                           onPreview={handlePreview}
-                          onChange={handleChange}
+                          onChange={(info) => handleChangeQr(info, index)}
                           beforeUpload={() => false}
                           maxCount={3}
                           showUploadList={{

@@ -42,7 +42,7 @@ const Order = () => {
                     rate={order.selling_price}
                     status={order.status}
                     orderType={order.order_type}
-                    totalAmount={order.amount}
+                    totalAmount={order.totalAmount}
                   />
                 ))
             : orders?.payload
@@ -55,7 +55,7 @@ const Order = () => {
                     rate={order.selling_price}
                     status={order.status}
                     orderType={order.order_type}
-                    totalAmount={order.amount}
+                    totalAmount={order.totalAmount}
                   />
                 ))}
         </div>

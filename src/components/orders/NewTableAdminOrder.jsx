@@ -526,7 +526,7 @@ const NewTableAdminOrder = ({
         ]}
       >
         <img
-          src={`http://localhost:3000/picture/${selectedInvoice}`}
+          src={`http://192.168.1.12:3000/picture/${selectedInvoice}`}
           alt="Invoice"
           width="500"
           height="600"
