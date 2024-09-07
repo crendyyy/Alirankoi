@@ -15,7 +15,7 @@ const Order = () => {
   console.log(orders);
 
   const handleOrderDetail = (order) => {
-    navigate(`/order/${order.order_type.toLowerCase()}/${order.id}`, {
+    navigate(`/order/${order.order_type.toLowerCase()}/${order._id}`, {
       state: { order },
     });
   };
@@ -49,7 +49,7 @@ const Order = () => {
                 .filter((order) => order.order_type === "Alipay")
                 .map((order) => (
                   <HistoryCard
-                    key={order.id}
+                    key={order._id}
                     onClick={() => handleOrderDetail(order)}
                     date={order.createdAt.slice(0, 10)}
                     rate={order.selling_price}

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const useAxios = () => {
-  const BASE_URL = "http://192.168.1.12:3000";
+  const BASE_URL = "http://localhost:3000";
 
   // Get the token from localStorage or cookies
   const token = localStorage.getItem("token");

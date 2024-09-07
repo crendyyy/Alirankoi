@@ -506,7 +506,7 @@ const Dashboard = () => {
         ]}
       >
         <img
-          src={`http://192.168.1.12:3000/picture/${selectedQr}`}
+          src={`http://localhost:3000/picture/${selectedQr}`}
           alt="Qr code"
         />
       </Modal>

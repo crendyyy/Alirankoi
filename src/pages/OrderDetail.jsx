@@ -26,6 +26,7 @@ const OrderDetail = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [orderId, setOrderId] = useState();
+  const [qrLength, setQrLength] = useState();
   const { auth } = useContext(AuthContext);
 
   const editOrderMutation = useUpdateOrderUser();
@@ -40,14 +41,14 @@ const OrderDetail = () => {
         name: orderItem.ali_qr || `qr_code_${index}`, // Berikan nama default jika tidak ada QR
         status: "done",
         url: orderItem.ali_qr
-          ? `http://192.168.1.12:3000/picture/${orderItem.ali_qr}`
+          ? `http://localhost:3000/picture/${orderItem.ali_qr}`
           : "",
       }));
       setQrCodeList(updatedQrCodeList);
     }
   }, [order.orders]);
 
-  const invoiceUrl = `http://192.168.1.12:3000/picture/${order.invoice_name}`;
+  const invoiceUrl = `http://localhost:3000/picture/${order.invoice_name}`;
   const [invoiceList, setInvoiceList] = useState([
     {
       uid: "-1",
@@ -58,14 +59,16 @@ const OrderDetail = () => {
   ]);
 
   console.log(orderId);
+  console.log("qrLength",qrLength?.name.length);
   const [imageList, setImageList] = useState([]);
   const [imageEditList, setImageEditList] = useState([]);
 
   const [formConfirmOrder] = Form.useForm();
 
-  const handleEdit = (orderItemId) => {
+  const handleEdit = (orderItemId, qrCodeLength) => {
     setOrderId(orderItemId); // Set orderId dari item yang diedit
     setIsEdit(true); // Aktifkan mode edit
+    setQrLength(qrCodeLength)
   };
 
   const handleSubmitEditBank = (value) => {
@@ -81,18 +84,19 @@ const OrderDetail = () => {
   };
 
   const handleSubmitEditAli = async (value) => {
+    console.log("qrCodeList:", qrCodeList);
+    
+
     let file = null;
 
-    // Cek apakah ada file baru yang diunggah
-    if (order.ali_qr && order.ali_qr?.length > 0) {
-      const uploadedFile = qrCodeList.find((item) => item?.originFileObj);
-      if (uploadedFile) {
-        file = uploadedFile.originFileObj;
-      }
-    } else {
-      file = imageEditList[0]?.originFileObj;
+    if (qrLength?.name.length > 0) {
+      // Ambil file terbar  u dari qrCodeList jika ada
+      file = qrCodeList[0].originFileObj;
+    } else if (imageEditList[0]?.originFileObj) {
+      // Ambil dari imageEditList jika qrCodeList kosong
+      file = imageEditList[0].originFileObj;
     }
-
+    console.log("File to be submitted:", file);
     const formData = new FormData();
     formData.append("ali_number_or_email", value.ali_number_or_email);
     formData.append("ali_name", value.ali_name);
@@ -130,8 +134,16 @@ const OrderDetail = () => {
     navigate("/");
   };
 
-  const handlePreview = (file) => {
-    setPreviewImage(file.thumbUrl || file.url);
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+      });
+    }
+
+    setPreviewImage(file.url || file.preview);
     setPreviewOpen(true);
   };
 
@@ -148,6 +160,17 @@ const OrderDetail = () => {
       // Update imageEditList if there's no initial QR data
       setImageEditList(fileList);
     }
+  };
+  const handleChangeQrtes = ({ fileList }, index) => {
+    console.log("File uploaded:", fileList);
+    // Update qrCodeList at the correct index with the latest file
+    const updatedQrCodeList = [...qrCodeList];
+
+    // Hanya simpan file yang terbaru (index terakhir dari fileList)
+    const latestFile = fileList[fileList.length - 1];
+    updatedQrCodeList[index] = latestFile;
+
+    setQrCodeList(updatedQrCodeList);
   };
 
   return (
@@ -680,7 +703,7 @@ const OrderDetail = () => {
                     <Button
                       style={{ padding: 0 }}
                       type="link"
-                      onClick={() => handleEdit(order?._id)} // Set orderId saat tombol edit ditekan
+                      onClick={() => handleEdit(order?._id, qrCodeList[index])} // Set orderId saat tombol edit ditekan
                       className="underline max-sm:text-xs text-primary"
                     >
                       Edit Data
@@ -742,7 +765,7 @@ const OrderDetail = () => {
                           fileList={
                             qrCodeList[index] ? [qrCodeList[index]] : []
                           }
-                          onChange={handleChangeQr}
+                          onChange={(info) => handleChangeQrtes(info, index)}
                           beforeUpload={() => false}
                           maxCount={3}
                           disabled={!isEdit || orderId !== order?._id}
