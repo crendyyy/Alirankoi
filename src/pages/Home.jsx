@@ -35,7 +35,7 @@ const Home = () => {
     try {
       toast.update("Logout successfully.", "success");
       logout();
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

@@ -923,9 +923,11 @@ const OrderDetail = () => {
                         <Upload
                           listType="picture"
                           className="w-full"
-                          fileList={qrCodeList}
+                          fileList={
+                            qrCodeList[index] ? [qrCodeList[index]] : []
+                          }
                           onPreview={handlePreview}
-                          onChange={handleChangeQr}
+                          onChange={(info) => handleChangeQrtes(info, index)}
                           beforeUpload={() => false}
                           maxCount={3}
                           disabled={!isEdit || orderId !== order?._id}

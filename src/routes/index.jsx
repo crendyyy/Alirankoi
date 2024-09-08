@@ -23,7 +23,7 @@ const LayoutUser = () => {
   return (
     <>
       <div className="min-h-screen flex flex-col justify-center w-full items-center bg-[#F8F8F8]">
-        {path === "/login" || path === "/register" ? (
+        {path === "/" || path === "/register" ? (
           <main className="relative flex flex-col justify-between min-h-screen max-[1080px]:w-full w-[600px] bg-white">
             <Outlet />
           </main>
@@ -103,11 +103,7 @@ const routes = [
         children: [
           {
             index: true,
-            element: (
-              <ProtectedRoutes roles={["user", "admin"]}>
-                <Home />
-              </ProtectedRoutes>
-            ),
+            element: <Login />,
           },
           {
             path: "/order/bank",
@@ -152,34 +148,17 @@ const routes = [
             ],
           },
           {
-            path: "/setting",
+            path: "/home",
             children: [
               {
                 index: true,
                 element: (
                   <ProtectedRoutes roles={["user"]}>
-                    <Setting />
+                    <Home />
                   </ProtectedRoutes>
                 ),
               },
             ],
-          },
-          {
-            path: "/profile",
-            children: [
-              {
-                index: true,
-                element: (
-                  <ProtectedRoutes roles={["user"]}>
-                    <Profile />
-                  </ProtectedRoutes>
-                ),
-              },
-            ],
-          },
-          {
-            path: "/login",
-            children: [{ index: true, element: <Login /> }],
           },
           {
             path: "/register",

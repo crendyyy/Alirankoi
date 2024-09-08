@@ -171,7 +171,6 @@ const TableAdminOrderAli = ({
   const filteredOrders =
     orders?.payload
       .filter((order) => order.order_type === "Alipay")
-      .filter((order) => order.status !== "Awaiting Payment")
       .filter((order) => {
         const orderDate = dayjs(order.createdAt).format(dateFormat);
         const matchDate = selectedDate ? orderDate === selectedDate : true;

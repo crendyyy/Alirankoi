@@ -6,7 +6,7 @@ const ButtomBar = () => {
   return (
     <div className="fixed bottom-0 z-10 flex w-[600px] max-[1080px]:w-full overflow-hidden bg-white border-t border-gray-200 border-solid">
       <div className="flex justify-between w-full">
-        <Menu icon={HomeOutlined} link="/" text="Home" />
+        <Menu icon={HomeOutlined} link="/home" text="Home" />
         <Menu icon={BankOutlined} link="/order/bank" text="Order Bank" />
         <Menu icon={AlipayOutlined} link="/order/alipay" text="Order Ali" />
       </div>

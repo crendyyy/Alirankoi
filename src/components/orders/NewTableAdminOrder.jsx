@@ -176,7 +176,6 @@ const NewTableAdminOrder = ({
   const filteredOrders =
     orders?.payload
       .filter((order) => order.order_type === "Bank")
-      .filter((order) => order.status !== "Awaiting Payment")
       .filter((order) => {
         const orderDate = dayjs(order.createdAt).format(dateFormat);
         const matchDate = selectedDate ? orderDate === selectedDate : true;

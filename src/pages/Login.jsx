@@ -33,7 +33,7 @@ const Login = () => {
           const { token, user } = data.data.payload;
           if (token) {
             login(user, token);
-            navigate(user.is_admin ? "/dashboard" : "/");
+            navigate(user.is_admin ? "/dashboard" : "/home");
           } else {
             console.log("Invalid Credentials");
           }
@@ -51,9 +51,9 @@ const Login = () => {
     <Layout className="flex items-center justify-center bg-white">
       <Content className="flex items-center w-80">
         <div className="flex flex-col w-full gap-4">
-          <div className="text-center mb-8 flex flex-col items-center">
-            <img src={logoKoi} alt="Logo Koi" className="w-fit mb-6" />
-            <h1 className="font-bold text-3xl mb-1">Welcome!</h1>
+          <div className="flex flex-col items-center mb-8 text-center">
+            <img src={logoKoi} alt="Logo Koi" className="mb-6 w-fit" />
+            <h1 className="mb-1 text-3xl font-bold">Welcome!</h1>
             <p className="text-[#6C6F93]">Please enter Your Account details.</p>
           </div>
           <Form layout="vertical" style={{ maxWidth: 600 }} name="login" initialValues={{ remember: true }} onFinish={handleSubmit}>
@@ -82,7 +82,7 @@ const Login = () => {
             </Form.Item>
             <Form.Item>
               <button
-                className="w-full bg-primary text-base text-center text-white py-3 rounded-xl"
+                className="w-full py-3 text-base text-center text-white bg-primary rounded-xl"
                 type="submit"
                 loading={loginMutation.isLoading} // Show loading state while submitting
               >
