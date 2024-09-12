@@ -53,9 +53,7 @@ const Dashboard = () => {
       toast.update("Logout successfully.", "success");
       logout();
       navigate("/");
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const [formUpdateStockBank] = Form.useForm();
@@ -335,7 +333,6 @@ const Dashboard = () => {
             onClick={() => {
               handleOpenModal("qrModal");
               setSelectedQr(record?.ali_qr);
-              console.log(record?.ali_qr);
             }}
             className="text-xs underline w-fit text-primary"
           >
@@ -368,7 +365,6 @@ const Dashboard = () => {
   ];
 
   const today = dayjs().startOf("day");
-  console.log(stock);
   const dataBank =
     orders?.payload
       .filter((order) => dayjs(order.createdAt).isSame(today, "day"))
@@ -398,9 +394,6 @@ const Dashboard = () => {
         subtotal: order.selling_price * Number(order.amount),
         ...order,
       })) || [];
-
-  console.log(dataBank);
-  console.log(dataAli);
 
   const generateExcekFile = async (rowToSave) => {
     const workbook = new ExcelJS.Workbook();
@@ -474,7 +467,6 @@ const Dashboard = () => {
     const blob = new Blob([buffer], { type: "application/octet-stream" });
     FileSaver.saveAs(blob, `${today}.xlsx`);
   };
-  console.log(stock?.payload[0].open);
 
   return (
     <Flex vertical gap={35}>

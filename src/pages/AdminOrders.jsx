@@ -21,7 +21,6 @@ const AdminOrders = () => {
 
   const location = useLocation();
   const path = location.pathname;
-  console.log(path);
 
   const printAreaRef = useRef();
 
@@ -71,8 +70,6 @@ const AdminOrders = () => {
     setSelectedRowKeys([]);
     setSelectedRow([]);
   };
-  console.log(selectedRowKeys);
-  console.log(selectedRow);
 
   const handleOpenModal = (typeModal) => {
     setIsModalOpen(true);
@@ -87,8 +84,6 @@ const AdminOrders = () => {
   const handleOnPrint = useReactToPrint({
     content: () => printAreaRef.current,
   });
-
-  console.log(selectedDate);
 
   return (
     <>

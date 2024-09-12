@@ -17,7 +17,6 @@ export const useOpenStatus = () => {
     onSuccess: (data) => {
       toast.update("Open status updated successfully.", "success");
       queryClient.invalidateQueries({ queryKey: stockKeys.lists });
-      console.log("Success:", data);
     },
     onError: (error) => {
       toast.update("Error updating status to open. Please try again.", "error");
@@ -38,10 +37,12 @@ export const useSeperateStatus = () => {
     onSuccess: (data) => {
       toast.update("Status updated successfully in separate mode.", "success");
       queryClient.invalidateQueries({ queryKey: stockKeys.lists });
-      console.log("Success:", data);
     },
     onError: (error) => {
-      toast.update("Error updating status in separate mode. Please try again.", "error");
+      toast.update(
+        "Error updating status in separate mode. Please try again.",
+        "error"
+      );
       console.error("Error:", error);
     },
   });

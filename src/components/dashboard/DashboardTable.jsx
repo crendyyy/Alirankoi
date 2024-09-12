@@ -26,8 +26,6 @@ const DashboardTable = ({
   handleHideBuyPriceAli,
   hideBuyPrice,
 }) => {
-  console.log(hideBuyPrice.bank);
-  console.log(hideBuyPrice.ali);
   const Fotter = () => {
     return (
       <Flex justify="space-between">

@@ -12,13 +12,11 @@ export const useDeleteOrder = () => {
   return useMutation({
     mutationFn: (id) => {
       toast.loading("Deleting order...");
-      console.log("Deleting order...");
       return axiosClient._delete(`/order/${id}`);
     },
 
     onSuccess: (response) => {
       toast.update("Order deleted successfully.", "success");
-      console.log("Order deleted successfully.", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: orderKeys.lists });
     },

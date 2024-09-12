@@ -11,7 +11,6 @@ const PrintModal = ({
   printAreaRef,
   typeModal,
 }) => {
-  console.log(typeModal);
   const columnsDashboard = [
     {
       title: "Amount",

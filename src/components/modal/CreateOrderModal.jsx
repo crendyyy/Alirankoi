@@ -1,9 +1,26 @@
-import { AlipayOutlined, BankOutlined, ShoppingCartOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, Flex, Form, Image, Input, InputNumber, Modal, Radio, Select, Upload } from "antd";
+import {
+  AlipayOutlined,
+  BankOutlined,
+  ShoppingCartOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
+  Flex,
+  Form,
+  Image,
+  Input,
+  InputNumber,
+  Modal,
+  Radio,
+  Select,
+  Upload,
+} from "antd";
 import Title from "antd/es/typography/Title";
 import { useState } from "react";
 import { useGetUserList } from "../service/admin/orders/useGetUserList";
 import { useCreateManualOrder } from "../service/admin/orders/useCreateManualOrder";
+import { useCreateOrderGroup } from "../service/user/order/useCreateOrderGroup";
 
 const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -13,9 +30,8 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
   const [userId, setUserId] = useState("");
 
   const { data: userList, isPending, isError } = useGetUserList();
+  const createOrderGroupMutation = useCreateOrderGroup();
   const createManualOrderMutation = useCreateManualOrder();
-
-  console.log(userList);
 
   const radioChangeHandle = (e) => {
     setOrderType(e.target.value);
@@ -23,7 +39,6 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
   const selectUserChangeHandle = (e) => {
     setUserId(e);
   };
-  console.log(userId);
 
   const handlePreview = (file) => {
     setPreviewImage(file.thumbUrl || file.preview);
@@ -45,7 +60,7 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
     formData.append("order_type", orderType);
     formData.append("user_id", userId);
     if (file) {
-      formData.append("file", file);
+      formData.append("invoice", file);
     }
 
     await createManualOrderMutation.mutate(formData);
@@ -55,23 +70,44 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
   };
 
   const handleCreateOrderAli = async (value) => {
-    const file = imageList[0]?.originFileObj;
-    const formData = new FormData();
-    formData.append("amount", value.amount);
-    formData.append("ali_number_or_email", value.ali_number_or_email);
-    formData.append("ali_name", value.ali_name);
+    try {
+      // Step 1: Generate order_group_id using createOrderGroupMutation
+      const orderGroupResponse = await createOrderGroupMutation.mutateAsync();
+      const order_group_id = orderGroupResponse?.data?.payload?.order_group_id;
 
-    if (file) {
-      formData.append("file", file);
+      if (!order_group_id) {
+        console.error("Failed to retrieve order_group_id");
+        return;
+      }
+
+      const file = imageList[0]?.originFileObj;
+      const formData = new FormData();
+
+      formData.append("amount", value.amount);
+      formData.append("ali_number_or_email", value.ali_number_or_email);
+      formData.append("ali_name", value.ali_name);
+
+      if (file) {
+        formData.append("invoice", file);
+      }
+
+      // Append additional fields
+      formData.append("order_type", orderType);
+      console.log(orderType);
+      formData.append("user_id", userId);
+      formData.append("order_group_id", order_group_id); // Attach the same order_group_id
+
+      // Step 3: Send each order one by one
+      await createManualOrderMutation.mutateAsync(formData);
+
+      // Step 4: Clear forms and close modal
+      formBank.resetFields();
+      setImageList([]);
+      onCancel();
+    } catch (error) {
+      console.error("Failed to create Ali order", error);
+      // Handle error here, e.g., show an error notification
     }
-
-    formData.append("order_type", orderType);
-    formData.append("user_id", userId);
-
-    await createManualOrderMutation.mutate(formData);
-    formAli.resetFields();
-    setImageList([]);
-    onCancel();
   };
 
   const handleChange = ({ fileList }) => setImageList(fileList);
@@ -83,7 +119,10 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
       onCancel={onCancel}
       width={650}
       footer={[
-        <div key="cancel" className="w-full p-6 bg-[#F7F9FC] rounded-2xl flex gap-2">
+        <div
+          key="cancel"
+          className="w-full p-6 bg-[#F7F9FC] rounded-2xl flex gap-2"
+        >
           <Button
             className="w-1/3 rounded-full py-6 text-red-500 bg-white hover:!bg-red-100 hover:!text-red-500 border border-red-300 shadow-none"
             type="primary"
@@ -94,11 +133,19 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
           <Form
             className="w-full"
             form={orderType === "Bank" ? formBank : formAli}
-            onFinish={orderType === "Bank" ? handleCreateOrderBank : handleCreateOrderAli}
+            onFinish={
+              orderType === "Bank"
+                ? handleCreateOrderBank
+                : handleCreateOrderAli
+            }
             onFinishFailed={(errorInfo) => console.log("Failed:", errorInfo)}
           >
             <Form.Item noStyle className="w-full">
-              <Button className="w-full rounded-full py-6 text-white bg-primary hover:!bg-blue-400 " type="primary" htmlType="submit">
+              <Button
+                className="w-full rounded-full py-6 text-white bg-primary hover:!bg-blue-400 "
+                type="primary"
+                htmlType="submit"
+              >
                 <ShoppingCartOutlined className="mb-1 text-xl" />
                 Pay Now
               </Button>
@@ -128,11 +175,21 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
             label: user.username,
           }))}
         />
-        <Radio.Group className="flex w-full gap-2" defaultValue={orderType} onChange={radioChangeHandle}>
-          <Radio.Button className="w-full !border-none !text-white flex items-center justify-center py-6 !rounded-full" value="Bank">
+        <Radio.Group
+          className="flex w-full gap-2"
+          defaultValue={orderType}
+          onChange={radioChangeHandle}
+        >
+          <Radio.Button
+            className="w-full !border-none !text-white flex items-center justify-center py-6 !rounded-full"
+            value="Bank"
+          >
             <BankOutlined className="mr-1 text-lg" /> Buy Bank
           </Radio.Button>
-          <Radio.Button className="w-full !border-none !text-white flex items-center justify-center py-6 !rounded-full" value="Alipay">
+          <Radio.Button
+            className="w-full !border-none !text-white flex items-center justify-center py-6 !rounded-full"
+            value="Alipay"
+          >
             <AlipayOutlined className="mr-1 text-lg" /> Buy Ali
           </Radio.Button>
         </Radio.Group>
@@ -234,7 +291,11 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                         showDownloadIcon: false,
                       }}
                     >
-                      <Button type="dashed" className="border-primary text-primary max-sm:text-xs" icon={<UploadOutlined />}>
+                      <Button
+                        type="dashed"
+                        className="border-primary text-primary max-sm:text-xs"
+                        icon={<UploadOutlined />}
+                      >
                         Invoice
                       </Button>
                     </Upload>
@@ -250,7 +311,8 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                     preview={{
                       visible: previewOpen,
                       onVisibleChange: (visible) => setPreviewOpen(visible),
-                      afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                      afterOpenChange: (visible) =>
+                        !visible && setPreviewImage(""),
                     }}
                     src={previewImage}
                   />
@@ -320,7 +382,11 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                       }}
                     >
                       <Flex gap="small" align="center">
-                        <Button type="dashed" icon={<UploadOutlined />} className="border-primary text-primary max-sm:text-xs">
+                        <Button
+                          type="dashed"
+                          icon={<UploadOutlined />}
+                          className="border-primary text-primary max-sm:text-xs"
+                        >
                           Invoice
                         </Button>
                       </Flex>
@@ -336,7 +402,8 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
                     preview={{
                       visible: previewOpen,
                       onVisibleChange: (visible) => setPreviewOpen(visible),
-                      afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                      afterOpenChange: (visible) =>
+                        !visible && setPreviewImage(""),
                     }}
                     src={previewImage}
                   />
@@ -362,7 +429,9 @@ const CreateOrderModal = ({ isOpen, onConfirm, onCancel }) => {
               variant="filled"
               prefix="¥"
               min={1}
-              formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
+              formatter={(value) =>
+                value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : ""
+              }
               parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
             />
           </Form.Item>

@@ -13,17 +13,12 @@ export const useUpdateStatusOrder = () => {
     },
 
     onSuccess: (response) => {
-      console.log("Status Order updated successfully.", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: orderKeys.lists });
     },
 
-    onError: (response) => {
-      console.log(
-        "Failed to update status, please try again",
-        "error",
-        response
-      );
+    onError: (error) => {
+      console.error("Error:", error);
     },
   });
 };
@@ -37,13 +32,11 @@ export const useUpdateDataOrder = () => {
   return useMutation({
     mutationFn: ({ id, data }) => {
       toast.loading("Updating order...");
-      console.log("Updating order...");
       return axiosClient._patch(`/admin/order/${id}`, data);
     },
 
     onSuccess: (response) => {
       toast.update("Order updated successfully.", "success");
-      console.log("Order updated successfully.", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: orderKeys.lists });
     },

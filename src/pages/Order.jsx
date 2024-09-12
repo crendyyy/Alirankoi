@@ -1,4 +1,4 @@
-import { Flex } from "antd";
+import { Empty, Flex } from "antd";
 import Title from "antd/es/typography/Title";
 import HistoryCard from "../components/shared/HistoryCard";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -12,15 +12,12 @@ const Order = () => {
   const path = location.pathname;
 
   const { data: orders, isPending, isError } = useGetUserOrders();
-  console.log(orders);
 
   const handleOrderDetail = (order) => {
     navigate(`/order/${order.order_type.toLowerCase()}/${order._id}`, {
       state: { order },
     });
   };
-
-  console.log(orders);
 
   return (
     <>
@@ -31,8 +28,10 @@ const Order = () => {
         </h1>
         <div className="flex flex-col gap-2">
           {isPending ? <p>Loading</p> : ""}
-          {path === "/order/bank"
-            ? orders?.payload
+          {orders?.payload.filter((order) => order.order_type === "Bank")
+            .length > 0 ? (
+            path === "/order/bank" ? (
+              orders?.payload
                 .filter((order) => order.order_type === "Bank")
                 .map((order) => (
                   <HistoryCard
@@ -45,7 +44,8 @@ const Order = () => {
                     totalAmount={order.totalAmount}
                   />
                 ))
-            : orders?.payload
+            ) : (
+              orders?.payload
                 .filter((order) => order.order_type === "Alipay")
                 .map((order) => (
                   <HistoryCard
@@ -57,7 +57,13 @@ const Order = () => {
                     orderType={order.order_type}
                     totalAmount={order.totalAmount}
                   />
-                ))}
+                ))
+            )
+          ) : (
+            <div className="h-screen flex items-center justify-center">
+              <Empty description="No Order" />
+            </div>
+          )}
         </div>
       </Flex>
     </>

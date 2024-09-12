@@ -51,15 +51,10 @@ const Home = () => {
 
   const { data: stock, isPending: isPending, isError: isError } = useGetStock();
 
-  console.log(orders);
-
   const handleOrderDetail = (order) => {
-    navigate(
-      `/order/${order.order_type.toLowerCase()}/${order._id}`,
-      {
-        state: { order },
-      }
-    );
+    navigate(`/order/${order.order_type.toLowerCase()}/${order._id}`, {
+      state: { order },
+    });
   };
 
   const handleOpenModal = (type) => {

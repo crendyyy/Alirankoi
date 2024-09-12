@@ -99,7 +99,6 @@ const TableAdminOrderAli = ({
   const [selectedInvoice, setSelectedInvoice] = useState("");
 
   const { data: orders, isPending, isError } = useGetOrders();
-  const updateStatusOrderMutation = useUpdateStatusOrder();
   const updateDataOrdeMutation = useUpdateDataOrder();
 
   const deleteOrderMutation = useDeleteOrder();
@@ -129,8 +128,6 @@ const TableAdminOrderAli = ({
           ...item,
           ...row,
         };
-        console.log(updatedData);
-        console.log(item);
 
         const newEditData = {
           buying_price: updatedData.buying_price,
@@ -186,6 +183,7 @@ const TableAdminOrderAli = ({
       username: order.user_id?.username,
       ...order,
     })) || [];
+  console.log(dataSource);
 
   const groupedOrders = Array.isArray(dataSource)
     ? groupBy(dataSource, (order) => order.username) || []
@@ -227,15 +225,33 @@ const TableAdminOrderAli = ({
     {
       title: "QR Code",
       dataIndex: "ali_qr",
+      render: (_, record) =>
+        record.ali_qr?.length > 0 ? (
+          <a
+            onClick={() => {
+              setSelectedInvoice(record.ali_qr);
+              setIsModalOpen(true);
+            }}
+            className="text-xs underline w-fit text-primary"
+          >
+            See QR Code
+          </a>
+        ) : (
+          <span className="text-xs italic text-gray-400">Not Uplouded</span>
+        ),
+    },
+    {
+      title: "Invoice",
+      dataIndex: "invoice",
       render: (_, record) => (
         <a
           onClick={() => {
-            setSelectedInvoice(record.ali_qr);
+            setSelectedInvoice(record.invoice_name);
             setIsModalOpen(true);
           }}
           className="text-xs underline w-fit text-primary"
         >
-          See QR Code
+          See Invoice
         </a>
       ),
     },

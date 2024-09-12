@@ -59,7 +59,7 @@ const OrderDetail = () => {
   ]);
 
   console.log(orderId);
-  console.log("qrLength",qrLength?.name.length);
+  console.log("qrLength", qrLength?.name.length);
   const [imageList, setImageList] = useState([]);
   const [imageEditList, setImageEditList] = useState([]);
 
@@ -68,7 +68,7 @@ const OrderDetail = () => {
   const handleEdit = (orderItemId, qrCodeLength) => {
     setOrderId(orderItemId); // Set orderId dari item yang diedit
     setIsEdit(true); // Aktifkan mode edit
-    setQrLength(qrCodeLength)
+    setQrLength(qrCodeLength);
   };
 
   const handleSubmitEditBank = (value) => {
@@ -85,7 +85,6 @@ const OrderDetail = () => {
 
   const handleSubmitEditAli = async (value) => {
     console.log("qrCodeList:", qrCodeList);
-    
 
     let file = null;
 
@@ -121,7 +120,7 @@ const OrderDetail = () => {
         data: formData,
       });
       console.log("Confirm order successfully.");
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.error("Error confirm order", error);
     }
@@ -131,7 +130,7 @@ const OrderDetail = () => {
 
   const handleCancelOrder = () => {
     cancelOrderMutation.mutate({ id: order._id });
-    navigate("/");
+    navigate("/home");
   };
 
   const handlePreview = async (file) => {
@@ -1146,7 +1145,7 @@ const OrderDetail = () => {
         </>
       ) : (
         <Button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/home")}
           className="w-full px-2 py-6 font-semibold text-white rounded-full bg-primary max-sm:text-sm"
         >
           Back

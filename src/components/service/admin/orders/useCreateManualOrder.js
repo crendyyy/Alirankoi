@@ -12,13 +12,11 @@ export const useCreateManualOrder = () => {
   return useMutation({
     mutationFn: (data) => {
       toast.loading("Creating order...");
-      console.log("Creating order...", data);
       return axiosClient._post(`/admin/order`, data);
     },
 
     onSuccess: (response) => {
       toast.update("Order create successfully.", "success");
-      console.log("Order create successfully.", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: ordersKeys.lists });
     },

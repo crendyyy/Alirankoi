@@ -21,11 +21,12 @@ export const useLogin = () => {
     },
     onSuccess: ({ data }) => {
       toast.update("Login successful.", "success");
-      console.log(data.message, "success");
     },
     onError: (error) => {
-      toast.update("Login failed. Please check your credentials and try again.", "error");
-      console.log(error.response.data.message, "error");
+      toast.update(
+        "Login failed. Please check your credentials and try again.",
+        "error"
+      );
     },
   });
 };
@@ -38,18 +39,19 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: (data) => {
       toast.loading("Creating account...");
-      console.log("Creating account...", data);
       return axiosClient._post(`/register`, data);
     },
 
     onSuccess: (response) => {
       toast.update("Account create successfully.", "success");
-      console.log("Account create successfully.", "success", response);
       navigate("/login");
     },
 
     onError: () => {
-      toast.update("Creating account failed. Please check your details and try again.", "error");
+      toast.update(
+        "Creating account failed. Please check your details and try again.",
+        "error"
+      );
     },
   });
 };

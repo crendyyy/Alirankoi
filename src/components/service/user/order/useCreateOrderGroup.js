@@ -8,16 +8,11 @@ export const useCreateOrderGroup = () => {
 
   return useMutation({
     mutationFn: () => {
-      console.log("Creating order...");
       return axiosClient._post(`/order-group`);
     },
 
-    onSuccess: (response) => {
-      console.log("Order create successfully.", "success", response);
-    },
+    onSuccess: (response) => {},
 
-    onError: () => {
-      console.log("Failed to create order, please try again.", "error");
-    },
+    onError: () => {},
   });
 };

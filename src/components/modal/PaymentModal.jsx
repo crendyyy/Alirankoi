@@ -1,7 +1,22 @@
 import Title from "antd/es/typography/Title";
 import Modal from "../shared/Modal";
-import { Button, Flex, Input, InputNumber, Upload, Image, Form, Carousel } from "antd";
-import { AlipayOutlined, BankOutlined, PlusCircleOutlined, ShoppingCartOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Flex,
+  Input,
+  InputNumber,
+  Upload,
+  Image,
+  Form,
+  Carousel,
+} from "antd";
+import {
+  AlipayOutlined,
+  BankOutlined,
+  PlusCircleOutlined,
+  ShoppingCartOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { useContext, useEffect, useState } from "react";
 import { useCreateOrder } from "../service/user/order/useCreateOrder";
 import { AuthContext } from "../../context/AuthContext";
@@ -26,8 +41,6 @@ const PaymentModal = ({ onClose, typeModal }) => {
 
   const [formBank] = Form.useForm();
   const [formAli] = Form.useForm();
-  console.log(formAdd);
-  console.log(formAdd.length + 1);
 
   const handleAddCreateOrderBank = (values) => {
     const formData = new FormData();
@@ -74,8 +87,6 @@ const PaymentModal = ({ onClose, typeModal }) => {
         const response = await createOrderMutation.mutateAsync(formData);
         const order = response.data.payload;
 
-        console.log(order);
-
         navigate(`/order/${order?.order_type.toLowerCase()}/${order._id}`, {
           state: { order },
         });
@@ -98,8 +109,6 @@ const PaymentModal = ({ onClose, typeModal }) => {
       try {
         const response = await createOrderMutation.mutateAsync(formData);
         const order = response.data.payload;
-
-        console.log(order);
 
         navigate(`/order/${order?.order_type.toLowerCase()}/${order._id}`, {
           state: { order },
@@ -162,7 +171,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
         const file = qrCodeList[0]?.originFileObj;
 
         currentFormData.append("amount", value.amount);
-        currentFormData.append("ali_number_or_email", value.ali_number_or_email);
+        currentFormData.append(
+          "ali_number_or_email",
+          value.ali_number_or_email
+        );
         currentFormData.append("ali_name", value.ali_name);
         if (file) {
           currentFormData.append("qr", file);
@@ -178,7 +190,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
         const formData = new FormData();
 
         formData.append("amount", form?.formData?.get("amount") || "");
-        formData.append("ali_number_or_email", form?.formData?.get("ali_number_or_email") || "");
+        formData.append(
+          "ali_number_or_email",
+          form?.formData?.get("ali_number_or_email") || ""
+        );
         formData.append("ali_name", form?.formData?.get("ali_name") || "");
 
         const file = form.formData.get("qr");
@@ -195,7 +210,6 @@ const PaymentModal = ({ onClose, typeModal }) => {
         // Step 3: Send each order one by one
         const response = await createOrderMutation.mutateAsync(formData);
         const order = response.data.payload;
-        console.log(order);
 
         // Navigate to the order detail page for the last order
         if (order) {
@@ -224,7 +238,11 @@ const PaymentModal = ({ onClose, typeModal }) => {
 
   const handleChangeQRForm = (formId, { fileList }) => {
     setFormAdd((prevForms) =>
-      prevForms.map((form) => (form.id === formId ? { ...form, qrFile: fileList[0]?.originFileObj || null } : form))
+      prevForms.map((form) =>
+        form.id === formId
+          ? { ...form, qrFile: fileList[0]?.originFileObj || null }
+          : form
+      )
     );
   };
 
@@ -368,10 +386,15 @@ const PaymentModal = ({ onClose, typeModal }) => {
                             }}
                           >
                             <Flex gap="small" align="center">
-                              <Button icon={<UploadOutlined />} className="hover:!border-black hover:!text-black max-sm:text-xs">
+                              <Button
+                                icon={<UploadOutlined />}
+                                className="hover:!border-black hover:!text-black max-sm:text-xs"
+                              >
                                 QR code
                               </Button>
-                              <span className="text-[#9CA3AF] text-sm max-sm:text-xs">{"(Optional)"}</span>
+                              <span className="text-[#9CA3AF] text-sm max-sm:text-xs">
+                                {"(Optional)"}
+                              </span>
                             </Flex>
                           </Upload>
                         </div>
@@ -384,8 +407,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
                           }}
                           preview={{
                             visible: previewOpen,
-                            onVisibleChange: (visible) => setPreviewOpen(visible),
-                            afterOpenChange: (visible) => !visible && setPreviewImageQR(""),
+                            onVisibleChange: (visible) =>
+                              setPreviewOpen(visible),
+                            afterOpenChange: (visible) =>
+                              !visible && setPreviewImageQR(""),
                           }}
                           src={previewImageQR}
                         />
@@ -415,7 +440,11 @@ const PaymentModal = ({ onClose, typeModal }) => {
                     variant="filled"
                     prefix="¥"
                     min={0}
-                    formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
+                    formatter={(value) =>
+                      value
+                        ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        : ""
+                    }
                     parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
                   />
                 </Form.Item>
@@ -424,7 +453,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
           </>
           {formAdd.map((form, index) => (
             <>
-              <div key={index} className="flex flex-col gap-3 max-sm:gap-3 p-6 max-sm:p-4 bg-[#111111] rounded-2xl">
+              <div
+                key={index}
+                className="flex flex-col gap-3 max-sm:gap-3 p-6 max-sm:p-4 bg-[#111111] rounded-2xl"
+              >
                 <div className="flex justify-between">
                   <Title level={5} className="max-sm:!text-sm !text-white">
                     {typeModal === "Bank" ? (
@@ -518,7 +550,8 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   <Form
                     key={form.id} // Use unique ID for the form
                     initialValues={{
-                      ali_number_or_email: form?.formData?.get("ali_number_or_email") || "",
+                      ali_number_or_email:
+                        form?.formData?.get("ali_number_or_email") || "",
                       ali_name: form?.formData?.get("ali_name") || "",
                     }}
                     onFinish={handleAddCreateOrderBank}
@@ -576,7 +609,9 @@ const PaymentModal = ({ onClose, typeModal }) => {
                                   : []
                               }
                               onPreview={handlePreviewQR}
-                              onChange={(info) => handleChangeQRForm(form.id, info)}
+                              onChange={(info) =>
+                                handleChangeQRForm(form.id, info)
+                              }
                               beforeUpload={() => false}
                               maxCount={1}
                               showUploadList={{
@@ -586,10 +621,15 @@ const PaymentModal = ({ onClose, typeModal }) => {
                               }}
                             >
                               <Flex gap="small" align="center">
-                                <Button icon={<UploadOutlined />} className="hover:!border-black hover:!text-black max-sm:text-xs">
+                                <Button
+                                  icon={<UploadOutlined />}
+                                  className="hover:!border-black hover:!text-black max-sm:text-xs"
+                                >
                                   QR code
                                 </Button>
-                                <span className="text-[#9CA3AF] text-sm max-sm:text-xs">{"(Optional)"}</span>
+                                <span className="text-[#9CA3AF] text-sm max-sm:text-xs">
+                                  {"(Optional)"}
+                                </span>
                               </Flex>
                             </Upload>
                           </div>
@@ -600,8 +640,10 @@ const PaymentModal = ({ onClose, typeModal }) => {
                             wrapperStyle={{ display: "none" }}
                             preview={{
                               visible: previewOpen,
-                              onVisibleChange: (visible) => setPreviewOpen(visible),
-                              afterOpenChange: (visible) => !visible && setPreviewImageQR(""),
+                              onVisibleChange: (visible) =>
+                                setPreviewOpen(visible),
+                              afterOpenChange: (visible) =>
+                                !visible && setPreviewImageQR(""),
                             }}
                             src={previewImageQR}
                           />
@@ -616,7 +658,11 @@ const PaymentModal = ({ onClose, typeModal }) => {
                   Purhcase Amount
                 </Title>
                 <Form
-                  onFinish={typeModal === "Bank" ? handleAddCreateOrderBank : handleAddCreateOrderAli}
+                  onFinish={
+                    typeModal === "Bank"
+                      ? handleAddCreateOrderBank
+                      : handleAddCreateOrderAli
+                  }
                   initialValues={{ amount: form.formData.get("amount") }}
                 >
                   <Form.Item
@@ -634,7 +680,11 @@ const PaymentModal = ({ onClose, typeModal }) => {
                       variant="filled"
                       prefix="¥"
                       min={0}
-                      formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
+                      formatter={(value) =>
+                        value
+                          ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                          : ""
+                      }
                       parser={(value) => value.replace(/\.\s?|(\.)/g, "")}
                     />
                   </Form.Item>
@@ -659,9 +709,13 @@ const PaymentModal = ({ onClose, typeModal }) => {
             onFinish={(values) => {
               // Decide which handler to call based on the button clicked
               if (submitType === "payNow") {
-                typeModal === "Bank" ? handleCreateOrderBank(values) : handleCreateOrderAli(values);
+                typeModal === "Bank"
+                  ? handleCreateOrderBank(values)
+                  : handleCreateOrderAli(values);
               } else if (submitType === "addPayment") {
-                typeModal === "Bank" ? handleAddCreateOrderBank(values) : handleAddCreateOrderAli(values);
+                typeModal === "Bank"
+                  ? handleAddCreateOrderBank(values)
+                  : handleAddCreateOrderAli(values);
               }
             }}
             onFinishFailed={(errorInfo) => console.log("Failed:", errorInfo)}

@@ -127,9 +127,6 @@ const NewTableAdminOrder = ({
           ...item,
           ...row,
         };
-        console.log(updatedData);
-        console.log(item);
-        console.log(row);
 
         const newEditData = {
           buying_price: updatedData.buying_price,

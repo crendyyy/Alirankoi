@@ -11,20 +11,17 @@ export const useUpdateOrderUser = () => {
   return useMutation({
     mutationFn: ({ id, data }) => {
       toast.loading("Updating order...");
-      console.log("Updating order...", data, id);
       return axiosClient._patch(`/order/${id}`, data);
     },
 
     onSuccess: (response) => {
       toast.update("Order updated successfully.", "success");
-      console.log("Order updated successfully.", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: ordersKeys.lists });
     },
 
     onError: (error) => {
       toast.update("Unable to update order. Please try again.", "error");
-      console.log(error.response.data.message, "error");
     },
   });
 };
@@ -37,20 +34,17 @@ export const useConfirmOrderUser = () => {
   return useMutation({
     mutationFn: ({ id, data }) => {
       toast.loading("Confirm order...");
-      console.log("Confirm order...", data, id);
       return axiosClient._patch(`/order/payment/${id}`, data);
     },
 
     onSuccess: (response) => {
       toast.update("Order confirmed successfully.", "success");
-      console.log("Order confirmed successfully.", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: ordersKeys.lists });
     },
 
     onError: (error) => {
       toast.update("Error confirming the order. Please try again.", "error");
-      console.log(error.response.data.message, "error");
     },
   });
 };
@@ -63,20 +57,17 @@ export const useCancelOrderUser = () => {
   return useMutation({
     mutationFn: ({ id }) => {
       toast.loading("Cancel order...");
-      console.log("Cancel order...", id);
       return axiosClient._patch(`/order/cancel/${id}`);
     },
 
     onSuccess: (response) => {
       toast.update("Order canceled successfully.", "success");
-      console.log("Order canceled successfully.", "success", response);
       // Refresh data related to the stock after a successful update
       queryClient.invalidateQueries({ queryKey: ordersKeys.lists });
     },
 
     onError: (error) => {
       toast.update("Error cancel ordered. Please try again.", "error");
-      console.log(error.response.data.message, "error");
     },
   });
 };
