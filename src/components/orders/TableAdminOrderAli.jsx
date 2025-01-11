@@ -99,6 +99,7 @@ const TableAdminOrderAli = ({
   const [selectedInvoice, setSelectedInvoice] = useState("");
 
   const { data: orders, isPending, isError } = useGetOrders();
+  const updateStatusOrderMutation = useUpdateStatusOrder();
   const updateDataOrdeMutation = useUpdateDataOrder();
 
   const deleteOrderMutation = useDeleteOrder();
@@ -161,7 +162,10 @@ const TableAdminOrderAli = ({
       content: "Deleted data cannot be recovered!",
       okText: "Yes",
       okType: "danger",
-      onOk: () => deleteOrderMutation.mutate(id),
+      onOk: () => updateStatusOrderMutation.mutate({
+        id: id,
+        data: { status: "Cancel" },
+      }),
     });
   };
 
