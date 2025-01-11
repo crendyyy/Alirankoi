@@ -12,7 +12,7 @@ export const useOpenStatus = () => {
   return useMutation({
     mutationFn: () => {
       toast.loading("Updating open status...");
-      axiosClient._patch("/open");
+      return axiosClient._patch("/open");
     },
     onSuccess: (data) => {
       toast.update("Open status updated successfully.", "success");
