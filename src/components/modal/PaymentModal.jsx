@@ -9,6 +9,7 @@ import {
   Image,
   Form,
   Carousel,
+  Badge,
 } from "antd";
 import {
   AlipayOutlined,
@@ -704,7 +705,7 @@ const PaymentModal = ({ onClose, typeModal }) => {
 
           {/* Single Form */}
           <Form
-            className="w-full flex gap-2"
+            className="flex w-full gap-2"
             form={typeModal === "Bank" ? formBank : formAli}
             onFinish={(values) => {
               // Decide which handler to call based on the button clicked
@@ -734,13 +735,15 @@ const PaymentModal = ({ onClose, typeModal }) => {
 
             {/* Add Another Payment Button */}
             <Form.Item noStyle className="w-full">
+              <Badge count={formAdd.length + 1} offset={[-5, 5]}>
               <button
                 htmlType="submit"
-                className={`after:content-['1'] after:border after:border-red-500 after:px-1.5 relative after:bg-red-100 after:text-[10px] after:rounded-full after:absolute after:top-0 after:right-0 after:text-red-500 !bg-[#F3F4F6] rounded-full max-sm:!w-[70px] px-[15px] max-sm:px-0 font-semibold text-black flex justify-center items-center`}
+                className={`relative h-full !bg-[#F3F4F6] rounded-full max-sm:!w-[70px] px-[15px] max-sm:px-0 font-semibold text-black flex justify-center items-center`}
                 onClick={() => setSubmitType("addPayment")} // Set submit type to add payment
-              >
+                >
                 <PlusCircleOutlined className="text-xl" />
               </button>
+                </Badge>
             </Form.Item>
           </Form>
         </div>
